@@ -184,7 +184,53 @@
   @keyframes stampIn { from { transform: translate(-50%, -50%) rotate(-12deg) scale(3); opacity: 0; } to { transform: translate(-50%, -50%) rotate(-12deg) scale(1); opacity: 0.92; } }
 
   /* ---------- 书桌主界面 ---------- */
-  .home { padding: 0; gap: 0; background: var(--paper); grid-template-rows: auto 1fr; align-content: stretch; }
+  .home { padding: 0; gap: 0; background: var(--paper); grid-template-rows: auto auto 1fr; align-content: stretch; }
+  .topbar {
+    position: sticky; top: 0; z-index: 4; display: flex; align-items: center; gap: 8px;
+    padding: 6px max(10px, env(safe-area-inset-right, 0px)) 6px max(10px, env(safe-area-inset-left, 0px));
+    background: #1f1a33; color: #fff; box-shadow: 0 3px 0 0 var(--ink);
+  }
+  .tb-logo { font-family: var(--display); font-size: 17px; line-height: 1; color: var(--gold); text-shadow: 2px 2px 0 var(--ink); white-space: nowrap; margin-right: auto; }
+  .tb-res { display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.35); padding: 2px 7px 2px 2px; box-shadow: 0 0 0 2px var(--ink); font-size: 13px; font-weight: 700; white-space: nowrap; border: 0; color: #fff; cursor: pointer; }
+  .tb-res b { font-variant-numeric: tabular-nums; }
+  .ri { width: 18px; height: 18px; display: grid; place-items: center; font-family: var(--display); font-style: normal; font-size: 12px; color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+  .tb-btn { position: relative; display: grid; justify-items: center; gap: 1px; background: transparent; border: 0; padding: 0; cursor: pointer; color: #fff; font-size: 10px; font-weight: 700; line-height: 1; }
+  .tb-btn i { width: 28px; height: 28px; display: grid; place-items: center; font-style: normal; font-family: var(--display); font-size: 17px; color: var(--ink); background: var(--paper); box-shadow: var(--px), inset 0 -3px 0 0 rgba(0,0,0,0.2); }
+  .tb-btn:active i { transform: translateY(2px); }
+  .tb-btn .dot { position: absolute; right: -4px; top: -4px; min-width: 14px; height: 14px; padding: 0 3px; background: var(--red); color: #fff; font-size: 9px; display: grid; place-items: center; box-shadow: 0 0 0 2px var(--ink); }
+  @media (max-width: 360px) { .tb-logo { display: none; } .tb-res { margin-right: auto; } .tb-res ~ .tb-res { margin-right: 0; } }
+
+  /* 设置 */
+  .set-row { display: grid; grid-template-columns: 72px 1fr 40px; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
+  .set-row output { font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; color: var(--dim); }
+  .set-row input[type=range] { width: 100%; accent-color: var(--red); height: 24px; }
+  .set-tog { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
+  .set-tog small { display: block; font-weight: 400; font-size: 12px; color: var(--dim); }
+  .tog { min-width: 64px; font-weight: 700; font-size: 14px; padding: 6px 10px; border: 0; cursor: pointer; background: #fff; color: var(--dim); box-shadow: 0 0 0 2px var(--ink); }
+  .tog[aria-pressed=true] { background: var(--green, #4f9a52); color: #fff; }
+  .set-sep { height: 0; border-top: 2px dashed rgba(29,22,38,0.25); }
+  .btn.danger { background: var(--paper); color: var(--red); }
+  .set-foot { font-size: 12px; color: var(--dim); text-align: center; line-height: 1.6; }
+
+  /* 图鉴 */
+  .codex { max-width: 460px; }
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .tabs button { font-weight: 700; font-size: 14px; padding: 7px 4px; border: 0; cursor: pointer; background: #fff; box-shadow: 0 0 0 2px var(--ink); color: var(--text); }
+  .tabs button[aria-pressed=true] { background: var(--ink); color: var(--gold); }
+  .cx-sec { display: grid; gap: 8px; }
+  .cx-sec h3 { font-size: 17px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .cx-sec h3 small { font-family: var(--body); font-size: 12px; color: var(--dim); }
+  .cx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 8px; }
+  .cx { display: grid; justify-items: center; gap: 3px; padding: 6px 2px 5px; border: 0; cursor: pointer; background: #fff; box-shadow: 0 0 0 2px var(--ink); color: var(--text); font-size: 11px; font-weight: 700; line-height: 1.2; text-align: center; }
+  .cx canvas { width: 48px; height: 48px; background: #2d2a40; }
+  .cx.off { background: #e9e2d0; color: var(--dim); }
+  .cx.new::after { content: "新"; position: absolute; }
+  .cx-body { display: grid; gap: 16px; max-height: min(58vh, 520px); overflow-y: auto; padding: 3px 3px 6px; }
+  .cc-head { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; }
+  .cc-head canvas { width: 96px; height: 96px; background: #2d2a40; box-shadow: var(--px); }
+  .cc-say { font-size: 14px; background: #fff7c8; padding: 8px 10px; box-shadow: 2px 3px 0 0 rgba(0,0,0,0.15); }
+  .cc-say + .cc-say { background: #e9e2d0; }
+
   .desk { position: relative; width: 100%; flex: none; }
   .desk-cv { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
   .desk-layer { position: absolute; inset: 0; }
@@ -498,6 +544,13 @@
 
   <!-- 书桌（主界面） -->
   <section class="view home" id="vHome" hidden>
+    <div class="topbar">
+      <div class="tb-logo">疯狂的研究生</div>
+      <button class="tb-res" id="tbEnergyBtn" type="button" aria-label="精力，点一下去续命"><i class="ri" style="background:#ff8a8a">精</i><b id="tbEnergy">10/10</b></button>
+      <button class="tb-res" id="tbStudyBtn" type="button" aria-label="学习力，点一下去升级"><i class="ri" style="background:var(--gold)">学</i><b id="tbStudy">0</b></button>
+      <button class="tb-btn" id="codexBtn" type="button" aria-label="怪物图鉴"><i>鉴</i>图鉴<span class="dot" id="codexDot" hidden>新</span></button>
+      <button class="tb-btn" id="setBtn" type="button" aria-label="设置"><i>设</i>设置</button>
+    </div>
     <div class="desk" id="desk">
       <canvas class="desk-cv" aria-label="你的书桌"></canvas>
       <div class="desk-layer">
@@ -526,7 +579,7 @@
         <span></span><span class="regen" id="regenTxt"></span>
         <span class="k">压力</span><div class="bar"><span id="stressBar"></span><em id="stressNum"></em></div>
       </div>
-      <p class="warn" id="stressWarn" hidden>压力 60 以上，考试当天容易状态下滑；90 以上还可能睡过头迟到、政治基本保不住！去摸鱼放松一下吧。</p>
+      <p class="warn" id="stressWarn" hidden>压力 60 以上，考试当天容易状态下滑；90 以上还可能睡过头迟到、第一科基本保不住！去摸鱼放松一下吧。</p>
       <p class="msg" id="homeMsg"></p>
 
       <div class="stack" id="examBox" hidden>
@@ -597,7 +650,7 @@
     <div class="bsay" id="bsay" hidden><canvas id="bsayCv" class="pix" width="24" height="24"></canvas><div><b id="bsayName"></b><p id="bsayText"></p></div></div>
     <div class="slots" id="slots"><button class="slot empty" id="slot0" type="button" aria-label="道具格 1"></button><button class="slot empty" id="slot1" type="button" aria-label="道具格 2"></button><button class="slot empty" id="slot2" type="button" aria-label="道具格 3"></button></div>
     <div class="tools">
-      <button class="ibtn" id="soundBtn" type="button">音效：开</button>
+      <button class="ibtn" id="soundBtn" type="button">声音：开</button>
       <button class="ibtn" id="pauseBtn" type="button">暂停</button>
     </div>
   </section>
@@ -611,6 +664,7 @@
       <h2>暂停中</h2>
       <p class="muted" id="buildText"></p>
       <button class="btn" id="resumeBtn" type="button">继续</button>
+      <button class="btn ghost" id="pauseSet" type="button">设置</button>
       <button class="btn ghost" id="quitBtn" type="button">放弃这一局</button>
     </div>
   </div>
@@ -629,6 +683,39 @@
       <p class="muted">学习力：<b id="shopStudy">0</b>。升级永久生效，再战也保留。<br><span id="shopProg"></span></p>
       <div class="stack" id="shopList"></div>
       <button class="btn ghost" id="shopClose" type="button">回书桌</button>
+    </div>
+  </div>
+  <div class="ov" id="setOv" hidden>
+    <div class="panel">
+      <div class="eyebrow">设置</div>
+      <h2>设置</h2>
+      <label class="set-row">音乐<input type="range" id="setBgm" min="0" max="100" step="5"><output id="setBgmV"></output></label>
+      <label class="set-row">音效<input type="range" id="setSfx" min="0" max="100" step="5"><output id="setSfxV"></output></label>
+      <div class="set-tog"><span>手机震动<small>受伤和 Boss 出场时轻震一下</small></span><button class="tog" id="setVib" type="button"></button></div>
+      <div class="set-tog"><span>画面震动<small>受击、爆炸时屏幕晃动</small></span><button class="tog" id="setShake" type="button"></button></div>
+      <div class="set-tog"><span>伤害数字<small>关掉画面会更干净</small></span><button class="tog" id="setNums" type="button"></button></div>
+      <div class="set-sep"></div>
+      <button class="btn ghost" id="setIntro" type="button">重看开场动画</button>
+      <button class="btn danger" id="setReset" type="button">重置存档</button>
+      <button class="btn" id="setClose" type="button">好了</button>
+      <p class="set-foot">疯狂的研究生 · 原型版 v0.7<br>本游戏纯属虚构，怪物与真实人物、机构无关。</p>
+    </div>
+  </div>
+  <div class="ov" id="codexOv" hidden>
+    <div class="panel codex">
+      <div class="eyebrow" id="codexProg"></div>
+      <h2>怪物图鉴</h2>
+      <div class="tabs" id="codexTabs"><button type="button" data-k="m" aria-pressed="true">小怪</button><button type="button" data-k="e" aria-pressed="false">精英</button><button type="button" data-k="b" aria-pressed="false">Boss</button></div>
+      <div class="cx-body" id="codexBody"></div>
+      <button class="btn ghost" id="codexClose" type="button">回书桌</button>
+    </div>
+  </div>
+  <div class="ov" id="codexCard" hidden>
+    <div class="panel">
+      <div class="cc-head"><canvas class="pix" id="ccCv" width="24" height="24"></canvas><div><div class="eyebrow" id="ccKind"></div><h2 id="ccName"></h2></div></div>
+      <dl class="result" id="ccStats"></dl>
+      <div id="ccSay"></div>
+      <button class="btn ghost" id="ccClose" type="button">返回图鉴</button>
     </div>
   </div>
   <div class="ov" id="adOv" hidden>
@@ -769,6 +856,8 @@
   var FONT = {
     'A': ['.#.', '#.#', '###', '#.#', '#.#'],
     'Z': ['###', '..#', '.#.', '#..', '###'],
+    'B': ['##.', '#.#', '##.', '#.#', '##.'],
+    'C': ['.##', '#..', '#..', '#..', '.##'],
     'X': ['#.#', '#.#', '.#.', '#.#', '#.#'],
     '?': ['##.', '..#', '.#.', '...', '.#.'],
     '!': ['.#.', '.#.', '.#.', '...', '.#.'],
@@ -1038,7 +1127,7 @@
 
     // 法学
     {
-      id: 'fatiao', group: 'law', name: '法条纸片', course: '专业基础·民法', main: true, speed: 34,
+      id: 'fatiao', group: 'lb', name: '法条纸片', course: '专业基础·民法', main: true, speed: 34,
       origin: '大量法条', behavior: '数量最多，一整片飘过来', line: '第……条……',
       draw: function (g, t) {
         var dx = t, ln = '#a8957a';
@@ -1053,7 +1142,7 @@
       }
     },
     {
-      id: 'jiayibing', group: 'law', name: '案例主角甲乙丙', course: '专业基础·刑法', speed: 32,
+      id: 'jiayibing', group: 'lb', name: '案例主角甲乙丙', course: '专业基础·刑法', speed: 32,
       origin: '案例题里的甲、乙、丙', behavior: '三个一组冲来', line: '甲欺骗了乙，乙又盗窃了丙…',
       draw: function (g, t) {
         var cols = ['#e76f51', '#2a9d8f', '#457b9d'], chars = ['甲', '乙', '丙'];
@@ -1069,7 +1158,7 @@
       }
     },
     {
-      id: 'danshu', flip: true, group: 'law', name: '但书小尾巴', course: '专业基础', speed: 38,
+      id: 'danshu', flip: true, group: 'lb', name: '但书小尾巴', course: '专业基础', speed: 38,
       origin: '法条后面的“但是……”', behavior: '冲到一半突然掉头', line: '但是，法律另有规定的除外',
       mirror: function (t) { return t === 1; },
       draw: function (g) {
@@ -1083,7 +1172,7 @@
       }
     },
     {
-      id: 'buding', group: 'law', name: '司法解释补丁', course: '专业基础', speed: 30,
+      id: 'buding', group: 'lb', name: '司法解释补丁', course: '专业基础', speed: 30,
       origin: '法条之外的司法解释', behavior: '贴在其他小怪身上给它们加血', line: '还有一条解释你没看',
       draw: function (g, t) {
         var y0 = 10 + t, tan = '#f2c48d', pad = '#e3a566', dot = '#c98a4b';
@@ -1098,7 +1187,7 @@
       }
     },
     {
-      id: 'paopao', group: 'law', name: '概念泡泡', course: '综合·法理学', speed: 24,
+      id: 'paopao', group: 'lz', name: '概念泡泡', course: '综合·法理学', main: true, speed: 24,
       origin: '抽象的法理概念', behavior: '轻飘飘地成群飘来', line: '权利还是权力？',
       alpha: function () { return 0.9; },
       draw: function (g, t) {
@@ -1110,7 +1199,7 @@
       }
     },
     {
-      id: 'zhujian', flip: true, group: 'law', name: '律令竹简兵', course: '综合·法制史', speed: 22,
+      id: 'zhujian', flip: true, group: 'lz', name: '律令竹简兵', course: '综合·法制史', speed: 22,
       origin: '古代律令竹简', behavior: '排成方阵正面推进', line: '哪个朝代的来着？',
       draw: function (g, t) {
         for (var i = 0; i < 5; i++) g.rect(4 + i * 3, 4, 2, 14, '#d2bc7c');
@@ -1127,7 +1216,7 @@
       }
     },
     {
-      id: 'yingwu', flip: true, group: 'law', name: '法谚鹦鹉', course: '综合·法理学', speed: 42,
+      id: 'yingwu', flip: true, group: 'lz', name: '法谚鹦鹉', course: '综合·法理学', speed: 42,
       origin: '反复背诵的法谚', behavior: '绕着玩家飞，念句子干扰', line: '法无明文规定不为罪！',
       draw: function (g, t) {
         var c = '#3fbf5f', s = '#2a8f45';
@@ -1143,6 +1232,244 @@
           g.p(18, 6, '#ffffff');
           g.text('!', 18, 0, '#e64b3b');
         }
+      }
+    },
+    // 材料（材料科学基础）
+    {
+      id: 'kongwei', group: 'mat', name: '空位小精灵', course: '材料科学基础', main: true, speed: 34,
+      origin: '晶体点缺陷', behavior: '成群冒出来，数量最多', line: '这里本来有个原子的',
+      draw: function (g, t) {
+        var a = '#9aa7b5', hi = '#d5dde6';
+        [[5, 5], [19, 5], [5, 19], [19, 19]].forEach(function (q) { g.circ(q[0], q[1] + t, 3, a); g.p(q[0] - 1, q[1] - 1 + t, hi); });
+        g.circ(12, 12 + t, 6, '#7fd6d0'); g.circ(12, 12 + t, 4, '#1c2823');
+        g.eye(9, 11 + t); g.eye(13, 11 + t);
+        g.rect(11, 14 + t, 2, 1, '#7fd6d0');
+      }
+    },
+    {
+      id: 'weicuo', group: 'mat', name: '位错蠕虫', course: '材料科学基础', speed: 30,
+      origin: '位错滑移', behavior: '沿直线一格一格滑动', line: '我不是在动，我是在滑移',
+      draw: function (g, t) {
+        for (var i = 0; i < 5; i++) { var y = 13 + ((i + t) % 2); g.rect(2 + i * 3, y, 3, 5, i % 2 ? '#c46f4a' : '#e08a5c'); }
+        g.circ(19, 13, 4, '#e08a5c'); g.eye(19, 11);
+        g.rect(16, 4, 7, 1, '#f4c542'); g.rect(19, 4, 1, 5, '#f4c542');
+      }
+    },
+    {
+      id: 'jingbao', group: 'mat', name: '晶胞方块', course: '材料科学基础', speed: 26,
+      origin: '晶胞与晶体结构', behavior: '排成方阵慢慢推进', line: '面心还是体心？',
+      draw: function (g, t) {
+        var l = '#6c8fb8';
+        g.rect(4, 8, 12, 12, '#bcd3ef'); g.line(4, 8, 8, 4, l); g.line(16, 8, 20, 4, l); g.line(16, 20, 20, 16, l);
+        g.rect(8, 4, 13, 1, l); g.rect(20, 4, 1, 13, l);
+        [[4, 8], [16, 8], [4, 20], [16, 20], [8, 4], [20, 4], [20, 16]].forEach(function (q) { g.rect(q[0] - 1, q[1] - 1, 3, 3, '#f28c38'); });
+        g.rect(9, 13, 3, 3, t ? '#f28c38' : '#ffd29a');
+        g.eye(6, 11); g.eye(12, 11);
+      }
+    },
+    {
+      id: 'kuosan', group: 'mat', name: '扩散云团', course: '材料科学基础', speed: 22,
+      origin: '菲克定律', behavior: '慢慢铺开，从浓到淡', line: '从高浓度往低浓度，这很合理',
+      draw: function (g, t) {
+        g.circ(12, 12, 9 + t, '#c8f0b8'); g.circ(12, 12, 6, '#8fd67a'); g.circ(12, 12, 3, '#4f9a52');
+        [[3, 4], [20, 6], [2, 19], [21, 20]].forEach(function (q) { if (t) g.p(q[0], q[1], '#8fd67a'); });
+        g.eye(8, 10); g.eye(14, 10);
+      }
+    },
+    {
+      id: 'ganguo', group: 'mat', name: '坩埚小炉', course: '材料科学基础', speed: 28,
+      origin: '高温炉与“炼丹”实验', behavior: '冒着烟冲过来', line: '这炉要么出文章，要么炸',
+      draw: function (g, t) {
+        g.rect(5, 9, 14, 9, '#8c96a3'); g.rect(4, 8, 16, 2, '#aeb8c4'); g.rect(6, 10, 12, 2, '#f28c38');
+        g.eye(8, 13); g.eye(14, 13);
+        g.rect(7, 18, 2, 3, '#5d6670'); g.rect(15, 18, 2, 3, '#5d6670');
+        g.rect(9, 19, 6, 2, t ? '#ff5c3a' : '#f4c542'); g.p(11, 18, '#ffd29a');
+        g.rect(10 + t, 4, 2, 2, '#d5dde6'); g.rect(12 - t, 1, 2, 2, '#d5dde6');
+      }
+    },
+
+    // 会计 · 199 逻辑
+    {
+      id: 'jiayan', group: 'lg', name: '假言命题怪', course: '199·逻辑', main: true, speed: 34,
+      origin: '“如果……那么……”', behavior: '举着箭头牌成群冲过来', line: '如果你不努力，那么……',
+      draw: function (g, t) {
+        g.rect(3, 3, 18, 10, '#f4ecd8'); g.rect(3, 3, 18, 1, '#c9a66b');
+        g.rect(6, 7, 9, 2, '#d9503f'); g.rect(14, 5, 2, 6, '#d9503f'); g.rect(16, 6, 1, 4, '#d9503f'); g.p(17, 7, '#d9503f'); g.p(17, 8, '#d9503f');
+        g.rect(11, 13, 2, 3, '#8a5432');
+        g.circ(12, 18, 3, '#f3c9a0'); g.p(11, 18, INK); g.p(13, 18, INK);
+        g.rect(10, 21, 1, 2 - t, INK); g.rect(13, 21, 1, 1 + t, INK);
+      }
+    },
+    {
+      id: 'sanduan', group: 'lg', name: '三段论积木', course: '199·逻辑', speed: 30,
+      origin: '大前提、小前提、结论', behavior: '三块叠着跳过来', line: '所有 A 是 B，所有 B 是 C……',
+      draw: function (g, t) {
+        g.rect(6, 15, 12, 6, '#3d7bd9'); g.rect(7, 9 + t, 10, 6, '#4f9a52'); g.rect(8, 3 + t * 2, 8, 6, '#f2b53c');
+        g.text('A', 10, 4 + t * 2, '#ffffff'); g.text('B', 11, 10 + t, '#ffffff'); g.text('C', 11, 16, '#ffffff');
+        g.eye(7, 17); g.eye(15, 17);
+      }
+    },
+    {
+      id: 'xueruo', group: 'lg', name: '削弱箭头', course: '199·逻辑', speed: 40,
+      origin: '削弱、加强题', behavior: '直直地往下戳', line: '你的论证，被我削弱了',
+      draw: function (g, t) {
+        var c = t ? '#e5484d' : '#ff6b6b';
+        g.rect(9, 2, 6, 11, c); for (var i = 0; i < 6; i++) g.rect(4 + i, 13 + i, 16 - i * 2, 1, c);
+        g.eye(9, 6); g.eye(13, 6); g.rect(10, 10, 4, 1, INK);
+      }
+    },
+
+    // 会计 · 199 写作
+    {
+      id: 'gezi', group: 'wr', name: '作文方格', course: '199·写作', main: true, speed: 32,
+      origin: '600 字的作文纸', behavior: '一格一格往前挪', line: '还差 300 字',
+      draw: function (g, t) {
+        g.rect(3, 4, 18, 16, '#fbf6e9');
+        for (var x = 3; x <= 21; x += 4) g.rect(x, 4, 1, 16, '#7fbf8a');
+        for (var y = 4; y <= 20; y += 4) g.rect(3, y, 18, 1, '#7fbf8a');
+        g.eye(8, 9); g.eye(14, 9); g.rect(9, 14, 6, 1 + t, INK);
+      }
+    },
+    {
+      id: 'loudong', group: 'wr', name: '论证漏洞', course: '199·写作', speed: 30,
+      origin: '论证有效性分析里的漏洞', behavior: '从纸上的洞里探头', line: '你没发现我吧？',
+      draw: function (g, t) {
+        g.rect(3, 3, 18, 18, '#f4f1ea'); for (var y = 6; y < 20; y += 3) g.rect(5, y, 14, 1, '#c9c2b2');
+        g.ell(12, 12, 5, 4, '#1c1626'); g.eye(9 + t, 11); g.eye(13 + t, 11);
+      }
+    },
+    {
+      id: 'moshui', group: 'wr', name: '墨水滴', course: '199·写作', speed: 36,
+      origin: '写到手酸的钢笔', behavior: '滴答滴答地弹过来', line: '笔……没水了……',
+      draw: function (g, t) {
+        var c = '#2f3f8f';
+        g.circ(12, 15, 6 - t, c); g.rect(11, 5 + t, 2, 5, c); g.rect(10, 8 + t, 4, 3, c); g.p(12, 4 + t, c);
+        g.p(9, 13, '#9fb3ff'); g.p(9, 14, '#9fb3ff'); g.eye(10, 15); g.eye(13, 15);
+      }
+    },
+
+    // 教育学 · 311 原理与心理
+    {
+      id: 'xiaogou', flip: true, group: 'e1', name: '条件反射小狗', course: '311·教育心理学', main: true, speed: 38,
+      origin: '经典条件反射实验', behavior: '听到铃声就扑过来', line: '叮铃——',
+      draw: function (g, t) {
+        var c = '#e0b07a', s = '#b9824a';
+        g.ell(10, 15, 7, 4, c); g.circ(17, 11, 4, c); g.rect(19, 7, 2, 4, s); g.rect(14, 7, 2, 3, s);
+        g.eye(17, 10); g.p(21, 12, INK); g.rect(4, 11 - t, 2, 3, s);
+        g.rect(5, 18, 2, 3, s); g.rect(13, 18, 2, 3, s);
+        if (t) { g.rect(18, 1, 4, 3, '#f4c542'); g.p(20, 4, '#f4c542'); }
+        g.p(20, 14, '#7fd1ff');
+      }
+    },
+    {
+      id: 'jimu', group: 'e1', name: '认知积木', course: '311·教育心理学', speed: 28,
+      origin: '认知发展阶段', behavior: '一级一级往上长', line: '我还在具体运算阶段',
+      draw: function (g, t) {
+        g.rect(3, 15, 6, 6, '#e5484d'); g.rect(9, 15, 6, 6, '#3d7bd9'); g.rect(15, 15, 6, 6, '#4f9a52');
+        g.rect(6, 9, 6, 6, '#f2b53c'); g.rect(12, 9, 6, 6, '#8f6ad1'); g.rect(9, 3 + t, 6, 6, '#ff9f7a');
+        g.eye(10, 5 + t); g.p(13, 5 + t, INK);
+      }
+    },
+    {
+      id: 'kebiao', group: 'e1', name: '课程表格', course: '311·教育学原理', speed: 26,
+      origin: '课程论与教学论', behavior: '排得满满当当地压过来', line: '第一节，又是你的课',
+      draw: function (g, t) {
+        g.rect(3, 4, 18, 16, '#ffffff'); g.rect(3, 4, 18, 3, '#3d7bd9');
+        var cs = ['#ffd29a', '#bfe0ff', '#c8f0b8', '#f6c1d0'];
+        for (var r = 0; r < 3; r++) for (var c = 0; c < 4; c++) g.rect(4 + c * 4, 8 + r * 4, 3, 3, cs[(r + c + t) % 4]);
+        g.eye(8, 12); g.eye(14, 12);
+      }
+    },
+
+    // 教育学 · 311 中外教育史
+    {
+      id: 'renming', group: 'e2', name: '人名牌', course: '311·中外教育史', main: true, speed: 34,
+      origin: '一长串教育家的名字', behavior: '成群冲来，名字长得都很像', line: '你记得我是哪个学派的吗？',
+      draw: function (g, t) {
+        g.line(8, 1, 12, 6, '#d9503f'); g.line(16, 1, 12, 6, '#d9503f');
+        g.rect(5, 6, 14, 12, '#f4ecd8'); g.rect(5, 6, 14, 3, '#d9503f');
+        g.text('?', 11, 11, '#8a5432'); g.eye(7, 10 + t); g.eye(15, 10 + t);
+        g.rect(8, 15, 8, 1, '#c9b48c');
+        g.rect(8, 18, 2, 3, INK); g.rect(14, 18, 2, 3 - t, INK);
+      }
+    },
+    {
+      id: 'jiechi', flip: true, group: 'e2', name: '戒尺小兵', course: '311·中国教育史', speed: 30,
+      origin: '古代私塾的戒尺', behavior: '一蹦一蹦地敲过来', line: '伸手！',
+      draw: function (g, t) {
+        g.rect(9, 2 + t, 6, 19, '#c8945a'); g.rect(9, 2 + t, 1, 19, '#e0b07a');
+        for (var y = 5; y < 20; y += 3) g.rect(13, y + t, 2, 1, '#7a5030');
+        g.eye(10, 7 + t); g.rect(10, 11 + t, 3, 1, INK);
+      }
+    },
+    {
+      id: 'xianzhuang', group: 'e2', name: '线装书', course: '311·中国教育史', speed: 24,
+      origin: '古代学堂的线装书', behavior: '慢吞吞地翻着页飘过来', line: '学而时习之……',
+      draw: function (g, t) {
+        g.rect(4, 4, 16, 17, '#3f6fa8'); g.rect(6, 6, 6, 12, '#f4ecd8');
+        for (var y = 6; y < 21; y += 3) g.rect(4, y, 2, 1, '#f4ecd8');
+        g.rect(14, 8, 4, 2, '#ffffff'); g.p(15 + t, 9, INK); g.rect(14, 12, 4, 2, '#ffffff'); g.p(15 + t, 13, INK);
+        g.rect(7, 8, 4, 1, INK); g.rect(7, 11, 3, 1, INK); g.rect(7, 14, 4, 1, INK);
+      }
+    },
+
+    // 临床医学 · 306 生理与生化
+    {
+      id: 'dianwei', group: 'm1', name: '动作电位闪电', course: '306·生理学', main: true, speed: 44,
+      origin: '神经冲动', behavior: '蓄力后全或无地突进', line: '全或无！',
+      draw: function (g, t) {
+        var c = t ? '#ffe066' : '#f4c542';
+        g.rect(11, 1, 7, 3, c); g.rect(9, 4, 7, 3, c); g.rect(7, 7, 7, 4, c); g.rect(7, 11, 12, 3, c);
+        g.rect(12, 14, 5, 3, c); g.rect(10, 17, 5, 3, c); g.rect(8, 20, 4, 3, c);
+        g.eye(9, 8); g.p(12, 8, INK);
+      }
+    },
+    {
+      id: 'atp', group: 'm1', name: 'ATP 小电池', course: '306·生物化学', speed: 32,
+      origin: '能量货币 ATP', behavior: '充满电就冲刺', line: '一分子葡萄糖能出几个我？',
+      draw: function (g, t) {
+        g.rect(5, 5, 14, 16, '#4d5666'); g.rect(9, 3, 6, 2, '#aeb8c4');
+        g.rect(7, 7, 10, 12, '#1c2823'); g.rect(7, 13 - t * 3, 10, 6 + t * 3, '#4ade80');
+        g.eye(8, 9); g.eye(14, 9);
+      }
+    },
+    {
+      id: 'mei', group: 'm1', name: '酶钥匙', course: '306·生物化学', speed: 30,
+      origin: '酶与底物的锁钥学说', behavior: '找到锁孔就钻进去', line: '我只开这一把锁',
+      draw: function (g, t) {
+        g.circ(8, 12, 6, '#a77bd9'); g.circ(8, 12, 2, null);
+        g.rect(13, 11, 9, 3, '#a77bd9'); g.rect(17, 14, 2, 2 + t, '#a77bd9'); g.rect(20, 14, 2, 3 - t, '#a77bd9');
+        g.eye(4, 8); g.eye(9, 7);
+      }
+    },
+
+    // 临床医学 · 306 病理与内外科
+    {
+      id: 'baixibao', group: 'm2', name: '白细胞巡逻兵', course: '306·病理学', main: true, speed: 32,
+      origin: '炎症反应', behavior: '成群聚拢，越聚越多', line: '哪里发炎了？',
+      draw: function (g, t) {
+        g.circ(12, 12, 8 + t, '#f4f6fb');
+        g.circ(9, 13, 2, '#9b6bd3'); g.circ(13, 15, 2, '#9b6bd3'); g.circ(15, 11, 2, '#9b6bd3');
+        g.eye(8, 8); g.eye(13, 8);
+      }
+    },
+    {
+      id: 'yaowan', flip: true, group: 'm2', name: '胶囊小药丸', course: '306·内科学', speed: 36,
+      origin: '用药选择题', behavior: '滚着冲过来', line: '饭前还是饭后？',
+      draw: function (g, t) {
+        for (var i = 0; i < 12; i++) g.rect(4 + i, 15 - i, 5, 5, i < 6 ? '#e5484d' : '#f4f1ea');
+        g.circ(6, 17, 2, '#e5484d'); g.circ(18, 6, 2, '#f4f1ea');
+        g.eye(10, 10 + t); g.eye(13, 8 + t);
+      }
+    },
+    {
+      id: 'tingzhen', group: 'm2', name: '听诊器', course: '306·内外科', speed: 28,
+      origin: '查体与问诊', behavior: '绕着你听来听去', line: '深呼吸——',
+      draw: function (g, t) {
+        var c = '#4d5666';
+        g.rect(6, 2, 2, 8, c); g.rect(16, 2, 2, 8, c); g.rect(6, 9, 12, 2, c); g.rect(11, 10, 2, 6, c);
+        g.circ(12, 18, 4, '#aeb8c4'); g.circ(12, 18, 2, '#e9efe6');
+        g.eye(10, 17 + t); g.p(14, 18 + t, INK);
       }
     }
   ];
@@ -1166,9 +1493,17 @@
   var GROUPS = [
     { id: 'en', name: '英语', note: '公共课 · 所有专业都要打' },
     { id: 'po', name: '政治', note: '公共课 · 只按题型做怪' },
-    { id: 'ma', name: '数学', note: '公共课 · 计算机要考，法学不考' },
+    { id: 'ma', name: '数学', note: '公共课 · 计算机、材料要考，会计考 199 数学' },
     { id: 'cs', name: '计算机 408', note: '专业课 · 数据结构、组成原理、操作系统、计算机网络' },
-    { id: 'law', name: '法学（法硕）', note: '专业课 · 专业基础（刑法、民法）+ 综合（法理学、法制史）' }
+    { id: 'lb', name: '法硕 · 专业基础', note: '专业课 · 刑法、民法' },
+    { id: 'lz', name: '法硕 · 综合', note: '专业课 · 法理学、宪法、法制史' },
+    { id: 'mat', name: '材料科学基础', note: '专业课 · 晶体、缺陷、扩散、相图、热处理' },
+    { id: 'lg', name: '199 · 逻辑', note: '会计专硕 · 管理类综合' },
+    { id: 'wr', name: '199 · 写作', note: '会计专硕 · 管理类综合' },
+    { id: 'e1', name: '311 · 原理与心理', note: '教育学 · 教育学原理、教育心理学' },
+    { id: 'e2', name: '311 · 中外教育史', note: '教育学 · 中国教育史、外国教育史' },
+    { id: 'm1', name: '306 · 生理生化', note: '临床医学 · 生理学、生物化学' },
+    { id: 'm2', name: '306 · 病理内外', note: '临床医学 · 病理学、内科学、外科学' }
   ];
 
   // 帧缓存：每只怪每帧只画一次，之后直接放大贴图
@@ -2112,30 +2447,51 @@
   var GM = window.GradMonsters;
   var INK = '#17130f';
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 设置（单独存，重置存档不会清掉）
+  var SET_KEY = 'crazygrad.settings.v1';
+  var SET = { bgm: 0.5, sfx: 0.8, vib: true, shake: !reduceMotion, nums: true };
+  try { var _st = JSON.parse(localStorage.getItem(SET_KEY)); if (_st) for (var _k in SET) if (_st[_k] !== undefined) SET[_k] = _st[_k]; } catch (e) {}
+  function saveSet() { try { localStorage.setItem(SET_KEY, JSON.stringify(SET)); } catch (e) {} }
+  function buzz(ms) { if (SET.vib && navigator.vibrate) try { navigator.vibrate(ms); } catch (e) {} }
   var $ = function (id) { return document.getElementById(id); };
 
   // ======================================================================
   // 数据：专业、院校、道具
   // ======================================================================
   var MAJORS = [
-    { id: 'cs', name: '计算机', code: '408', open: true, d: '数据结构、组成原理、操作系统、计算机网络。主力怪：僵尸进程。' },
-    { id: 'law', name: '法学（法硕）', code: '法硕', open: false, d: '刑法、民法、法理学、法制史。主力怪：法条纸片。' },
-    { id: 'mat', name: '材料', open: false, d: '晶体、缺陷、相图。' },
-    { id: 'acc', name: '会计', open: false, d: '199 管理类综合 + 财务会计。' },
-    { id: 'edu', name: '教育学', open: false, d: '311 教育学专业基础综合。' },
-    { id: 'med', name: '临床医学', open: false, d: '306 西医综合，五科合一。' }
+    { id: 'cs', name: '计算机', code: '408', open: true, d: '政治 · 英语 · 数学 · 408。崩溃报错的电子世界，主力怪：僵尸进程。' },
+    { id: 'mat', name: '材料', code: '材料科学基础', open: true, d: '政治 · 英语 · 数学 · 材料科学基础。生化环材，天坑自嘲，主力怪：空位小精灵。' },
+    { id: 'law', name: '法学（法硕）', code: '法硕', open: true, d: '政治 · 英语 · 专业基础 · 综合。背不完的法条，主力怪：法条纸片。' },
+    { id: 'acc', name: '会计', code: '199', open: true, d: '英语二 · 199 数学 · 逻辑 · 写作。时间永远不够，初试不考政治。' },
+    { id: 'edu', name: '教育学', code: '311', open: true, d: '政治 · 英语 · 311 原理与心理 · 中外教育史。人名多到背不完。' },
+    { id: 'med', name: '临床医学', code: '306', open: true, d: '政治 · 英语 · 306 西医综合（拆成两场）。五本书一起往脑子里塞。' }
   ];
   var SCHOOLS = [
-    { name: '青藤学院', tier: '双非', hp: 0.85, line: 300, d: '分数线 300，稳稳上岸' },
-    { name: '东湖大学', tier: '211', hp: 1.0, line: 340, d: '分数线 340，正常难度' },
-    { name: '云顶大学', tier: '顶尖名校', hp: 1.2, line: 380, d: '分数线 380，考场上的怪更厚' }
+    { name: '青藤学院', tier: '双非', hp: 0.85, ratio: 0.6, d: '稳稳上岸' },
+    { name: '东湖大学', tier: '211', hp: 1.0, ratio: 0.68, d: '正常难度' },
+    { name: '云顶大学', tier: '顶尖名校', hp: 1.2, ratio: 0.76, d: '考场上的怪更厚' }
   ];
-  var SUBJECTS = [
-    { id: 'po', name: '政治', d: '单选题小兵、答题卡方格、蒙题骰子' },
-    { id: 'en', name: '英语', d: 'Abandon 幽灵、熟词僻义怪……' },
-    { id: 'ma', name: '数学', d: '无穷小量、正负号小虫、常数 C……' },
-    { id: 'cs', name: '专业课 408', d: '僵尸进程、丢包数据包……有精英死锁双子' }
-  ];
+  // 所有科目。pool = 借用哪一组小怪（199 数学用数学的怪）；boss = 考研日这一科的 Boss（画在后面）
+  var SUBJ = {
+    po: { name: '政治', d: '单选题小兵、答题卡方格、蒙题骰子' },
+    en: { name: '英语', d: 'Abandon 幽灵、熟词僻义怪……' },
+    ma: { name: '数学', d: '无穷小量、正负号小虫、常数 C……' },
+    cs: { name: '专业课 408', book: '408', d: '僵尸进程、丢包数据包……有精英死锁双子' },
+    mat: { name: '材料科学基础', book: '材料基础', d: '空位小精灵、位错蠕虫、坩埚小炉' },
+    lb: { name: '法硕 · 专业基础', book: '专业基础', d: '法条纸片、甲乙丙、但书小尾巴' },
+    lz: { name: '法硕 · 综合', book: '法硕综合', d: '概念泡泡、律令竹简、法谚鹦鹉' },
+    am: { name: '199 · 数学', book: '数学', d: '应用题、排列组合、无穷小量', pool: 'ma' },
+    lg: { name: '199 · 逻辑', book: '逻辑', d: '假言命题、三段论积木、削弱箭头' },
+    wr: { name: '199 · 写作', book: '写作', d: '作文方格、论证漏洞、墨水滴' },
+    e1: { name: '311 · 原理与心理', book: '原理心理', d: '条件反射小狗、认知积木、课程表格' },
+    e2: { name: '311 · 中外教育史', book: '教育史', d: '人名牌、戒尺小兵、线装书' },
+    m1: { name: '306 · 生理生化', book: '生理生化', d: '动作电位闪电、ATP 小电池、酶钥匙' },
+    m2: { name: '306 · 病理内外', book: '病理内外', d: '白细胞巡逻兵、胶囊小药丸、听诊器' }
+  };
+  Object.keys(SUBJ).forEach(function (id) { SUBJ[id].id = id; });
+  var MAJOR_SUBS = { cs: ['po', 'en', 'ma', 'cs'], mat: ['po', 'en', 'ma', 'mat'], law: ['po', 'en', 'lb', 'lz'],
+    acc: ['en', 'am', 'lg', 'wr'], edu: ['po', 'en', 'e1', 'e2'], med: ['po', 'en', 'm1', 'm2'] };
+  var SUBJECTS = [], SUB_IDS = [];
   var ITEMS = [
     { id: 'notebook', name: '错题本', icon: '本', color: '#ff9f7a', max: 5, base: 120, d: function (l) { return '伤害 +' + (l * 6) + '%'; } },
     { id: 'cup', name: '保温杯', icon: '杯', color: '#ff8a8a', max: 5, base: 120, d: function (l) { return '生命 +' + (l * 15); } },
@@ -2191,17 +2547,82 @@
       E('taowa', '递归套娃王', '我调用我自己调用我自己调用……', 'Stack……Overflow……'),
       E('cache', 'Cache 刺客', '你要的数据？不在我这儿。', '命中率……归零……'),
       { twins: true, name: '死锁双子', say: '你等我释放，我等你释放。', die: '我们……就这样等到了考研结束……' },
-      E('diubao', '三次握手怪', '你好？你好？你好？……超时重传！', '四次挥手……再见了……')] }
+      E('diubao', '三次握手怪', '你好？你好？你好？……超时重传！', '四次挥手……再见了……')] },
+    mat: { full: 150, list: ['晶体结构', '晶体缺陷', '扩散', '凝固', '铁碳相图', '热处理'], el: [
+      E('jingbao', '晶胞方阵', '面心立方还是体心立方？数清楚我有几个原子！', '4 个……确实是 4 个……'),
+      E('kongwei', '空位大魔', '这里本来有个原子的，现在是你的坑了。', '坑……被填平了……'),
+      E('kuosan', '扩散云团', '从高浓度往低浓度，这很合理。', '浓度……平衡了……'),
+      E('ganguo', '炸炉丹师', '这一炉，要么出文章，要么炸！', '炉……炸了……我转码去了……'),
+      E('weicuo', '杠杆定律裁判', '两相比例，用杠杆定律给我算！', '支点……歪了……'),
+      E('ganguo', '淬火剑士', '要硬度，还是要韧性？', '回火……回过头来了……')] },
+    lb: { full: 150, list: ['刑法总则', '犯罪构成', '刑法分则', '民法总则', '物权', '合同与侵权'], el: [
+      E('fatiao', '法条瀑布', '第一条到最后一条，一起上！', '我……被你背完了……'),
+      E('jiayibing', '甲乙丙三人组', '甲骗了乙，乙偷了丙，丙又打了甲！', '三个人……都判完了……'),
+      E('danshu', '正当防卫判官', '你还手了？这算不算防卫过当？', '……正当防卫，不负刑事责任。'),
+      E('buding', '司法解释大全', '法条背完了？还有司法解释呢！', '补丁……打完了……'),
+      E('jiayibing', '善意取得怪', '我是善意的！东西归我了！', '原来……我有重大过失……'),
+      E('fatiao', '侵权责任巨兽', '过错推定！你得证明你没错！', '举证……成功了……')] },
+    lz: { full: 150, list: ['法理学', '宪法', '中国法制史', '法律职业伦理'], el: [
+      E('paopao', '权利权力泡泡王', '权利还是权力？就差一个字！', '……木字旁的那个。'),
+      E('yingwu', '法谚大鹦鹉', '法无明文规定不为罪！法无明文规定不为罪！', '……我只会这一句。'),
+      E('zhujian', '律令竹简将军', '古代律令十二篇，报上名来！', '名例、卫禁……我也背不全……'),
+      E('yingwu', '职业伦理考官', '律师能同时代理双方吗？', '……利益冲突，必须回避。')] },
+    am: { full: 75, list: ['算术与应用题', '代数', '几何', '数据分析'], el: [
+      E('wuqiong', '应用题大叔', '一个水池，一边进水一边放水……', '水……终于放完了……'),
+      E('zhengfu', '行程问题小魔', '甲乙相向而行，第几次相遇？', '……相遇了。'),
+      E('changshu', '排列组合怪', 'A 还是 C？要不要除以顺序？', '……原来要除以顺序……'),
+      E('caogao', '手算大师', '考场不让带计算器，手算吧！', '……居然真算出来了。')] },
+    lg: { full: 60, list: ['假言命题', '三段论', '削弱与加强', '真假话推理'], el: [
+      E('jiayan', '如果那么大师', '如果你不努力，那么你就……你猜？', '……否后必否前。'),
+      E('sanduan', '偷换概念怪', '所有学霸都熬夜，你熬夜了，所以你是学霸！', '……中项不周延。'),
+      E('xueruo', '削弱之王', '你的论证？我一句话就削弱了！', '……被你加强回来了……'),
+      E('jiayan', '真假话迷宫', '我们四个只有一个说真话！', '……原来是丙说了真话。')] },
+    wr: { full: 65, list: ['论证有效性分析', '论说文审题', '论说文结构', '考场抢时间'], el: [
+      E('loudong', '漏洞百出怪', '你这篇论证，漏洞比我还多！', '……漏洞全被你找到了。'),
+      E('gezi', '字数凑不够怪', '600 字，你才写了 300！', '……居然写满了。'),
+      E('moshui', '跑题魔', '题目说的是诚信，你写的是理想？', '……拉回来了……'),
+      E('gezi', '倒计时沙漏', '还有 10 分钟，作文还没写呢！', '……时间刚刚好。')] },
+    e1: { full: 150, list: ['教育学原理', '课程与教学', '教育心理学', '学习理论', '教育研究方法'], el: [
+      E('kebiao', '教育目的论使', '教育的目的是什么？写满一页纸！', '……培养全面发展的人。'),
+      E('jimu', '认知发展四阶段', '我从感知运动阶段开始成长！', '……形式运算……到顶了……'),
+      E('xiaogou', '条件反射铃铛王', '叮铃——听到铃声你就会流口水！', '……反射消退了……'),
+      E('kebiao', '最近发展区导师', '这道题，你跳一跳就够得着！', '……支架，可以撤掉了。'),
+      E('jimu', '对照组审查官', '你没设对照组，实验无效！', '……变量控制住了。')] },
+    e2: { full: 150, list: ['中国古代教育', '中国近现代教育', '外国古代教育', '外国近现代教育'], el: [
+      E('xianzhuang', '学在官府守卫', '想读书？先当贵族子弟！', '……学术下移了。'),
+      E('jiechi', '科举考官', '八股文八个部分，一个都不能少！', '……科举，废除了……'),
+      E('renming', '问答法导师', '那你认为什么是教育？那你认为……', '……你自己想出了答案。'),
+      E('renming', '人名大军', '你记得我是哪个学派的吗？', '……原来你都记住了。')] },
+    m1: { full: 150, list: ['细胞生理', '血液循环', '呼吸与消化', '生物化学', '物质代谢'], el: [
+      E('dianwei', '全或无闪电', '要么不放电，要么放满！', '……复极化了。'),
+      E('mei', '钠钾泵', '三个钠出去，两个钾进来！', '……泵不动了……'),
+      E('atp', '心动周期鼓手', '收缩、舒张、收缩、舒张……', '……心率正常了。'),
+      E('mei', '三羧酸循环风车', '你背得出这一圈吗？', '……一圈都背出来了……'),
+      E('atp', '糖酵解工厂', '一分子葡萄糖，能出几个 ATP？', '……算对了。')] },
+    m2: { full: 150, list: ['病理学', '内科学', '外科学', '病例分析'], el: [
+      E('baixibao', '炎症风暴', '哪里发炎了？我们全去！', '……炎症消退了。'),
+      E('yaowan', '用药选择困难', '青霉素过敏？那用哪个？', '……选对药了。'),
+      E('tingzhen', '术前谈话主刀', '无菌观念记住了吗？', '……手术很顺利。'),
+      E('baixibao', '病例分析考官', '主诉、现病史、诊断依据，一个都不能少！', '……诊断正确。')] }
   };
-  var SUB_IDS = ['po', 'en', 'ma', 'cs'];
   // 精英技能：spit 吐毒液 / bomb 召唤自爆怪 / blink 隐入虚空再突袭 / charge 冲撞 / ring 弹幕
   var ELITE_SK = {
     po: [['ring'], ['charge'], ['spit', 'ring'], ['bomb', 'charge'], ['blink', 'spit']],
     en: [['charge'], ['spit'], ['spit', 'ring'], ['blink', 'charge'], ['bomb', 'ring'], ['blink', 'bomb', 'spit']],
     ma: [['blink'], ['charge', 'ring'], ['bomb'], ['blink', 'spit'], ['bomb', 'charge'], ['blink', 'spit', 'ring']],
-    cs: [['bomb'], ['blink', 'charge'], ['spit', 'ring'], ['blink', 'bomb', 'ring']]
+    cs: [['bomb'], ['blink', 'charge'], ['spit', 'ring'], ['blink', 'bomb', 'ring']],
+    mat: [['ring'], ['blink'], ['spit', 'ring'], ['bomb', 'charge'], ['charge', 'spit'], ['blink', 'bomb', 'spit']],
+    lb: [['charge'], ['bomb'], ['ring', 'charge'], ['spit', 'bomb'], ['blink', 'ring'], ['blink', 'bomb', 'spit']],
+    lz: [['spit'], ['blink', 'ring'], ['charge', 'bomb'], ['blink', 'spit', 'ring']],
+    am: [['ring'], ['charge', 'spit'], ['bomb', 'ring'], ['blink', 'spit', 'bomb']],
+    lg: [['spit'], ['blink', 'charge'], ['bomb', 'ring'], ['blink', 'spit', 'bomb']],
+    wr: [['ring'], ['spit', 'charge'], ['blink', 'bomb'], ['bomb', 'spit', 'ring']],
+    e1: [['charge'], ['spit', 'ring'], ['bomb', 'charge'], ['blink', 'spit'], ['blink', 'bomb', 'ring']],
+    e2: [['ring'], ['charge', 'spit'], ['blink', 'ring'], ['blink', 'bomb', 'spit']],
+    m1: [['charge'], ['ring', 'spit'], ['charge', 'bomb'], ['ring', 'blink'], ['blink', 'bomb', 'spit']],
+    m2: [['spit'], ['bomb', 'ring'], ['charge', 'blink'], ['blink', 'spit', 'bomb']]
   };
-  SUB_IDS.forEach(function (id) { CHAPTERS[id].el.forEach(function (e, i) { e.sk = ELITE_SK[id][i]; }); });
+  Object.keys(CHAPTERS).forEach(function (id) { CHAPTERS[id].el.forEach(function (e, i) { e.sk = ELITE_SK[id][i]; }); });
   var SK_NAME = { spit: '吐毒液', bomb: '召唤自爆怪', blink: '隐入虚空', charge: '冲撞', ring: '弹幕' };
   var SK = {
     spit: { cd: 4.2, first: 2.5 }, bomb: { cd: 8, first: 4 }, blink: { cd: 7, first: 5 }, charge: { cd: 5, first: 3 }, ring: { cd: 5.5, first: 4.5 }
@@ -2220,21 +2641,41 @@
   var EXAM_BOSS = { name: '408 缝合怪', say: '四门课，我全都要！', die: '四门课缝在一起……还是被你一门一门拆开了……' };
   var TIPS = [
     '数学别跳步。跳步一时爽，阅卷火葬场。', '政治选择题，先圈出“不正确的是”。', '英语阅读先看题干，再回原文定位。',
-    '408 年年考 PV 操作，别再躲了。', '作文模板背一套就够，背十套会串台。', '熬夜不等于努力，睡够 7 小时效率更高。',
+'作文模板背一套就够，背十套会串台。', '熬夜不等于努力，睡够 7 小时效率更高。',
     '真题至少刷两遍：第一遍做题，第二遍做人。', '错题本不是抄题本，要写清楚“为什么错”。', '考前一周别学新东西，把错题过一遍。',
     '准考证、身份证、2B 铅笔，前一晚就装好。', '大题不会也写公式，过程分也是分。', '英语作文字迹工整，印象分真的存在。',
     '背书别只看，要讲出来、默写出来。', '打怪掉的道具点右边格子用：红牛回血、粉笔灰炸弹清场。', '地上出现虚线圈就快跑，那是精英要砸下来了。', '三天打鱼两天晒网，也比不打强。', '压力大就出去走走，图书馆不会跑。'
   ];
+  // 专业专属小贴士
+  var MAJOR_TIPS = {
+    cs: ['408 年年考 PV 操作，别再躲了。', '数据结构的代码题，先写思路再写代码，思路也给分。'],
+    mat: ['铁碳相图那几条线和温度，背熟了能拿一大块分。', '材料科学基础各校自命题，一定要看目标院校的真题。'],
+    law: ['法条要背，但案例题更看分析过程：先定性，再找条文。', '法制史按朝代串成时间线，比零散背好记得多。'],
+    acc: ['199 时间特别紧：数学 25 道题，每道别超过 3 分钟。', '论证有效性分析先找漏洞，常见的就那几类。'],
+    edu: ['311 人名多，按“人名 + 代表作 + 核心观点”三件套背。', '教育史画一条时间线，中外对照着记。'],
+    med: ['西综五科分值不同，生理和内科最值得花时间。', '病例分析先抓主诉，再按诊断依据一条条写。']
+  };
   var LOAD_MSG = ['正在削铅笔……', '正在占图书馆的座……', '正在泡速溶咖啡……', '正在给 2B 铅笔开光……', '正在翻开真题集……', '正在把手机调成静音……'];
   var MAX_ENERGY = 10, REGEN_MS = 30 * 60 * 1000, ADS_PER_DAY = 2, RUN_STRESS = 10, STRESS_LIMIT = 60;
   function tierOf(id, ci) { var n = CHAPTERS[id].list.length; return n > 1 ? ci / (n - 1) * 5 : 0; }
   function tierVal(arr, t) { var i = Math.min(4, Math.floor(t)), f = t - i; return arr[i] + (arr[i + 1] - arr[i]) * f; }
   // 每颗星的学习力：按章节档位加权，所有星加起来 = 全部升级花费 × 70%
-  var STAR_UNIT = (function () {
+  // （只算本专业的四门课，所以每个专业拿满星都正好是 70%）
+  var STAR_UNIT = 0;
+  function calcStarUnit() {
     var w = 0;
-    Object.keys(CHAPTERS).forEach(function (id) { CHAPTERS[id].list.forEach(function (_, ci) { w += 3 * (1 + tierOf(id, ci) * 0.4); }); });
-    return BAL.chapterShare * TOTAL_COST / w;
-  })();
+    SUB_IDS.forEach(function (id) { CHAPTERS[id].list.forEach(function (_, ci) { w += 3 * (1 + tierOf(id, ci) * 0.4); }); });
+    STAR_UNIT = BAL.chapterShare * TOTAL_COST / w;
+  }
+  // 切换专业：换掉四门课
+  function setMajor(id) {
+    SUB_IDS = (MAJOR_SUBS[id] || MAJOR_SUBS.cs).slice();
+    SUBJECTS = SUB_IDS.map(function (k) { return SUBJ[k]; });
+    calcStarUnit();
+  }
+  setMajor('cs');
+  function fullTotal() { return SUB_IDS.reduce(function (a, k) { return a + CHAPTERS[k].full; }, 0); }
+  function schoolLine(s) { return Math.round(fullTotal() * s.ratio); }
   // 进度锁：后面的章节要“高级复习”层数够了才开放（每天第一次登录 +1 层），最快第 4 天打通
   function reqReview(id, ci) { var t = tierOf(id, ci); return t < 1.5 ? 0 : t < 2.5 ? 1 : t < 3.5 ? 2 : 3; }
   function starReward(id, ci) { return Math.round(STAR_UNIT * (1 + tierOf(id, ci) * 0.4)); }
@@ -2248,7 +2689,7 @@
     return { major: null, school: null, start: null, week: 1, study: 0, up: { notebook: 0, cup: 0, phones: 0, coffee: 0, bag: 0 },
       stress: 0, energy: MAX_ENERGY, energyAt: Date.now(), energyDay: null, ads: 0, dayOffset: 0, outcome: null, finalSchool: null,
       totalKills: 0, runs: 0, storySeen: false, stars: { po: [], en: [], ma: [], cs: [] }, seenDay: null, dayLog: null, msgSeen: null,
-      attrs: { focus: 0, stamina: 0, wit: 0 }, review: 0, endlessBest: 0, lastRelax: 0 };
+      attrs: { focus: 0, stamina: 0, wit: 0 }, review: 0, endlessBest: 0, lastRelax: 0, codex: { m: {}, e: {}, b: {} }, codexSeen: 0 };
   }
   function load() {
     var b = blank();
@@ -2265,7 +2706,7 @@
     return Math.round(sc);
   }
   function totalScore() { return SUB_IDS.reduce(function (a, k) { return a + subScore(k); }, 0); }
-  function lineOf() { return SCHOOLS[save.school].line; }
+  function lineOf() { return schoolLine(SCHOOLS[save.school]); }
   function mastery(id) { return subScore(id) / CHAPTERS[id].full; }
   function starsOf(id, i) { return (save.stars[id] || [])[i] || 0; }
   function unlocked(id, i) { return (i === 0 || starsOf(id, i - 1) > 0) && (save.review || 0) >= reqReview(id, i); }
@@ -2359,7 +2800,7 @@
     MAJORS.forEach(function (m) {
       var b = optRow('major-' + m.id, m.name, m.open ? (m.code || '') : '后续开放', m.d, !m.open);
       b.addEventListener('click', function () {
-        audioInit(); tick(b); save.major = m.id; persist();
+        audioInit(); tick(b); save.major = m.id; setMajor(m.id); persist();
         setTimeout(function () { renderSchools(); show('vSchool'); }, 260);
       });
       box.appendChild(b);
@@ -2368,7 +2809,7 @@
   function renderSchools() {
     var box = $('schoolList'); box.innerHTML = '';
     SCHOOLS.forEach(function (s, i) {
-      var b = optRow('school-' + i, s.name, s.tier, s.d + ' · 考场怪物血量 ×' + s.hp);
+      var b = optRow('school-' + i, s.name, s.tier, '分数线 ' + schoolLine(s) + ' / ' + fullTotal() + '，' + s.d + ' · 考场怪物血量 ×' + s.hp);
       b.addEventListener('click', function () {
         tick(b);
         save.school = i; save.start = today(); save.energyDay = null; persist();
@@ -2383,7 +2824,10 @@
   var desk = GS.Desk($('desk'));
   var SUB_LOOK = {
     po: { c: '#d9503f', mon: 'danxuan', d: '单选题小兵、蒙题骰子' }, en: { c: '#3d7bd9', mon: 'abandon', d: 'Abandon 幽灵成群' },
-    ma: { c: '#4f9a52', mon: 'wuqiong', d: '无穷小量、常数 C' }, cs: { c: '#8f6ad1', mon: 'jiangshi', d: '僵尸进程，有精英怪' }
+    ma: { c: '#4f9a52', mon: 'wuqiong', d: '无穷小量、常数 C' }, cs: { c: '#8f6ad1', mon: 'jiangshi', d: '僵尸进程，有精英怪' },
+    mat: { c: '#e08a5c', mon: 'kongwei' }, lb: { c: '#b23a3a', mon: 'fatiao' }, lz: { c: '#8a6a3a', mon: 'zhujian' },
+    am: { c: '#4f9a52', mon: 'wuqiong' }, lg: { c: '#3d7bd9', mon: 'jiayan' }, wr: { c: '#2f3f8f', mon: 'gezi' },
+    e1: { c: '#e0a43a', mon: 'xiaogou' }, e2: { c: '#3f6fa8', mon: 'renming' }, m1: { c: '#d9a400', mon: 'dianwei' }, m2: { c: '#e5484d', mon: 'baixibao' }
   };
   function monIcon(id) {
     var def = GM.list.filter(function (x) { return x.id === id; })[0];
@@ -2402,7 +2846,7 @@
     if (save.week > 1 && d === 1) return '<b>' + zhan(save.week) + '第 1 天。</b>星星、学习力、道具全都还在，' + (save.week === 2 ? '这次稳了。' : '越挫越勇，这次一定行。');
     var tips = [
       '<b>第 1 天。</b>先把四门课的第 1 章都打通，预估分涨得最快。',
-      '研友说：“专业课 408 的怪最难，但学习力给得最多。”',
+      '研友说：“' + SUBJECTS[3].name + '的怪最难，后面几章一定要先升级。”',
       '压力 60 以上考研那天容易状态下滑，90 以上可能睡过头迟到。摸鱼是免费的。',
       '精力每 30 分钟回 1 格，满了就不再回，记得常来刷。',
       '后面的章节越来越难，打不过就去“道具”里升级。',
@@ -2440,6 +2884,8 @@
 
   function renderHome() {
     refreshDay();
+    $('tbEnergy').textContent = save.energy + '/' + MAX_ENERGY; $('tbStudy').textContent = save.study;
+    $('codexDot').hidden = codexCount() <= (save.codexSeen || 0);
     var d = dayNum(), exam = d >= 7, dd = Math.min(d, 7);
     var m = MAJORS.filter(function (x) { return x.id === save.major; })[0];
     var s = SCHOOLS[save.school];
@@ -2475,11 +2921,10 @@
       b.style.setProperty('--c', look.c);
       b.innerHTML = '<span class="ic"></span><span><span class="t"></span><span class="d"></span><span class="prog"></span></span>';
       b.querySelector('.ic').appendChild(monIcon(look.mon));
-      b.querySelector('.t').textContent = sub.name;
+      b.querySelector('.t').textContent = sub.book || sub.name;
       b.querySelector('.d').textContent = allDone ? '全部三星！' : '第 ' + (ci + 1) + ' 章 · ' + ch.list[ci] + (!starsOf(sub.id, ci) && !unlocked(sub.id, ci) && starsOf(sub.id, ci - 1) ? '（明天开放）' : '');
       b.querySelector('.prog').innerHTML = '<span class="stars"></span> ' + subScore(sub.id) + '/' + ch.full + ' 分';
       b.querySelector('.stars').textContent = starStr(starsOf(sub.id, ci));
-      if (sub.id === 'cs') { var f = document.createElement('span'); f.className = 'flag'; f.textContent = '学习力 ×1.2'; b.appendChild(f); }
       b.addEventListener('click', function () { openChapters(sub); });
       subs.appendChild(b);
     });
@@ -2561,7 +3006,8 @@
     $('loadKind').textContent = (o.kind || '本章精英') + (o.spec.sk && o.spec.sk.length ? ' · 会' + skText(o.spec.sk) : '');
     $('loadBoss').textContent = o.spec.name; $('loadBark').textContent = '“' + o.spec.say + '”';
     drawIcon($('loadCv'), o.spec.boss || eliteDef(o.spec.sprite || o.spec.twins ? o.spec : null));
-    $('loadTip').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
+    var tips = TIPS.concat(MAJOR_TIPS[save.major] || []);
+    $('loadTip').textContent = tips[Math.floor(Math.random() * tips.length)];
     $('loadFill').style.width = '0%';
     $('loadOv').hidden = false;
     loading = { t: 0, dur: 5, done: o.done, msg: -1 };
@@ -2629,13 +3075,146 @@
   $('dbgIntro').addEventListener('click', function () { startIntro(); });
   $('dbgReset').addEventListener('click', function () { save = blank(); persist(); boot(); });
 
+
+  // ======================================================================
+  // 设置
+  // ======================================================================
+  function renderSet() {
+    $('setBgm').value = Math.round(SET.bgm * 100); $('setBgmV').textContent = Math.round(SET.bgm * 100);
+    $('setSfx').value = Math.round(SET.sfx * 100); $('setSfxV').textContent = Math.round(SET.sfx * 100);
+    [['setVib', 'vib'], ['setShake', 'shake'], ['setNums', 'nums']].forEach(function (q) { var b = $(q[0]); b.setAttribute('aria-pressed', SET[q[1]] ? 'true' : 'false'); b.textContent = SET[q[1]] ? '开' : '关'; });
+    $('setReset').textContent = '重置存档'; $('setReset').dataset.arm = '';
+    $('setIntro').hidden = mode !== 'idle';
+    $('setReset').hidden = mode !== 'idle';
+  }
+  function openSet() { audioInit(); renderSet(); overlay('setOv', true); }
+  $('setBtn').addEventListener('click', openSet);
+  $('pauseSet').addEventListener('click', openSet);
+  $('setBgm').addEventListener('input', function () { SET.bgm = this.value / 100; $('setBgmV').textContent = this.value; applyVolume(); saveSet(); });
+  $('setSfx').addEventListener('input', function () { SET.sfx = this.value / 100; $('setSfxV').textContent = this.value; saveSet(); });
+  $('setSfx').addEventListener('change', function () { sfx('pop'); });
+  [['setVib', 'vib'], ['setShake', 'shake'], ['setNums', 'nums']].forEach(function (q) {
+    $(q[0]).addEventListener('click', function () { SET[q[1]] = !SET[q[1]]; saveSet(); renderSet(); sfx('tick'); if (q[1] === 'vib') buzz(40); });
+  });
+  $('setIntro').addEventListener('click', function () { overlay('setOv', false); startIntro(); });
+  $('setReset').addEventListener('click', function () {
+    var b = this;
+    if (!b.dataset.arm) { b.dataset.arm = '1'; b.textContent = '再点一次确认：清空所有进度，无法恢复'; return; }
+    overlay('setOv', false); save = blank(); persist(); boot();
+  });
+  $('setClose').addEventListener('click', function () { overlay('setOv', false); });
+  $('tbEnergyBtn').addEventListener('click', function () { $('adBtn').click(); });
+  $('tbStudyBtn').addEventListener('click', function () { $('shopBtn').click(); });
+
+  // ======================================================================
+  // 怪物图鉴：打倒一次就收录
+  // ======================================================================
+  var codexTab = 'm';
+  function codexOrder() {
+    var mine = SUB_IDS.slice(), rest = Object.keys(SUBJ).filter(function (k) { return mine.indexOf(k) < 0; });
+    return mine.concat(rest);
+  }
+  function majorsOf(id) { return MAJORS.filter(function (m) { return MAJOR_SUBS[m.id].indexOf(id) >= 0; }).map(function (m) { return m.name.replace(/（.*）/, ''); }); }
+  function codexEntries(k) {
+    var out = [], seenIds = {};
+    codexOrder().forEach(function (sid) {
+      var sub = SUBJ[sid], list = [];
+      if (k === 'm') {
+        var g = sub.pool || sid;
+        if (seenIds[g]) return; seenIds[g] = 1;
+        GM.list.forEach(function (m) { if (m.group === g) list.push({ key: m.id, def: m, name: m.name, mon: m }); });
+      } else if (k === 'e') {
+        var names = {};
+        CHAPTERS[sid].el.forEach(function (e, ci) { if (names[e.name]) return; names[e.name] = 1; list.push({ key: e.name, def: eliteDef(e), name: e.name, el: e, ci: ci }); });
+      } else {
+        var B = EXAM_BOSSES[sid]; list.push({ key: B.name, def: B.def, name: B.name, boss: B });
+      }
+      if (list.length) out.push({ sid: sid, sub: sub, list: list });
+    });
+    if (k === 'b') out.push({ sid: 're', sub: { name: '复试' }, list: [{ key: '复试导师', def: BOSS_RE, name: '复试导师', boss: { name: '复试导师', say: '同学，先用英文介绍一下你自己。', die: '……嗯，这个学生，我要了。', sk: ['blink', 'spit', 'bomb'] } }] });
+    return out;
+  }
+  function codexCount() { var c = save.codex || { m: {}, e: {}, b: {} }; return Object.keys(c.m).length + Object.keys(c.e).length + Object.keys(c.b).length; }
+  function codexTotal() { return ['m', 'e', 'b'].reduce(function (a, k) { return a + codexEntries(k).reduce(function (b, sec) { return b + sec.list.length; }, 0); }, 0); }
+  function spriteCanvas(def, locked, size) {
+    var c = document.createElement('canvas'); c.width = c.height = GM.N; c.className = 'pix';
+    var x = c.getContext('2d');
+    if (def) x.drawImage(GM.frame(def, 0), 0, 0);
+    if (locked) { x.globalCompositeOperation = 'source-in'; x.fillStyle = '#4a4466'; x.fillRect(0, 0, GM.N, GM.N); }
+    return c;
+  }
+  function renderCodex() {
+    var body = $('codexBody'); body.innerHTML = '';
+    var got = save.codex[codexTab];
+    codexEntries(codexTab).forEach(function (sec) {
+      var el = document.createElement('section'); el.className = 'cx-sec';
+      var h = document.createElement('h3'), n = sec.list.filter(function (e) { return got[e.key]; }).length;
+      var mine = SUB_IDS.indexOf(sec.sid) >= 0 || sec.sid === 're' || (sec.sid === 'ma' && SUB_IDS.indexOf('am') >= 0);
+      h.innerHTML = '<span></span><small></small>';
+      h.firstChild.textContent = sec.sub.name;
+      h.lastChild.textContent = n + ' / ' + sec.list.length + (mine ? '' : ' · ' + (sec.sid === 're' ? '' : majorsOf(sec.sid).join('、')) + '专业');
+      el.appendChild(h);
+      var grid = document.createElement('div'); grid.className = 'cx-grid';
+      sec.list.forEach(function (e) {
+        var on = !!got[e.key], b = document.createElement('button');
+        b.type = 'button'; b.className = 'cx' + (on ? '' : ' off');
+        b.appendChild(spriteCanvas(e.def, !on));
+        var t = document.createElement('span'); t.textContent = on ? e.name : '？？？'; b.appendChild(t);
+        b.addEventListener('click', function () { openCard(e, sec, on); });
+        grid.appendChild(b);
+      });
+      el.appendChild(grid); body.appendChild(el);
+    });
+    $('codexProg').textContent = '已收录 ' + codexCount() + ' / ' + codexTotal() + ' · 打倒一次就会收录';
+  }
+  function openCard(e, sec, on) {
+    var cv = $('ccCv'), x = cv.getContext('2d'); x.clearRect(0, 0, 24, 24); x.drawImage(spriteCanvas(e.def, !on), 0, 0);
+    $('ccKind').textContent = sec.sub.name + ' · ' + { m: '小怪', e: '精英', b: 'Boss' }[codexTab];
+    $('ccName').textContent = on ? e.name : '？？？';
+    var dl = $('ccStats'); dl.innerHTML = ''; var say = $('ccSay'); say.innerHTML = '';
+    function line(text) { var p = document.createElement('p'); p.className = 'cc-say'; p.textContent = text; say.appendChild(p); }
+    if (!on) {
+      var where = sec.sid === 're' ? '考研日的复试' : (SUB_IDS.indexOf(sec.sid) >= 0 || (sec.sid === 'ma' && SUB_IDS.indexOf('am') >= 0) ? '“' + sec.sub.name + '”' : majorsOf(sec.sid).join('、') + '专业的“' + sec.sub.name + '”');
+      addStat(dl, '状态', '还没打倒过');
+      line('在' + where + (codexTab === 'b' ? '' : (codexTab === 'e' ? '第 ' + (e.ci + 1) + ' 章' : '')) + '里打倒它，就能收录。');
+    } else if (codexTab === 'm') {
+      addStat(dl, '科目', e.mon.course || sec.sub.name); addStat(dl, '原型', e.mon.origin || '—'); addStat(dl, '行为', e.mon.behavior || '—');
+      addStat(dl, '已打倒', save.codex.m[e.key] + ' 只', true);
+      if (e.mon.line) line('“' + e.mon.line + '”');
+    } else if (codexTab === 'e') {
+      addStat(dl, '出没', sec.sub.name + ' · 第 ' + (e.ci + 1) + ' 章 ' + CHAPTERS[sec.sid].list[e.ci]);
+      addStat(dl, '技能', e.el.twins ? '两只要一起打倒' + (e.el.sk ? ' · ' + skText(e.el.sk) : '') : skText(e.el.sk) || '—');
+      addStat(dl, '已打倒', save.codex.e[e.key] + ' 次', true);
+      line('“' + e.el.say + '”'); line('倒下时：“' + e.el.die + '”');
+    } else {
+      addStat(dl, '出没', '考研日 · ' + sec.sub.name); addStat(dl, '技能', '冲撞 · 弹幕 · ' + skText(e.boss.sk));
+      addStat(dl, '已打倒', save.codex.b[e.key] + ' 次', true);
+      line('“' + e.boss.say + '”'); line('倒下时：“' + e.boss.die + '”');
+    }
+    overlay('codexCard', true); sfx('pop');
+  }
+  $('codexBtn').addEventListener('click', function () {
+    audioInit(); save.codexSeen = codexCount(); persist(); $('codexDot').hidden = true;
+    renderCodex(); overlay('codexOv', true); sfx('pop');
+  });
+  [].forEach.call(document.querySelectorAll('#codexTabs button'), function (b) {
+    b.addEventListener('click', function () {
+      codexTab = b.dataset.k;
+      [].forEach.call(document.querySelectorAll('#codexTabs button'), function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      renderCodex(); $('codexBody').scrollTop = 0; sfx('tick');
+    });
+  });
+  $('codexClose').addEventListener('click', function () { overlay('codexOv', false); });
+  $('ccClose').addEventListener('click', function () { overlay('codexCard', false); });
+
   // 考试
   $('examBtn').addEventListener('click', function () {
     var s = SCHOOLS[save.school];
     $('preExamStats').innerHTML = '';
     var sc = totalScore();
-    addStat($('preExamStats'), '目标院校', s.name + '（分数线 ' + s.line + '）');
-    addStat($('preExamStats'), '预估总分', sc + (sc >= s.line ? '（已过线）' : '（差 ' + (s.line - sc) + ' 分）'), true);
+    var sl = schoolLine(s);
+    addStat($('preExamStats'), '目标院校', s.name + '（分数线 ' + sl + '）');
+    addStat($('preExamStats'), '预估总分', sc + (sc >= sl ? '（已过线）' : '（差 ' + (sl - sc) + ' 分）'), true);
     SUBJECTS.forEach(function (sub) {
       addStat($('preExamStats'), sub.name + ' ' + subScore(sub.id) + '/' + CHAPTERS[sub.id].full, '怪物血量 ×' + (examMul(sub.id) * s.hp).toFixed(2));
     });
@@ -2643,7 +3222,7 @@
     addStat($('preExamStats'), '压力 ' + Math.round(save.stress) + '（' + band.name + '）', band.odds);
     var w = $('preExamWarn');
     w.hidden = save.stress < 60;
-    w.textContent = save.stress >= 90 ? '压力太大了！有 3 成概率闹钟没响、睡过头迟到，赶到时政治只剩 1 分钟。建议先回去摸鱼，把压力降到 90 以下再来。'
+    w.textContent = save.stress >= 90 ? '压力太大了！有 3 成概率闹钟没响、睡过头迟到，赶到时' + SUBJECTS[0].name + '只剩 1 分钟。建议先回去摸鱼，把压力降到 90 以下再来。'
       : '压力偏高，考场上大概率状态下滑。摸鱼一次能降 35 压力，降到 60 以下就能正常发挥。';
     $('examGo').textContent = save.stress >= 90 ? '不管了，硬着头皮进考场' : '进入考场';
     overlay('preExamOv', true);
@@ -2759,6 +3338,123 @@
     }
   };
 
+
+  // 各专业的专业课 Boss
+  var BOSS_MAT = {
+    id: 'boss_mat',
+    draw: function (g, t) {
+      g.rect(2, 3, 20, 18, '#f4f1ea'); g.rect(3, 4, 8, 8, '#ffb36b'); g.rect(11, 4, 10, 6, '#ff7f50'); g.rect(3, 13, 18, 7, '#9aa7b5');
+      g.line(3, 12, 11, 8, '#d62828'); g.line(11, 8, 20, 12, '#d62828'); g.rect(3, 15, 18, 1, INK);
+      g.rect(2, 3, 1, 18, INK); g.rect(2, 20, 20, 1, INK);
+      g.rect(6, 6, 3, 3, '#ffffff'); g.p(7, 7 + t, INK); g.rect(15, 6, 3, 3, '#ffffff'); g.p(16, 7 + t, INK);
+      g.rect(7, 17, 10, 2, INK); for (var k = 0; k < 5; k++) g.p(8 + k * 2, 17, '#ffffff');
+      g.rect(4, 0, 2, 3, '#f4c542'); g.rect(18, 0, 2, 3, '#f4c542');
+    }
+  };
+  var BOSS_LB = {
+    id: 'boss_lb',
+    draw: function (g, t) {
+      g.rect(4, 2, 16, 20, '#9e2e25'); g.rect(4, 2, 3, 20, '#6e1f18'); g.rect(19, 3, 2, 18, '#f4ecd8');
+      g.rect(9, 4, 8, 7, '#f4c542'); g.text('§', 11, 5, '#9e2e25');
+      g.rect(9, 13, 3, 2, '#ffffff'); g.p(10 + t, 14, INK); g.rect(14, 13, 3, 2, '#ffffff'); g.p(15 + t, 14, INK);
+      g.rect(10, 18, 6, 2, INK); g.p(11, 18, '#ffffff'); g.p(14, 18, '#ffffff');
+      g.rect(19, 0 + t, 5, 2, '#8a5432'); g.rect(21, 2 + t, 1, 3, '#8a5432');
+    }
+  };
+  var BOSS_LZ = {
+    id: 'boss_lz',
+    draw: function (g, t) {
+      g.rect(4, 15, 16, 9, '#1d1d2b'); g.rect(10, 15, 4, 3, '#ffffff');
+      g.circ(12, 9, 6, '#f3c9a0');
+      g.rect(5, 2, 14, 3, '#e9efe6'); g.rect(4, 4, 2, 10, '#e9efe6'); g.rect(18, 4, 2, 10, '#e9efe6');
+      for (var y = 5; y < 14; y += 2) { g.p(4, y, '#c8ccd2'); g.p(19, y, '#c8ccd2'); }
+      g.line(8, 7, 10, 8, INK); g.line(16, 7, 14, 8, INK); g.p(10, 9, INK); g.p(14, 9, INK);
+      g.rect(10, 12, 4, 1, INK);
+      g.rect(19, 15 - t, 5, 3, '#8a5432'); g.rect(21, 18 - t, 1, 4, '#8a5432');
+    }
+  };
+  var BOSS_LG = {
+    id: 'boss_lg',
+    draw: function (g, t) {
+      g.circ(12, 12, 9, '#f4f1ea');
+      for (var y = 0; y < 24; y++) for (var x = 12; x < 24; x++) if (g.get(x, y)) g.p(x, y, '#2d3142');
+      g.rect(6, 9, 4, 2, INK); g.rect(14, 9, 4, 2, '#f4c542');
+      g.p(7, 15, INK); g.p(8, 16, INK); g.p(9, 16, INK); g.p(10, 15, INK);
+      g.p(14, 16, '#f4c542'); g.p(15, 15, '#f4c542'); g.p(16, 15, '#f4c542'); g.p(17, 16, '#f4c542');
+      g.text('?', 10, 0 + t, '#d9503f');
+    }
+  };
+  var BOSS_WR = {
+    id: 'boss_wr',
+    draw: function (g, t) {
+      for (var i = 0; i < 14; i++) g.rect(4 + i, 17 - i, 4, 4, i > 11 ? '#9e2e25' : '#d9503f');
+      g.rect(2, 19, 3, 3, '#c8ccd2'); g.p(1, 22, INK);
+      g.rect(8, 12, 3, 2, '#ffffff'); g.p(9 + t, 13, INK); g.rect(12, 8, 3, 2, '#ffffff'); g.p(13 + t, 9, INK);
+      g.line(14, 19, 16, 21, '#d9503f'); g.line(16, 21, 21, 15, '#d9503f');
+    }
+  };
+  var BOSS_E1 = {
+    id: 'boss_e1',
+    draw: function (g, t) {
+      var books = [[3, 18, 18, '#3d7bd9'], [4, 14, 16, '#e5484d'], [5, 10, 14, '#4f9a52'], [6, 6, 12, '#f2b53c'], [8, 2, 8, '#8f6ad1']];
+      books.forEach(function (b, k) { var dx = (k % 2 ? t : -t); g.rect(b[0] + dx, b[1], b[2], 4, b[3]); g.rect(b[0] + 1 + dx, b[1] + 1, b[2] - 2, 1, '#ffffff'); });
+      g.rect(8, 15, 3, 2, '#ffffff'); g.p(9, 16, INK); g.rect(13, 15, 3, 2, '#ffffff'); g.p(14, 16, INK);
+      g.rect(9, 20, 6, 1, INK);
+    }
+  };
+  var BOSS_E2 = {
+    id: 'boss_e2',
+    draw: function (g, t) {
+      for (var i = 0; i < 8; i++) {
+        var x = 1 + i * 2, y = 14 + Math.round(Math.sin(i * 0.9 + t * 1.5) * 3);
+        g.rect(x, y, 3, 5, i % 2 ? '#c8945a' : '#e0b07a'); g.p(x + 1, y - 1, INK);
+      }
+      g.rect(16, 6, 7, 7, '#c8945a'); g.rect(18, 7, 2, 2, '#ffffff'); g.p(19, 8, INK);
+      g.p(17, 4, '#f4c542'); g.p(17, 5, '#f4c542'); g.p(21, 4, '#f4c542'); g.p(21, 5, '#f4c542');
+      g.rect(19, 11, 4, 1, INK); g.rect(17, 13, 3, 4, '#c8945a');
+    }
+  };
+  var BOSS_M1 = {
+    id: 'boss_m1',
+    draw: function (g, t) {
+      var r = 5 + t;
+      g.circ(8, 9, r, '#e5484d'); g.circ(16, 9, r, '#e5484d');
+      for (var i = 0; i < 10; i++) g.rect(3 - t + i, 12 + i, 18 + 2 * t - 2 * i, 1, '#e5484d');
+      g.p(6, 6, '#ffb0a0'); g.p(5, 7, '#ffb0a0');
+      g.rect(10, 0, 2, 4, '#3d7bd9'); g.rect(13, 0, 2, 4, '#c9302c');
+      g.rect(7, 10, 3, 2, '#ffffff'); g.p(8, 11, INK); g.rect(14, 10, 3, 2, '#ffffff'); g.p(15, 11, INK);
+      g.rect(10, 15, 4, 1 + t, INK);
+    }
+  };
+  var BOSS_M2 = {
+    id: 'boss_m2',
+    draw: function (g, t) {
+      g.ell(12, 19, 9, 4, '#5fa848');
+      var xs = [3, 7, 12, 17, 21], cs = ['#e5484d', '#f2b53c', '#3d7bd9', '#8f6ad1', '#4f9a52'];
+      xs.forEach(function (x, k) {
+        var up = (k + t) % 2, hy = 5 + up + (k === 2 ? -2 : 0);
+        g.rect(x, hy + 2, 1, 16 - hy, '#5fa848'); g.circ(x, hy, 2, cs[k]); g.p(x, hy, '#ffffff');
+      });
+    }
+  };
+  // 考研日每一科的 Boss
+  var EXAM_BOSSES = {
+    po: { def: BOSS_PO, name: '材料分析巨卷', say: '辨析题：论你上岸的必然性与偶然性！', die: '答……答到点子上了……', sk: ['spit'] },
+    en: { def: BOSS_EN, name: '作文阅卷官', say: '这个模板，我今天已经看了一万遍。', die: '……这篇，给你个高分吧。', sk: ['blink'] },
+    ma: { def: BOSS_MA, name: '压轴大题', say: '前面都是送分，我才是真正的数学。', die: '步骤分……被你拿满了……', sk: ['bomb'] },
+    cs: { def: BOSS, name: '408 缝合怪', say: '四门课，我全都要！', die: '四门课缝在一起……还是被你一门一门拆开了……', sk: ['spit', 'bomb'] },
+    mat: { def: BOSS_MAT, name: '铁碳相图巨兽', say: '727 度，共析转变！你背到第几条线了？', die: '奥氏体、珠光体、渗碳体……全被你分清了……', sk: ['spit', 'bomb'] },
+    lb: { def: BOSS_LB, name: '法典巨像', say: '一千二百多条，你背到哪了？', die: '……翻到最后一页了。', sk: ['bomb', 'spit'] },
+    lz: { def: BOSS_LZ, name: '法理大法官', say: '法的本质是什么？三句话说清楚。', die: '……本庭宣布，你通过了。', sk: ['blink', 'spit'] },
+    am: { def: BOSS_MA, name: '199 速算王', say: '25 道题，每道两分半，开始计时！', die: '……时间居然够用了。', sk: ['bomb'] },
+    lg: { def: BOSS_LG, name: '真假话之主', say: '我们之中只有一个说真话。猜猜是谁？', die: '……原来说真话的是我自己。', sk: ['blink', 'spit'] },
+    wr: { def: BOSS_WR, name: '论说文阅卷组长', say: '审题跑偏，直接三类卷！', die: '……这篇，一类卷。', sk: ['spit', 'bomb', 'blink'] },
+    e1: { def: BOSS_E1, name: '教育理论巨塔', say: '三大流派、四个阶段，你分得清吗？', die: '……塔，被你一层层拆完了。', sk: ['bomb', 'spit'] },
+    e2: { def: BOSS_E2, name: '教育史时间线巨龙', say: '这个制度是哪一年颁布的？', die: '……时间线，被你理顺了。', sk: ['blink', 'spit', 'bomb'] },
+    m1: { def: BOSS_M1, name: '人体循环巨心', say: '心输出量等于什么？给你一秒钟！', die: '……心率，恢复正常了。', sk: ['bomb', 'spit'] },
+    m2: { def: BOSS_M2, name: '西综五头龙', say: '还有五年本科、三年规培等着你哦。', die: '……五个头，都被你打下来了。', sk: ['blink', 'spit', 'bomb'] }
+  };
+
   // ======================================================================
   // 战斗：画布、精灵、音效
   // ======================================================================
@@ -2805,18 +3501,57 @@
     ctx.restore();
   }
 
-  var AC = null, soundOn = true, lastSfx = {};
+  var AC = null, soundOn = true, lastSfx = {}, bgmGain = null;
   function audioInit() {
-    try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume(); } catch (e) { AC = null; }
+    try {
+      AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume();
+      if (!bgmGain) { bgmGain = AC.createGain(); bgmGain.connect(AC.destination); applyVolume(); }
+    } catch (e) { AC = null; }
   }
+  function applyVolume() { if (bgmGain) bgmGain.gain.value = soundOn ? SET.bgm * 0.5 : 0; }
   function tone(freq, dur, type, vol, slide, delay) {
-    if (!AC || !soundOn) return;
+    if (!AC || !soundOn || SET.sfx <= 0) return;
+    vol *= SET.sfx * 1.25;
     var now = AC.currentTime + (delay || 0), o = AC.createOscillator(), g = AC.createGain();
     o.type = type; o.frequency.setValueAtTime(freq, now);
     if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, freq * slide), now + dur);
     g.gain.setValueAtTime(vol, now); g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
     o.connect(g); g.connect(AC.destination); o.start(now); o.stop(now + dur + 0.02);
   }
+
+  // ---------- 背景音乐：程序生成的 8-bit 小循环 ----------
+  // 书桌是慢板（C - Am - F - G），战斗是快板（Am - F - C - G），一小节 8 个八分音符
+  var NOTE = function (n) { return 440 * Math.pow(2, (n - 69) / 12); };
+  var TRACKS = {
+    home: { bpm: 92, chords: [[48, 52, 55], [45, 48, 52], [41, 45, 48], [43, 47, 50]],
+      mel: [72, -1, 76, -1, 79, -1, 76, 74, 72, -1, 69, -1, 72, -1, -1, -1, 69, -1, 72, -1, 77, -1, 76, 72, 74, -1, 71, -1, 67, -1, -1, -1] },
+    battle: { bpm: 150, chords: [[45, 48, 52], [41, 45, 48], [48, 52, 55], [43, 47, 50]],
+      mel: [69, 72, 76, 72, 81, 79, 76, 72, 69, 72, 77, 72, 81, 77, 76, 72, 72, 76, 79, 76, 84, 79, 76, 79, 71, 74, 79, 74, 83, 79, 74, 71] }
+  };
+  var bgm = { track: null, step: 0, next: 0 };
+  function bgmVoice(freq, t, dur, type, vol) {
+    var o = AC.createOscillator(), g = AC.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(bgmGain); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function bgmTick() {
+    if (!AC || !bgmGain || !soundOn || SET.bgm <= 0 || document.hidden) return;
+    var want = !$('battle').hidden ? 'battle' : ($('vIntro').hidden ? 'home' : null);
+    if (!want) { bgm.track = null; return; }
+    if (want !== bgm.track) { bgm.track = want; bgm.step = 0; bgm.next = AC.currentTime + 0.1; }
+    var T = TRACKS[want], e8 = 60 / T.bpm / 2;
+    if (bgm.next < AC.currentTime - 0.5) bgm.next = AC.currentTime + 0.05;
+    while (bgm.next < AC.currentTime + 0.2) {
+      var st = bgm.step % 32, ch = T.chords[Math.floor(st / 8)], t = bgm.next;
+      if (st % 2 === 0) bgmVoice(NOTE(ch[0] - 12), t, e8 * 1.8, 'triangle', want === 'battle' ? 0.22 : 0.18);
+      else if (want === 'battle') bgmVoice(NOTE(ch[0]), t, e8 * 0.8, 'triangle', 0.12);
+      bgmVoice(NOTE(ch[st % 3] + 12), t, e8 * 0.7, 'square', 0.025);
+      var m = T.mel[st]; if (m > 0) bgmVoice(NOTE(m), t, e8 * (want === 'battle' ? 0.9 : 1.6), 'square', 0.04);
+      bgm.step++; bgm.next += e8;
+    }
+  }
+  setInterval(bgmTick, 60);
   function sfx(name) {
     if (!AC || !soundOn) return;
     var t = performance.now(), gap = { hit: 40, kill: 35, gem: 30 }[name] || 0;
@@ -2867,6 +3602,7 @@
 
   function poolOf(group) {
     if (group === 'all') return SUB_IDS.reduce(function (a, g) { return a.concat(poolOf(g)); }, []);
+    if (SUBJ[group] && SUBJ[group].pool) group = SUBJ[group].pool;
     var arr = [];
     GM.list.forEach(function (m) { if (m.group === group) for (var i = 0; i < (m.main ? 5 : 1); i++) arr.push(m); });
     return arr;
@@ -2900,7 +3636,7 @@
     if (cfg.rounds && cfg.accident && cfg.accident.late) {
       // 睡过头：赶到考场政治只剩最后 1 分钟，Boss 直接在场，基本不可能写完
       S.rt = BAL.roundDur - BAL.lateLeft;
-      banner('迟到！政治只剩 1 分钟', 2.8);
+      banner('迟到！' + SUBJECTS[0].name + '只剩 1 分钟', 2.8);
     }
     $('bossbar').hidden = true; $('banner').hidden = true; $('bsay').hidden = true;
     $('bossName').textContent = '408 缝合怪';
@@ -2955,7 +3691,7 @@
   }
   function eliteDown(m) {
     var spec = m.spec || S.eliteSpec || EXAM_ELITE;
-    S.eliteDown = true; S.slowT = 1.4; S.eliteKills++;
+    S.eliteDown = true; S.slowT = 1.4; S.eliteKills++; codexHit('e', spec.name);
     if (m.main) S.mainDown = true;
     battleSay(m.def, spec.name, spec.die, 3.2);
   }
@@ -2976,7 +3712,7 @@
     S.boss = addMob(B.def, a.x, a.y, 'boss'); S.bossSpawned = true;
     S.boss.max = S.boss.hp = B.hp; S.bossT0 = S.rt; S.boss.dmg = BAL.bossHit; S.boss.skills = B.sk || []; S.boss.ringN = B.ring || 14; S.boss.ringCd = B.ringCd || 6; S.boss.ring = 3;
     $('bossName').textContent = B.name;
-    banner('压轴：' + B.name, 2.2); S.shake = 8; sfx('boss');
+    banner('压轴：' + B.name, 2.2); S.shake = 8; sfx('boss'); buzz([60, 40, 60]);
     battleSay(B.def, B.name, B.say, 3.2);
   }
   function roundOver(ok) {
@@ -3029,7 +3765,7 @@
     m.hp -= val; m.flash = 0.1;
     var dl = Math.hypot(dx, dy) || 1;
     m.kx += dx / dl * kb / m.mass; m.ky += dy / dl * kb / m.mass;
-    if (S.nums.length < 90) S.nums.push({ x: m.x + (Math.random() - 0.5) * 10, y: m.y - m.r * 0.8, v: val, crit: crit, life: 0.7 });
+    if (SET.nums && S.nums.length < 90) S.nums.push({ x: m.x + (Math.random() - 0.5) * 10, y: m.y - m.r * 0.8, v: val, crit: crit, life: 0.7 });
     if (crit) { S.hitstop = Math.max(S.hitstop, 0.035); sfx('crit'); } else sfx('hit');
     if (m.kind !== 'mob') S.shake = Math.max(S.shake, crit ? 4 : 2);
     if (m.hp <= 0) die(m, dx / dl, dy / dl);
@@ -3042,8 +3778,10 @@
         c: pal[Math.floor(Math.random() * pal.length)] || '#fff', life: 0.35 + Math.random() * 0.35, size: (Math.random() < 0.3 ? 4 : 3) * (m.scale / 2) });
     }
   }
+  function codexHit(k, id) { if (!window.__bot && id) { var c = save.codex[k]; c[id] = (c[id] || 0) + 1; } }
   function die(m, dx, dy) {
     m.dead = true; S.kills++;
+    if (m.kind === 'mob') codexHit('m', m.def.id);
     if (m.kind === 'mob') {
       burst(m, 8, 150, dx, dy); S.gems.push({ x: m.x, y: m.y, v: 1 });
       if (Math.random() < BAL.dropMob) dropPick(m.x, m.y);
@@ -3064,7 +3802,7 @@
       burst(m, 70, 320, 0, 0); S.hitstop = 0.25; S.shake = 16; sfx('big');
       for (var b2 = 0; b2 < 25; b2++) S.gems.push({ x: m.x + (Math.random() - 0.5) * 80, y: m.y + (Math.random() - 0.5) * 80, v: 3 });
       S.items = [];
-      var RB = S.cfg.rounds[S.ri].boss;
+      var RB = S.cfg.rounds[S.ri].boss; codexHit('b', RB.name);
       S.slowT = 1.6; battleSay(RB.def, RB.name, RB.die, 3.4);
       roundOver(true);
     } else if (m.kind === 'boss') {
@@ -3083,7 +3821,7 @@
       if (p.hp <= 0) { p.hp = 0; if (S.endTimer < 0) S.endTimer = 0.8; }
       return;
     }
-    p.hp -= dmg; p.inv = BAL.invTime; p.hurt = 0.25; S.minHp = Math.min(S.minHp, Math.max(0, p.hp) / p.max);
+    p.hp -= dmg; p.inv = BAL.invTime; p.hurt = 0.25; buzz(35); S.minHp = Math.min(S.minHp, Math.max(0, p.hp) / p.max);
     var dx = p.x - fx, dy = p.y - fy, dl = Math.hypot(dx, dy) || 1;
     p.kx += dx / dl * 260; p.ky += dy / dl * 260;
     S.shake = Math.max(S.shake, 7); S.hitstop = Math.max(S.hitstop, 0.06); sfx('hurt');
@@ -3547,7 +4285,7 @@
   function draw() {
     var p = S.p;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.imageSmoothingEnabled = false;
-    var sh = reduceMotion ? 0 : S.shake;
+    var sh = SET.shake ? S.shake : 0;
     var camX = Math.round(p.x - W / 2 + (Math.random() - 0.5) * sh * 2), camY = Math.round(p.y - H / 2 + (Math.random() - 0.5) * sh * 2);
     ctx.fillStyle = '#1c2823'; ctx.fillRect(0, 0, W, H);
     var tile = 48, sx = -((camX % tile) + tile) % tile, sy = -((camY % tile) + tile) % tile;
@@ -3745,13 +4483,13 @@
   $('pauseBtn').addEventListener('click', togglePause);
   $('resumeBtn').addEventListener('click', togglePause);
   $('quitBtn').addEventListener('click', function () { overlay('pauseOv', false); S.quit = true; finishBattle(); });
-  $('soundBtn').addEventListener('click', function () { soundOn = !soundOn; if (soundOn) audioInit(); this.textContent = '音效：' + (soundOn ? '开' : '关'); });
+  $('soundBtn').addEventListener('click', function () { soundOn = !soundOn; if (soundOn) audioInit(); applyVolume(); this.textContent = '声音：' + (soundOn ? '开' : '关'); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden && !$('vHome').hidden && $('dailyOv').hidden && save.seenDay !== dayKey()) goHome(); });
   document.addEventListener('visibilitychange', function () { if (document.hidden && mode === 'play') togglePause(); });
 
   function finishBattle() {
     if (mode === 'done') return;
-    mode = 'done';
+    mode = 'done'; if (!window.__bot) persist();
     overlay('levelOv', false);
     var r = { kills: S.kills, lv: S.lv, t: S.t, won: S.won, completed: S.completed, died: S.p.hp <= 0, quit: S.quit,
       eliteDown: S.eliteDown, mainDown: S.mainDown, allDown: S.eliteKills >= (S.cfg.elites || []).length, minHp: S.minHp, results: S.results.slice(), bossSpawned: S.bossSpawned, bossFrac: S.boss ? Math.max(0, S.boss.hp / S.boss.max) : 1 };
@@ -3869,14 +4607,13 @@
         hp: Math.round((sub ? BAL.examBossHp : BAL.retestBossHp) * k * s.hp * (sub ? examMul(sub) : 1)) };
     }
     return {
-      kind: 'exam', hpMul: s.hp, mobDmg: 1, rateMul: 0.9, duration: 0, bossAt: 0, elites: [], accident: accident, phases: [{ group: 'po', until: 1e9, label: '' }],
-      rounds: [
-        { group: 'po', name: '政治', tag: '第一科 · 政治（3 分钟）', boss: boss(BOSS_PO, '材料分析巨卷', '辨析题：论你上岸的必然性与偶然性！', '答……答到点子上了……', 0.9, 'po', 12, 6, ['spit']) },
-        { group: 'en', name: '英语', tag: '第二科 · 英语（3 分钟）', boss: boss(BOSS_EN, '作文阅卷官', '这个模板，我今天已经看了一万遍。', '……这篇，给你个高分吧。', 1.4, 'en', 14, 5.5, ['blink']) },
-        { group: 'ma', name: '数学', tag: '第三科 · 数学（3 分钟）', boss: boss(BOSS_MA, '压轴大题', '前面都是送分，我才是真正的数学。', '步骤分……被你拿满了……', 1.9, 'ma', 16, 5, ['bomb']) },
-        { group: 'cs', name: '专业课', tag: '第四科 · 专业课 408（3 分钟）', boss: boss(BOSS, '408 缝合怪', '四门课，我全都要！', '四门课缝在一起……还是被你一门一门拆开了……', 1.9, 'cs', 18, 5, ['spit', 'bomb']) },
+      kind: 'exam', hpMul: s.hp, mobDmg: 1, rateMul: 0.9, duration: 0, bossAt: 0, elites: [], accident: accident, phases: [{ group: SUB_IDS[0], until: 1e9, label: '' }],
+      rounds: SUBJECTS.map(function (sub, i) {
+        var B = EXAM_BOSSES[sub.id], K = [0.9, 1.4, 1.9, 1.9], R = [12, 14, 16, 18], RC = [6, 5.5, 5, 5];
+        return { group: sub.id, name: sub.name, tag: '第' + CN_NUM[i] + '科 · ' + sub.name + '（3 分钟）', boss: boss(B.def, B.name, B.say, B.die, K[i], sub.id, R[i], RC[i], B.sk) };
+      }).concat([
         { group: 'all', name: '复试', tag: '复试 · 导师组面试（3 分钟）', boss: boss(BOSS_RE, '复试导师', '同学，先用英文介绍一下你自己。', '……嗯，这个学生，我要了。', 2.0, null, 20, 4, ['blink', 'spit', 'bomb']) }
-      ],
+      ]),
       onEnd: onEnd
     };
   }
@@ -3884,14 +4621,13 @@
     audioInit();
     var s = SCHOOLS[save.school];
     var accident = rollExamState(save.stress);
-    var first = accident && accident.late
-      ? { name: '材料分析巨卷', say: '同学，还有一分钟收卷。', boss: BOSS_PO, sk: ['spit'] }
-      : { name: '材料分析巨卷', say: '辨析题：论你上岸的必然性与偶然性！', boss: BOSS_PO, sk: ['spit'] };
+    var B0 = EXAM_BOSSES[SUB_IDS[0]];
+    var first = { name: B0.name, say: accident && accident.late ? '同学，还有一分钟收卷。' : B0.say, boss: B0.def, sk: B0.sk };
     showLoading({ sub: '考研日 · ' + s.name, title: accident && accident.late ? '迟到了！' : '四门连考', kind: '第一科 Boss', spec: first, done: function () {
       startBattle(examCfg(s, accident, function (r) { examResult(s, r, accident); }));
       if (accident) { if (!accident.late) banner(accident.banner, 2.6); battleSay(GM.player, '你（内心）', accident.text + (accident.good ? '！' : '……'), 4); }
     } });
-    if (accident) $('loadTip').textContent = (accident.good ? '✦ ' : '⚠ ') + accident.text + '。' + (accident.late ? '赶到考场时政治只剩最后 1 分钟，这科基本保不住了，最好的结果是调剂。' : '今天' + accident.label + '（整体输出）。');
+    if (accident) $('loadTip').textContent = (accident.good ? '✦ ' : '⚠ ') + accident.text + '。' + (accident.late ? '赶到考场时' + SUBJECTS[0].name + '只剩最后 1 分钟，这科基本保不住了，最好的结果是调剂。' : '今天' + accident.label + '（整体输出）。');
   }
   function examResult(s, r, acc) {
     save.runs++; save.totalKills += r.kills;
@@ -3904,7 +4640,7 @@
     } else if (passed >= 3 && !r.quit) {
       persist();
       showResult(passed === 4 ? '复试没过…但可以调剂！' : '差一科…可以调剂！',
-        (passed === 4 ? '初试四科都过了，复试被导师问倒了。' : acc && acc.late && !res[0] && passed === 3 ? '睡过头错过了政治，剩下三科全过。' : '四科里过了三科。') + '可以调剂到 ' + adj + '，也可以' + zhan(save.week + 1) + '再冲 ' + s.name + '（星星、学习力、道具全保留）。',
+        (passed === 4 ? '初试四科都过了，复试被导师问倒了。' : acc && acc.late && !res[0] && passed === 3 ? '睡过头错过了' + SUBJECTS[0].name + '，剩下三科全过。' : '四科里过了三科。') + '可以调剂到 ' + adj + '，也可以' + zhan(save.week + 1) + '再冲 ' + s.name + '（星星、学习力、道具全保留）。',
         stats, [{ label: '接受调剂：' + adj, primary: true, fn: function () { save.outcome = 'adjust'; save.finalSchool = adj; persist(); showLetter(adj, true); } },
                 { label: '不甘心，' + zhan(save.week + 1), fn: secondTry }]);
     } else {
@@ -4014,7 +4750,7 @@
     save.seenDay = key; persist();
     var left = Math.max(0, 7 - d);
     $('dailyBig').innerHTML = d >= 7 ? '今天考研！<small>考研魔王就在眼前</small>' : '距离考研 ' + left + ' 天<small>考研魔王正在逼近</small>';
-    $('dailyName').textContent = '考研魔王 · 408 缝合怪';
+    $('dailyName').textContent = '考研魔王 · ' + EXAM_BOSSES[SUB_IDS[3]].name;
     $('dailyBig').hidden = $('dailyName').hidden = $('dailyCard').hidden = true;
     $('dailyOv').hidden = false;
     daily = { t: 0, left: left, steps: 0, shake: 0, flash: 0, stage: 0 };
@@ -4048,7 +4784,7 @@
     var p = (7 - D.left) / 7, grow = 0.82 + 0.06 * D.steps;
     var sc = Math.max(3, Math.floor(Math.min(w, h * 0.6) * (0.4 + 0.75 * p) * grow / GM.N)), size = GM.N * sc;
     var gx = Math.round(w / 2 - size / 2), gy = Math.round(hz - size * (0.86 - 0.1 * p));
-    var sil = silhouette(BOSS, Math.floor(t * 2) % 2), rim = Math.max(2, Math.round(sc / 3));
+    var sil = silhouette(EXAM_BOSSES[SUB_IDS[3]].def, Math.floor(t * 2) % 2), rim = Math.max(2, Math.round(sc / 3));
     c.globalAlpha = 0.55; c.filter = 'none';
     c.drawImage(rimOf(sil), gx - rim, gy - rim, size, size); c.drawImage(rimOf(sil), gx + rim, gy - rim, size, size);
     c.globalAlpha = 1;
@@ -4076,8 +4812,9 @@
   // 启动与主循环
   // ======================================================================
   function boot() {
-    mode = 'idle';
-    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv', 'celeOv', 'letterOv'].forEach(function (o) { overlay(o, false); });
+    mode = 'idle'; setMajor(save.major);
+    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv', 'celeOv', 'letterOv', 'setOv', 'codexOv', 'codexCard'].forEach(function (o) { overlay(o, false); });
+    if (!save.codex || !save.codex.m) save.codex = { m: {}, e: {}, b: {} };
     if (save.outcome) { renderEnd(); show('vEnd'); return; }
     if (!save.storySeen) { startIntro(); return; }
     if (!save.major) { renderMajors(); show('vMajor'); return; }
@@ -4103,11 +4840,12 @@
     botRun: function (kind, opt) {
       opt = opt || {};
       var keep = { up: save.up, attrs: save.attrs, review: save.review, stars: save.stars };
+      if (opt.major) setMajor(opt.major);
       save.up = opt.up || { notebook: 0, cup: 0, phones: 0, coffee: 0, bag: 0 };
       save.attrs = opt.attrs || { focus: 0, stamina: 0, wit: 0 };
       save.review = opt.review || 0; if (opt.stars) save.stars = opt.stars;
       var out = null, done = function (r) { out = r; }, cfg;
-      if (kind === 'chapter') cfg = chapterCfg(SUBJECTS.filter(function (x) { return x.id === opt.sub; })[0], opt.ci, done);
+      if (kind === 'chapter') cfg = chapterCfg(SUBJ[opt.sub], opt.ci, done);
       else if (kind === 'endless') cfg = endlessCfg(done);
       else cfg = examCfg(SCHOOLS[opt.school == null ? 1 : opt.school], opt.accident || null, done);
       window.__bot = true; startBattle(cfg);
@@ -4126,10 +4864,11 @@
       window.__bot = false;
       var res = { t: Math.round(S.t), kills: S.kills, lv: S.lv, hp: Math.round(S.p.hp), completed: S.completed, elite: S.eliteDown, minHp: +S.minHp.toFixed(2), results: S.results.slice(), ttk: S.ttk.slice(), hits: [S.hitC || 0, S.hitB || 0, S.hitBoss || 0, S.hitHz || 0, S.poolHits || 0], max: S.p.max, used: S.used, main: S.mainDown, allEl: S.eliteKills };
       save.up = keep.up; save.attrs = keep.attrs; save.review = keep.review; save.stars = keep.stars;
+      if (opt.major) setMajor(save.major);
       mode = 'idle'; ['levelOv', 'resultOv', 'celeOv', 'letterOv'].forEach(function (o) { overlay(o, false); }); $('bsay').hidden = true;
       return res;
     },
-    totalCost: TOTAL_COST, starUnit: STAR_UNIT, bal: BAL, tier: TIER,
+    totalCost: TOTAL_COST, starUnit: function () { return STAR_UNIT; }, subs: function () { return SUB_IDS.slice(); }, setMajor: setMajor, bosses: EXAM_BOSSES, bal: BAL, tier: TIER,
     // 不依赖画面刷新，直接按 1/30 秒步进模拟；升级时自动选第一个
     sim: function (sec) {
       for (var i = 0; i < Math.round(sec * 30); i++) {
