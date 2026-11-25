@@ -300,6 +300,14 @@
   .bossbar .name { font-family: var(--display); font-size: 18px; color: #ff8a8a; text-shadow: 0 2px 0 var(--ink); }
   .bossbar .bb { width: 100%; height: 10px; background: rgba(0,0,0,0.5); box-shadow: 0 0 0 2px var(--ink); overflow: hidden; }
   .bossbar .bb span { display: block; height: 100%; width: 100%; background: #ff5c5c; }
+  .slots { position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); bottom: 150px; display: grid; gap: 10px; z-index: 2; }
+  .slot { position: relative; width: 54px; height: 54px; border: 0; padding: 0; cursor: pointer; background: rgba(29,22,38,0.55); color: var(--ink);
+    box-shadow: 0 0 0 2px var(--ink), inset 0 0 0 2px rgba(255,255,255,0.12); display: grid; place-items: center; font-family: var(--display); font-size: 24px; line-height: 1; touch-action: manipulation; }
+  .slot.empty { opacity: 0.45; cursor: default; }
+  .slot .g { width: 36px; height: 36px; display: grid; place-items: center; box-shadow: 0 0 0 2px var(--ink); }
+  .slot small { position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); white-space: nowrap; font-family: "Noto Sans SC", system-ui, sans-serif; font-size: 10px; font-weight: 700; color: #fff; background: var(--ink); padding: 0 4px; }
+  .slot i { position: absolute; left: 3px; top: 1px; font-style: normal; font-size: 10px; color: rgba(255,255,255,0.6); font-family: "Noto Sans SC", system-ui, sans-serif; }
+  .slot.new { animation: pop 0.3s both; --r: 0deg; }
   .tools { position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); bottom: 14px; display: flex; gap: 8px; }
   .ibtn { font-size: 13px; font-weight: 700; color: var(--ink); background: var(--paper); border: 0; padding: 4px 10px; cursor: pointer; box-shadow: 0 0 0 2px var(--ink); }
   .banner {
@@ -526,7 +534,7 @@
       </div>
 
       <div class="stack" id="studyBox">
-        <h3 class="sec-title">刷题闯关<small>每章 1 精力 · 2 分钟</small></h3>
+        <h3 class="sec-title">刷题闯关<small>每章 1 精力 · 5 分钟</small></h3>
         <div class="books" id="subjects"></div>
       </div>
 
@@ -587,6 +595,7 @@
     </div>
     <div class="banner" id="banner" hidden></div>
     <div class="bsay" id="bsay" hidden><canvas id="bsayCv" class="pix" width="24" height="24"></canvas><div><b id="bsayName"></b><p id="bsayText"></p></div></div>
+    <div class="slots" id="slots"><button class="slot empty" id="slot0" type="button" aria-label="道具格 1"></button><button class="slot empty" id="slot1" type="button" aria-label="道具格 2"></button><button class="slot empty" id="slot2" type="button" aria-label="道具格 3"></button></div>
     <div class="tools">
       <button class="ibtn" id="soundBtn" type="button">音效：开</button>
       <button class="ibtn" id="pauseBtn" type="button">暂停</button>
@@ -632,7 +641,7 @@
     <div class="panel">
       <div class="eyebrow" id="chapEyebrow"></div>
       <h2 id="chapTitle"></h2>
-      <p class="muted">每章 2 分钟。撑到最后 ★，打倒本章精英 ★★，血量始终不低于一半 ★★★。星越多预估分越高，可以重刷。</p>
+      <p class="muted">每章 5 分钟，中途和章末各来一只精英。撑到下课 ★，打倒章末精英 ★★，两只精英都打倒 ★★★。星越多预估分越高，可以重刷。</p>
       <div class="stack" id="chapList"></div>
       <button class="btn ghost" id="chapClose" type="button">回书桌</button>
     </div>
@@ -2145,16 +2154,17 @@
   // 平衡参数（集中放这里方便调）
   var BAL = {
     chapterShare: 0.7,        // 章节首次拿星合计给到全部升级花费的 70%，剩下靠全科复习
-    replayPerKill: 0.3,       // 已拿满的星再刷：每击杀 0.3 学习力
+    replayPerKill: 0.12,      // 已拿到的星再刷：每击杀 0.12 学习力（5 分钟一局击杀多）
     reviewDmg: 0.12, reviewHp: 8,   // 每天登录的“高级复习”：伤害 +12%、生命 +8，可叠加
-    endlessPerSec: 0.6, endlessPerKill: 0.15,
+    endlessPerSec: 0.6, endlessPerKill: 0.08,
     accidentBase: 0.10, accidentPerStress: 0.003, accidentMul: 0.7,
-    examBossHp: 21000, retestBossHp: 28000, roundDur: 180, roundBossAt: 15,
-    relaxCdMs: 60 * 60 * 1000, celeTwistAt: 6
+    examBossHp: 27000, retestBossHp: 34000, roundDur: 180, roundBossAt: 15,
+    relaxCdMs: 60 * 60 * 1000, celeTwistAt: 6,
+    baseHp: 40, chapterDur: 300, mobHit: 3, bulletHit: 6, eliteHit: 9, bossHit: 12, invTime: 1.0, rate0: 2.2, rateUp: 0.05, tierRamp0: 0.35, tierRampT: 140, endlessHpT: 40, endlessHp2: 120, endlessDmgT: 50, endlessSpT: 300, dropMob: 0.012, groundMax: 6
   };
   // 章节难度按“在本科里的位置”分 6 档（第 1 档到第 6 档），各科最后一章一样难
-  var TIER = { hp: [1, 1.4, 3.6, 4.6, 5.8, 7.2], dmg: [1, 1.15, 2.0, 2.3, 2.6, 3.0], rate: [1, 1.1, 1.4, 1.5, 1.6, 1.75], speed: [1, 1.05, 1.25, 1.28, 1.32, 1.38] };
-  // 章节：每科拆成几章，每章 2 分钟，章末精英怪。星越多预估分越高
+  var TIER = { hp: [1, 1.8, 3.6, 4.6, 5.8, 7.2], dmg: [1, 1.3, 2.0, 2.3, 2.6, 3.0], rate: [1, 1.2, 1.4, 1.5, 1.6, 1.75], speed: [1, 1.05, 1.25, 1.28, 1.32, 1.38] };
+  // 章节：每科拆成几章，每章 5 分钟，中途 + 章末两只精英。星越多预估分越高
   function E(sprite, name, say, die) { return { sprite: sprite, name: name, say: say, die: die }; }
   var CHAPTERS = {
     po: { full: 100, list: ['马原', '毛中特', '史纲', '思修法基', '时政'], el: [
@@ -2184,6 +2194,28 @@
       E('diubao', '三次握手怪', '你好？你好？你好？……超时重传！', '四次挥手……再见了……')] }
   };
   var SUB_IDS = ['po', 'en', 'ma', 'cs'];
+  // 精英技能：spit 吐毒液 / bomb 召唤自爆怪 / blink 隐入虚空再突袭 / charge 冲撞 / ring 弹幕
+  var ELITE_SK = {
+    po: [['ring'], ['charge'], ['spit', 'ring'], ['bomb', 'charge'], ['blink', 'spit']],
+    en: [['charge'], ['spit'], ['spit', 'ring'], ['blink', 'charge'], ['bomb', 'ring'], ['blink', 'bomb', 'spit']],
+    ma: [['blink'], ['charge', 'ring'], ['bomb'], ['blink', 'spit'], ['bomb', 'charge'], ['blink', 'spit', 'ring']],
+    cs: [['bomb'], ['blink', 'charge'], ['spit', 'ring'], ['blink', 'bomb', 'ring']]
+  };
+  SUB_IDS.forEach(function (id) { CHAPTERS[id].el.forEach(function (e, i) { e.sk = ELITE_SK[id][i]; }); });
+  var SK_NAME = { spit: '吐毒液', bomb: '召唤自爆怪', blink: '隐入虚空', charge: '冲撞', ring: '弹幕' };
+  var SK = {
+    spit: { cd: 4.2, first: 2.5 }, bomb: { cd: 8, first: 4 }, blink: { cd: 7, first: 5 }, charge: { cd: 5, first: 3 }, ring: { cd: 5.5, first: 4.5 }
+  };
+  function skText(sk) { return (sk || []).map(function (k) { return SK_NAME[k]; }).join(' · '); }
+  // 局内一次性道具：小怪偶尔掉、精英必掉，最多带 3 个，点右侧格子使用
+  var PICKS = [
+    { id: 'chalk', name: '粉笔灰炸弹', g: '炸', c: '#f2efe6', w: 30, tip: '扔向怪最多的地方，范围伤害' },
+    { id: 'bull', name: '红牛', g: '牛', c: '#ff6b6b', w: 28, tip: '回复 45% 生命' },
+    { id: 'clock', name: '闹钟', g: '停', c: '#7fd1ff', w: 14, tip: '全场怪物定住 3.5 秒，清掉子弹' },
+    { id: 'koi', name: '锦鲤', g: '鲤', c: '#f4a742', w: 14, tip: '无敌 5 秒' },
+    { id: 'magnet', name: '磁铁', g: '吸', c: '#c9a7ff', w: 14, tip: '吸走全场知识点' }
+  ];
+  function pickDef(id) { return PICKS.filter(function (x) { return x.id === id; })[0]; }
   var EXAM_ELITE = { twins: true, name: '死锁双子', say: '考场上，我们也要互相等！', die: '解锁了……你可以交卷了……' };
   var EXAM_BOSS = { name: '408 缝合怪', say: '四门课，我全都要！', die: '四门课缝在一起……还是被你一门一门拆开了……' };
   var TIPS = [
@@ -2191,7 +2223,7 @@
     '408 年年考 PV 操作，别再躲了。', '作文模板背一套就够，背十套会串台。', '熬夜不等于努力，睡够 7 小时效率更高。',
     '真题至少刷两遍：第一遍做题，第二遍做人。', '错题本不是抄题本，要写清楚“为什么错”。', '考前一周别学新东西，把错题过一遍。',
     '准考证、身份证、2B 铅笔，前一晚就装好。', '大题不会也写公式，过程分也是分。', '英语作文字迹工整，印象分真的存在。',
-    '背书别只看，要讲出来、默写出来。', '三天打鱼两天晒网，也比不打强。', '压力大就出去走走，图书馆不会跑。'
+    '背书别只看，要讲出来、默写出来。', '打怪掉的道具点右边格子用：红牛回血、粉笔灰炸弹清场。', '地上出现虚线圈就快跑，那是精英要砸下来了。', '三天打鱼两天晒网，也比不打强。', '压力大就出去走走，图书馆不会跑。'
   ];
   var LOAD_MSG = ['正在削铅笔……', '正在占图书馆的座……', '正在泡速溶咖啡……', '正在给 2B 铅笔开光……', '正在翻开真题集……', '正在把手机调成静音……'];
   var MAX_ENERGY = 10, REGEN_MS = 30 * 60 * 1000, ADS_PER_DAY = 2, RUN_STRESS = 10, STRESS_LIMIT = 70;
@@ -2523,7 +2555,7 @@
   }
   function showLoading(o) {
     $('loadSub').textContent = o.sub; $('loadTitle').textContent = o.title;
-    $('loadKind').textContent = o.kind || '本章精英';
+    $('loadKind').textContent = (o.kind || '本章精英') + (o.spec.sk && o.spec.sk.length ? ' · 会' + skText(o.spec.sk) : '');
     $('loadBoss').textContent = o.spec.name; $('loadBark').textContent = '“' + o.spec.say + '”';
     drawIcon($('loadCv'), o.spec.boss || eliteDef(o.spec.sprite || o.spec.twins ? o.spec : null));
     $('loadTip').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
@@ -2834,7 +2866,7 @@
     var u = save.up, a = save.attrs, rv = save.review || 0;
     return {
       dmg: (1 + u.notebook * 0.06) * (1 + a.focus * 0.05) * (1 + rv * BAL.reviewDmg),
-      hp: 100 + u.cup * 15 + a.stamina * 10 + rv * BAL.reviewHp,
+      hp: BAL.baseHp + u.cup * 15 + a.stamina * 10 + rv * BAL.reviewHp,
       rate: 1 + u.phones * 0.06, speed: 1 + u.coffee * 0.05, pickup: 1 + u.bag * 0.2, xp: 1 + a.wit * 0.06
     };
   }
@@ -2850,8 +2882,10 @@
       spawnAcc: 0, dartCd: 0.3, beamCd: 1.5, orbitAng: 0, hitstop: 0, shake: 0,
       eliteIdx: 0, boss: null, bossSpawned: false, won: false, endTimer: -1, pendingRevive: null, bannerT: 0,
       phaseIdx: -1, pool: null, completed: false, quit: false, minHp: 1, eliteDown: false, slowT: 0, sayT: 0,
-      ending: null, nextElite: 45, ri: 0, rt: 0, rstate: 'fight', breakT: 0, results: [], celeT: 0, ttk: [], bossT0: 0
+      ending: null, nextElite: 45, ri: 0, rt: 0, rstate: 'fight', breakT: 0, results: [], celeT: 0, ttk: [], bossT0: 0,
+      bag: [], items: [], hz: [], throws: [], freezeT: 0, mainDown: false, eliteKills: 0, used: 0
     };
+    renderSlots();
     if (cfg.accident) S.b.dmg *= BAL.accidentMul;
     if (cfg.rounds) startRound();
     $('bossbar').hidden = true; $('banner').hidden = true; $('bsay').hidden = true;
@@ -2876,14 +2910,16 @@
     return { x: S.p.x + Math.cos(a) * d, y: S.p.y + Math.sin(a) * d };
   }
   function addMob(def, x, y, kind) {
-    var hpScale = (S.cfg.rounds ? 1 + S.rt / 200 : S.cfg.endless ? 1 + S.t / 40 : 1 + S.t / 90) * S.cfg.hpMul;
-    var m = { def: def, x: x, y: y, kx: 0, ky: 0, flash: 0, ph: Math.random() * 2, kind: kind || 'mob', scale: 2, r: 13, mass: 1, dmg: 5,
+    // 章节难度的血量倍率开局先打折，约 90 秒后到满额：开局能站稳，越往后越难
+    var hm = S.cfg.kind === 'daily' ? 1 + (S.cfg.hpMul - 1) * Math.min(1, BAL.tierRamp0 + S.t / BAL.tierRampT) : S.cfg.hpMul;
+    var hpScale = (S.cfg.rounds ? 1 + S.rt / 200 : S.cfg.endless ? 1 + S.t / BAL.endlessHpT + Math.pow(S.t / BAL.endlessHp2, 2) : 1 + S.t / 90) * hm;
+    var m = { def: def, x: x, y: y, kx: 0, ky: 0, flash: 0, ph: Math.random() * 2, kind: kind || 'mob', scale: 2, r: 13, mass: 1, dmg: BAL.mobHit,
       sp: (def.speed || 30) * (0.9 + Math.random() * 0.2), orbCd: 0, dead: false };
     var ph = S.cfg.phases[Math.max(0, S.phaseIdx)], pm = (ph && ph.mul) || 1;
     if (m.kind === 'mob') m.max = (def.main ? 16 : 22) * hpScale * pm;
-    if (m.kind === 'elite') { m.scale = 3; m.r = 26; m.mass = 5; m.dmg = 14; m.max = (S.cfg.eliteHp || 420) * S.cfg.hpMul * pm; m.sp = 48; }
-    if (m.kind === 'boss') { m.scale = 5; m.r = 46; m.mass = 40; m.dmg = 22; m.max = 3600 * S.cfg.hpMul * (S.cfg.bossMul || 1); m.sp = 42; m.state = 'chase'; m.timer = 3; m.ring = 6; }
-    m.dmg *= (S.cfg.mobDmg || 1) * (S.cfg.endless ? 1 + S.t / 80 : 1); if (m.kind === 'mob') m.sp *= S.cfg.mobSpeed || 1;
+    if (m.kind === 'elite') { m.scale = 3; m.r = 26; m.mass = 5; m.dmg = BAL.eliteHit; m.max = (S.cfg.eliteHp || 420) * S.cfg.hpMul * pm; m.sp = 48; }
+    if (m.kind === 'boss') { m.scale = 5; m.r = 46; m.mass = 40; m.dmg = BAL.bossHit; m.max = 3600 * S.cfg.hpMul * (S.cfg.bossMul || 1); m.sp = 42; m.state = 'chase'; m.timer = 3; m.ring = 6; }
+    m.dmg *= (S.cfg.mobDmg || 1) * (S.cfg.endless ? 1 + S.t / BAL.endlessDmgT : 1); if (m.kind === 'mob') m.sp *= (S.cfg.mobSpeed || 1) * (S.cfg.endless ? 1 + S.t / BAL.endlessSpT : 1);
     m.hp = m.max; S.mobs.push(m); return m;
   }
   function battleSay(def, name, text, dur) {
@@ -2891,20 +2927,22 @@
     $('bsayName').textContent = name; $('bsayText').textContent = text;
     $('bsay').hidden = false; S.sayT = dur || 2.6;
   }
-  function spawnElite() {
-    var spec = S.cfg.eliteSpec || EXAM_ELITE, def = eliteDef(spec);
-    S.eliteSpec = spec;
+  function spawnElite(spec, hpK, main) {
+    spec = spec || S.cfg.eliteSpec || EXAM_ELITE;
+    var def = eliteDef(spec), list = [];
     if (spec.twins) {
       var a = edgePoint(20), b = edgePoint(20);
       var m1 = addMob(LOCK, a.x, a.y, 'elite'), m2 = addMob(LOCK, b.x, b.y, 'elite');
-      m1.twin = m2; m2.twin = m1;
-    } else { var e = edgePoint(20); addMob(def, e.x, e.y, 'elite'); }
-    banner('精英：' + spec.name, 2); sfx('boss');
+      m1.twin = m2; m2.twin = m1; list = [m1, m2];
+    } else { var e = edgePoint(20); list = [addMob(def, e.x, e.y, 'elite')]; }
+    list.forEach(function (m) { m.spec = spec; m.main = !!main; m.skills = spec.sk || []; if (hpK) { m.max *= hpK; m.hp = m.max; } });
+    banner('精英：' + spec.name + (spec.sk && spec.sk.length ? '（' + skText(spec.sk) + '）' : ''), 2.4); sfx('boss');
     battleSay(def, spec.name, spec.say, 3);
   }
   function eliteDown(m) {
-    var spec = S.eliteSpec || EXAM_ELITE;
-    S.eliteDown = true; S.slowT = 1.4;
+    var spec = m.spec || S.eliteSpec || EXAM_ELITE;
+    S.eliteDown = true; S.slowT = 1.4; S.eliteKills++;
+    if (m.main) S.mainDown = true;
     battleSay(m.def, spec.name, spec.die, 3.2);
   }
   function randomEliteSpec() {
@@ -2922,7 +2960,7 @@
   function spawnRoundBoss(RD) {
     var a = edgePoint(60), B = RD.boss;
     S.boss = addMob(B.def, a.x, a.y, 'boss'); S.bossSpawned = true;
-    S.boss.max = S.boss.hp = B.hp; S.bossT0 = S.rt; S.boss.dmg = 16; S.boss.ringN = B.ring || 14; S.boss.ringCd = B.ringCd || 6; S.boss.ring = 3;
+    S.boss.max = S.boss.hp = B.hp; S.bossT0 = S.rt; S.boss.dmg = BAL.bossHit; S.boss.skills = B.sk || []; S.boss.ringN = B.ring || 14; S.boss.ringCd = B.ringCd || 6; S.boss.ring = 3;
     $('bossName').textContent = B.name;
     banner('压轴：' + B.name, 2.2); S.shake = 8; sfx('boss');
     battleSay(B.def, B.name, B.say, 3.2);
@@ -2931,7 +2969,7 @@
     var RD = S.cfg.rounds[S.ri];
     S.results[S.ri] = ok; S.ttk[S.ri] = ok ? Math.round(S.rt - S.bossT0) : null;
     S.mobs.forEach(function (m) { if (!m.dead) { burst(m, m.kind === 'mob' ? 5 : 30, 140, 0, 0); m.dead = true; } });
-    S.boss = null; S.ebullets = [];
+    S.boss = null; S.ebullets = []; S.hz = [];
     S.gems.forEach(function (g) { g.pull = true; });
     S.rstate = 'break'; S.breakT = 3.4;
     S.p.hp = Math.min(S.p.max, S.p.hp + S.p.max * 0.3);   // 交卷休息：回 30% 血
@@ -2994,6 +3032,7 @@
     m.dead = true; S.kills++;
     if (m.kind === 'mob') {
       burst(m, 8, 150, dx, dy); S.gems.push({ x: m.x, y: m.y, v: 1 });
+      if (Math.random() < BAL.dropMob) dropPick(m.x, m.y);
       if (m.def.id === 'taowa' && !m.child) {
         for (var k = 0; k < 2; k++) { var c = addMob(m.def, m.x + (k ? 10 : -10), m.y, 'mob'); c.scale = 1.4; c.r = 9; c.max = c.hp = 8; c.child = true; c.kx = (k ? 1 : -1) * 160; }
       }
@@ -3001,6 +3040,7 @@
     } else if (m.kind === 'elite') {
       burst(m, 28, 240, dx, dy);
       for (var g = 0; g < 6; g++) S.gems.push({ x: m.x + (Math.random() - 0.5) * 30, y: m.y + (Math.random() - 0.5) * 30, v: 3 });
+      dropPick(m.x - 14, m.y, 'bull'); dropPick(m.x + 14, m.y);
       S.hitstop = Math.max(S.hitstop, 0.09); S.shake = 9; sfx('big');
       var tw = m.twin;
       if (tw && !tw.dead) { S.pendingRevive = { m: m, partner: tw, t: 3 }; banner('3 秒内打掉另一只！', 1.4); }
@@ -3009,6 +3049,7 @@
     } else if (m.kind === 'boss' && S.cfg.rounds) {
       burst(m, 70, 320, 0, 0); S.hitstop = 0.25; S.shake = 16; sfx('big');
       for (var b2 = 0; b2 < 25; b2++) S.gems.push({ x: m.x + (Math.random() - 0.5) * 80, y: m.y + (Math.random() - 0.5) * 80, v: 3 });
+      S.items = [];
       var RB = S.cfg.rounds[S.ri].boss;
       S.slowT = 1.6; battleSay(RB.def, RB.name, RB.die, 3.4);
       roundOver(true);
@@ -3020,10 +3061,15 @@
       banner('408 缝合怪 被打败了！', 2);
     }
   }
-  function hurtPlayer(dmg, fx, fy) {
+  function hurtPlayer(dmg, fx, fy, soft) {
     var p = S.p;
     if (p.inv > 0 || mode !== 'play' || p.hp <= 0) return;
-    p.hp -= dmg; p.inv = 0.8; p.hurt = 0.25; S.minHp = Math.min(S.minHp, Math.max(0, p.hp) / p.max);
+    if (soft) {   // 毒池：小伤害，不击退、不给无敌
+      p.hp -= dmg; p.hurt = Math.max(p.hurt, 0.12); S.minHp = Math.min(S.minHp, Math.max(0, p.hp) / p.max);
+      if (p.hp <= 0) { p.hp = 0; if (S.endTimer < 0) S.endTimer = 0.8; }
+      return;
+    }
+    p.hp -= dmg; p.inv = BAL.invTime; p.hurt = 0.25; S.minHp = Math.min(S.minHp, Math.max(0, p.hp) / p.max);
     var dx = p.x - fx, dy = p.y - fy, dl = Math.hypot(dx, dy) || 1;
     p.kx += dx / dl * 260; p.ky += dy / dl * 260;
     S.shake = Math.max(S.shake, 7); S.hitstop = Math.max(S.hitstop, 0.06); sfx('hurt');
@@ -3034,6 +3080,8 @@
   var keys = {}, joy = null;
   window.addEventListener('keydown', function (e) {
     keys[e.key.toLowerCase()] = true;
+    if (mode === 'play' && /^[123]$/.test(e.key)) useSlot(Number(e.key) - 1);
+    if (mode === 'play' && e.key === ' ') useSlot(0);
     if (mode === 'level' && /^[123]$/.test(e.key)) { var b = document.querySelectorAll('#choices .choice')[Number(e.key) - 1]; if (b) b.click(); }
     if ((e.key === 'Escape' || e.key === 'p') && (mode === 'play' || mode === 'pause')) togglePause();
   });
@@ -3064,6 +3112,13 @@
       if (d < Rr) { var w = (Rr - d) / Rr; w = w * w * (m.kind === 'mob' ? 1 : 3); fx += dx / d * w; fy += dy / d * w; }
     });
     S.ebullets.forEach(function (b) { var dx = p.x - b.x, dy = p.y - b.y, d = Math.hypot(dx, dy) || 1; if (d < 80) { var w = (80 - d) / 80 * 1.5; fx += dx / d * w; fy += dy / d * w; } });
+    // 看到预警圈 / 毒池 / 引信就躲（普通玩家也会躲，但有反应延迟）
+    S.hz.forEach(function (h) {
+      if (h.k === 'fx') return;
+      var dx = p.x - h.x, dy = p.y - h.y, d = Math.hypot(dx, dy) || 1, R = h.r + 26;
+      if (d < R) { var w = (R - d) / R * (h.k === 'warn' ? 5 : 2.5); fx += dx / d * w; fy += dy / d * w; }
+    });
+    S.mobs.forEach(function (m) { if (m.fuse > 0) { var dx = p.x - m.x, dy = p.y - m.y, d = Math.hypot(dx, dy) || 1; if (d < 90) { fx += dx / d * 4; fy += dy / d * 4; } } });
     if (big && big.kind === 'boss' && (big.state === 'tele' || big.state === 'dash')) {
       // 看到冲锋预警就往侧面闪
       var px = -(big.dy || 0), py = big.dx || 0, side = (p.x - big.x) * px + (p.y - big.y) * py >= 0 ? 1 : -1;
@@ -3073,6 +3128,7 @@
     if (l < 0.15) {
       var g = null, gd = 1e9;
       S.gems.forEach(function (q) { var d = Math.hypot(q.x - p.x, q.y - p.y); if (d < gd) { gd = d; g = q; } });
+      if (S.bag.length < 3) S.items.forEach(function (q) { var d = Math.hypot(q.x - p.x, q.y - p.y) * 0.5; if (d < gd) { gd = d; g = q; } });
       if (g && gd < 400) { fx = g.x - p.x; fy = g.y - p.y; } else { fx = Math.cos(S.t * 0.7); fy = Math.sin(S.t * 0.7); }
     } else { var tx = -fy, ty = fx; fx += tx * 0.5; fy += ty * 0.5; }
     var ang = Math.atan2(fy, fx) + (Math.random() - 0.5) * 0.9;
@@ -3091,7 +3147,7 @@
 
   function nearest(n) {
     var p = S.p, list = [];
-    S.mobs.forEach(function (m) { if (!m.dead) list.push({ m: m, d: (m.x - p.x) * (m.x - p.x) + (m.y - p.y) * (m.y - p.y) }); });
+    S.mobs.forEach(function (m) { if (!m.dead && !m.ghost) list.push({ m: m, d: (m.x - p.x) * (m.x - p.x) + (m.y - p.y) * (m.y - p.y) }); });
     list.sort(function (a, b) { return a.d - b.d; });
     return list.slice(0, n).map(function (o) { return o.m; });
   }
@@ -3129,11 +3185,11 @@
         var nk = Math.ceil(alive.length * Math.min(1, dt * 3));
         alive.slice(0, nk).forEach(function (m) { burst(m, m.kind === 'mob' ? 6 : 24, 160, 0, 0); m.dead = true; if (m.kind === 'mob') S.gems.push({ x: m.x, y: m.y, v: 1 }); });
         S.gems.forEach(function (g) { g.pull = true; });
-        S.ebullets = [];
+        S.ebullets = []; S.hz = [];
         if (S.ending.t >= 3 && S.endTimer < 0) S.endTimer = 0.01;
       } else {
-        if (S.eliteIdx < cfg.elites.length && S.t >= cfg.elites[S.eliteIdx]) { S.eliteIdx++; spawnElite(); }
-        if (cfg.endless && S.t >= S.nextElite) { S.nextElite += 50; cfg.eliteSpec = randomEliteSpec(); spawnElite(); }
+        if (S.eliteIdx < cfg.elites.length && S.t >= cfg.elites[S.eliteIdx].at) { var EL = cfg.elites[S.eliteIdx++]; spawnElite(EL.spec, EL.hpK, EL.main); }
+        if (cfg.endless && S.t >= S.nextElite) { S.nextElite += 50; spawnElite(randomEliteSpec(), 1 + S.t / 240); }
         if (cfg.bossAt && !S.bossSpawned && S.t >= cfg.bossAt) spawnBoss();
         if (cfg.duration && S.t >= cfg.duration && S.endTimer < 0 && p.hp > 0) {
           S.completed = true; S.ending = { t: 0 };
@@ -3144,7 +3200,8 @@
 
     var cap = W < 420 ? 130 : 170;
     var tt = cfg.rounds ? S.rt : S.t;
-    var rate = Math.min(3.2 + tt * 0.1, 14) * (cfg.rateMul || 1) * (S.boss && !S.boss.dead ? 0.5 : 1);
+    var rate = (cfg.kind === 'daily' ? Math.min(BAL.rate0 + tt * BAL.rateUp, 14) : Math.min(3.2 + tt * 0.1, 14)) * (cfg.rateMul || 1) * (S.boss && !S.boss.dead ? 0.5 : 1);
+    if (S.freezeT > 0) { S.freezeT -= dt; spawning = false; }
     S.spawnAcc += spawning ? dt * rate : 0;
     while (S.spawnAcc >= 1) {
       S.spawnAcc -= 1;
@@ -3155,20 +3212,29 @@
     p.x += (dir.x * sp + p.kx) * dt; p.y += (dir.y * sp + p.ky) * dt;
     var damp = Math.exp(-9 * dt); p.kx *= damp; p.ky *= damp;
     if (dir.x || dir.y) { p.fx = dir.x; p.fy = dir.y; if (Math.abs(dir.x) > 0.1) p.face = dir.x < 0; }
-    p.inv = Math.max(0, p.inv - dt); p.hurt = Math.max(0, p.hurt - dt);
+    p.inv = Math.max(0, p.inv - dt); p.hurt = Math.max(0, p.hurt - dt); if (S.koiT > 0) S.koiT -= dt;
 
     var mdamp = Math.exp(-8 * dt);
+    var frozen = S.freezeT > 0;
     S.mobs.forEach(function (m) {
       if (m.dead) return;
       var dx = p.x - m.x, dy = p.y - m.y, d = Math.hypot(dx, dy) || 1;
+      if (frozen) { m.flash = Math.max(0, m.flash - dt); m.x += m.kx * dt; m.y += m.ky * dt; m.kx *= mdamp; m.ky *= mdamp; return; }
       var chase = Math.max(0, 1 - Math.hypot(m.kx, m.ky) / 220);
       var vx = dx / d * m.sp * chase, vy = dy / d * m.sp * chase;
-      if (m.kind === 'boss') { bossAI(m, dt, dx / d, dy / d); if (m.state !== 'chase') { vx = 0; vy = 0; } }
+      if (m.kami) {   // 自爆怪：贴近就点燃引信，停下闪红，0.8 秒后爆炸
+        if (m.fuse > 0) { vx = 0; vy = 0; m.fuse -= dt; m.flash = Math.floor(m.fuse * 12) % 2 ? 0.08 : 0; if (m.fuse <= 0) { kamiBoom(m); return; } }
+        else if (d < 48) { m.fuse = 0.8; sfx('tick'); }
+      }
+      var busy = (m.kind !== 'mob') && skillAI(m, dt, dx / d, dy / d);
+      if (busy) { vx = 0; vy = 0; }
+      if (m.kind === 'boss' && !m.ghost) { bossAI(m, dt, dx / d, dy / d); if (m.state !== 'chase') { vx = 0; vy = 0; } }
+      if (m.ghost) { vx = 0; vy = 0; }
       m.x += (vx + m.kx) * dt; m.y += (vy + m.ky) * dt;
       m.kx *= mdamp; m.ky *= mdamp;
       m.flash = Math.max(0, m.flash - dt); m.orbCd = Math.max(0, m.orbCd - dt); m.face = dx < 0;
       if (d > Math.hypot(W, H) * 0.9 && m.kind === 'mob') { var e = edgePoint(); m.x = e.x; m.y = e.y; }
-      if (d < m.r + 12) { if (p.inv <= 0) { if (m.kind === 'mob') S.hitC = (S.hitC || 0) + 1; else S.hitBoss = (S.hitBoss || 0) + 1; } hurtPlayer(m.dmg, m.x, m.y); }
+      if (d < m.r + 12 && !m.ghost) { if (p.inv <= 0) { if (m.kind === 'mob') S.hitC = (S.hitC || 0) + 1; else S.hitBoss = (S.hitBoss || 0) + 1; } hurtPlayer(m.dmg, m.x, m.y); }
     });
     separate();
 
@@ -3187,7 +3253,7 @@
       s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
       for (var i = 0; i < S.mobs.length && s.pierce > 0; i++) {
         var m = S.mobs[i];
-        if (m.dead || s.hit.indexOf(m) >= 0) continue;
+        if (m.dead || m.ghost || s.hit.indexOf(m) >= 0) continue;
         if (Math.abs(m.x - s.x) < m.r + 4 && Math.abs(m.y - s.y) < m.r + 4) { s.hit.push(m); s.pierce--; hurt(m, 11 * (dl >= 2 ? 1.3 : 1), s.vx, s.vy, 150); }
       }
       if (s.pierce <= 0) s.life = 0;
@@ -3201,7 +3267,7 @@
     for (var k = 0; k < orbN; k++) { var ang = S.orbitAng + k * Math.PI * 2 / orbN; S.orbs.push({ x: p.x + Math.cos(ang) * 62, y: p.y + Math.sin(ang) * 62 }); }
     S.orbs.forEach(function (o) {
       S.mobs.forEach(function (m) {
-        if (m.dead || m.orbCd > 0) return;
+        if (m.dead || m.ghost || m.orbCd > 0) return;
         if (Math.hypot(m.x - o.x, m.y - o.y) < m.r + 10) { m.orbCd = 0.35; hurt(m, ol >= 3 ? 13 : 9, m.x - p.x, m.y - p.y, 230); }
       });
     });
@@ -3217,7 +3283,7 @@
           var len = 300, wid = bl >= 2 ? 24 : 15, l = Math.hypot(dv[0], dv[1]) || 1, ux = dv[0] / l, uy = dv[1] / l;
           S.beams.push({ x: p.x, y: p.y, ux: ux, uy: uy, len: len, wid: wid, life: 0.2 });
           S.mobs.forEach(function (m) {
-            if (m.dead) return;
+            if (m.dead || m.ghost) return;
             var rx = m.x - p.x, ry = m.y - p.y, along = rx * ux + ry * uy, perp = Math.abs(-rx * uy + ry * ux);
             if (along > -10 && along < len && perp < wid / 2 + m.r) hurt(m, bl >= 3 ? 36 : 24, ux, uy, 300);
           });
@@ -3227,7 +3293,8 @@
     }
     S.beams.forEach(function (b) { b.life -= dt; }); S.beams = S.beams.filter(function (b) { return b.life > 0; });
 
-    S.ebullets.forEach(function (b) { b.x += b.vx * dt; b.y += b.vy * dt; b.life -= dt; if (Math.hypot(b.x - p.x, b.y - p.y) < 14) { if (p.inv <= 0) S.hitB = (S.hitB || 0) + 1; hurtPlayer(10, b.x, b.y); b.life = 0; } });
+    stepExtras(dt);
+    S.ebullets.forEach(function (b) { b.x += b.vx * dt; b.y += b.vy * dt; b.life -= dt; if (Math.hypot(b.x - p.x, b.y - p.y) < 14) { if (p.inv <= 0) S.hitB = (S.hitB || 0) + 1; hurtPlayer(BAL.bulletHit, b.x, b.y); b.life = 0; } });
     S.ebullets = S.ebullets.filter(function (b) { return b.life > 0; });
 
     var pr = S.pendingRevive;
@@ -3263,7 +3330,177 @@
     if (S.endTimer >= 0) { S.endTimer -= dt; if (S.endTimer < 0) finishBattle(); }
   }
 
+
+  // ======================================================================
+  // 精英 / Boss 技能
+  // ======================================================================
+  function hzDmg(base) { return base * (S.cfg.mobDmg || 1) * (S.cfg.endless ? 1 + S.t / BAL.endlessDmgT : 1); }
+  function skillAI(m, dt, ux, uy) {
+    if (!m.skills || !m.skills.length) return false;
+    if (!m.cd) { m.cd = {}; m.skills.forEach(function (k, i) { m.cd[k] = SK[k].first + i * 1.4; }); }
+    if (m.st === 'tele') { m.stT -= dt; if (m.stT <= 0) { m.st = 'dash'; m.stT = 0.45; S.shake = Math.max(S.shake, 4); sfx('big'); } return true; }
+    if (m.st === 'dash') { m.x += m.dx * 440 * dt; m.y += m.dy * 440 * dt; m.stT -= dt; if (m.stT <= 0) m.st = null; return true; }
+    if (m.st === 'vanish') return true;
+    var isBoss = m.kind === 'boss';
+    for (var i = 0; i < m.skills.length; i++) {
+      var k = m.skills[i];
+      if (isBoss && (k === 'charge' || k === 'ring')) continue;
+      m.cd[k] -= dt;
+      if (m.cd[k] <= 0) { m.cd[k] = SK[k].cd * (0.85 + Math.random() * 0.3) * (isBoss ? 1.15 : 1); castSkill(m, k, ux, uy); return !!m.st; }
+    }
+    return false;
+  }
+  function castSkill(m, k, ux, uy) {
+    var p = S.p, boss = m.kind === 'boss';
+    if (k === 'spit') {
+      var n = boss ? 5 : 3, v = inputDir();
+      for (var i = 0; i < n; i++) {
+        var tx = p.x + v.x * 50 + (i ? (Math.random() - 0.5) * 140 : 0), ty = p.y + v.y * 50 + (i ? (Math.random() - 0.5) * 140 : 0);
+        S.hz.push({ k: 'warn', x: tx, y: ty, r: 36, t: 0.95 + i * 0.12, t0: 0.95 + i * 0.12, dmg: hzDmg(7), then: 'pool', fx: m.x, fy: m.y - m.r });
+      }
+      floatText(m, '噗——', '#9be15d'); sfx('pop');
+    } else if (k === 'bomb') {
+      var cnt = boss ? 4 : 3;
+      for (var j = 0; j < cnt; j++) {
+        var a = j / cnt * Math.PI * 2, def = S.pool[Math.floor(Math.random() * S.pool.length)];
+        var km = addMob(def, m.x + Math.cos(a) * (m.r + 16), m.y + Math.sin(a) * (m.r + 16), 'mob');
+        km.kami = true; km.sp *= 2.1; km.max = km.hp = km.max * 0.7; km.fuse = 0;
+      }
+      floatText(m, '自爆小队，上！', '#ff8a5c'); sfx('whoosh');
+    } else if (k === 'blink') {
+      m.st = 'vanish'; m.ghost = true; m.kx = m.ky = 0;
+      S.hz.push({ k: 'warn', x: p.x, y: p.y, r: boss ? 92 : 72, t: 1.15, t0: 1.15, dmg: hzDmg(boss ? 14 : 12), then: 'appear', src: m });
+      burst(m, 14, 120, 0, 0); floatText(m, '……', '#c9a7ff'); sfx('whoosh');
+    } else if (k === 'charge') {
+      m.st = 'tele'; m.stT = 0.7; m.dx = ux; m.dy = uy;
+    } else if (k === 'ring') {
+      var rn = 10, off = Math.random() * Math.PI;
+      for (var q = 0; q < rn; q++) { var b = off + q / rn * Math.PI * 2; S.ebullets.push({ x: m.x, y: m.y, vx: Math.cos(b) * 140, vy: Math.sin(b) * 140, life: 4 }); }
+      sfx('pop');
+    }
+  }
+  function floatText(m, text, color) { if (S.nums.length < 90) S.nums.push({ x: m.x, y: m.y - m.r - 6, v: text, life: 0.9, color: color, txt: true }); }
+  function blastAt(x, y, r, dmg, hitMobs) {
+    var p = S.p;
+    if (dmg && Math.hypot(p.x - x, p.y - y) < r + 8) { S.hitHz = (S.hitHz || 0) + (p.inv <= 0 ? 1 : 0); hurtPlayer(dmg, x, y); }
+    if (hitMobs) S.mobs.forEach(function (o) { if (!o.dead && !o.ghost && o.kind === 'mob' && Math.hypot(o.x - x, o.y - y) < r) hurt(o, hitMobs, o.x - x, o.y - y, 200); });
+    S.hz.push({ k: 'fx', x: x, y: y, r: r, life: 0.35, c: '#ffb15c' });
+    S.shake = Math.max(S.shake, 5);
+  }
+  function kamiBoom(m) {
+    m.dead = true; burst(m, 16, 220, 0, 0); sfx('big');
+    blastAt(m.x, m.y, 64, hzDmg(11), 30);
+  }
+  function stepExtras(dt) {
+    var p = S.p;
+    // 预警圈 / 毒池 / 爆炸特效
+    S.hz.forEach(function (h) {
+      if (h.k === 'warn') {
+        h.t -= dt;
+        if (h.t <= 0) {
+          h.dead = true;
+          if (h.then === 'pool') {
+            if (Math.hypot(p.x - h.x, p.y - h.y) < h.r) { if (p.inv <= 0) S.hitHz = (S.hitHz || 0) + 1; hurtPlayer(h.dmg, h.x, h.y); }
+            S.hz.push({ k: 'pool', x: h.x, y: h.y, r: h.r * 1.15, life: 4.5, tick: 0, dmg: h.dmg * 0.35 });
+            sfx('hit');
+          } else if (h.then === 'appear') {
+            var m = h.src;
+            if (!m.dead) { m.ghost = false; m.st = null; m.x = h.x; m.y = h.y - 4; m.flash = 0.2; burst(m, 18, 200, 0, 0); }
+            blastAt(h.x, h.y, h.r, h.dmg, 0); sfx('boss');
+          }
+        }
+      } else if (h.k === 'pool') {
+        h.life -= dt; h.tick -= dt;
+        if (h.tick <= 0 && Math.hypot(p.x - h.x, p.y - h.y) < h.r) { h.tick = 0.4; S.poolHits = (S.poolHits || 0) + 1; hurtPlayer(h.dmg, h.x, h.y, true); }
+        if (h.life <= 0) h.dead = true;
+      } else if (h.k === 'fx') { h.life -= dt; if (h.life <= 0) h.dead = true; }
+    });
+    S.hz = S.hz.filter(function (h) { return !h.dead; });
+    // 某个隐身的精英如果被别的方式清掉了，别让它一直隐身
+    S.mobs.forEach(function (m) { if (m.ghost && !S.hz.some(function (h) { return h.src === m; })) { m.ghost = false; m.st = null; } });
+    // 扔出去的粉笔灰炸弹
+    S.throws.forEach(function (t) {
+      t.t += dt;
+      if (t.t >= t.dur) {
+        t.dead = true;
+        S.mobs.forEach(function (m) { if (!m.dead && !m.ghost && Math.hypot(m.x - t.x, m.y - t.y) < 100 + m.r) hurt(m, 150, m.x - t.x, m.y - t.y, 420); });
+        S.hz.push({ k: 'fx', x: t.x, y: t.y, r: 100, life: 0.45, c: '#ffffff' });
+        for (var i = 0; i < 30; i++) { var a = Math.random() * Math.PI * 2, sp = 80 + Math.random() * 220; S.parts.push({ x: t.x, y: t.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, c: i % 3 ? '#f2efe6' : '#cfd8dc', life: 0.4 + Math.random() * 0.4, size: 4 }); }
+        S.shake = Math.max(S.shake, 9); S.hitstop = Math.max(S.hitstop, 0.06); sfx('big');
+      }
+    });
+    S.throws = S.throws.filter(function (t) { return !t.dead; });
+    // 地上的道具
+    S.items.forEach(function (it) {
+      it.life -= dt;
+      if (S.bag.length < 3 && Math.hypot(p.x - it.x, p.y - it.y) < 24) {
+        it.got = true; S.bag.push(it.id); renderSlots(S.bag.length - 1); sfx('level');
+        var d = pickDef(it.id); floatText({ x: p.x, y: p.y, r: 16 }, '捡到 ' + d.name, d.c);
+      }
+    });
+    S.items = S.items.filter(function (it) { return !it.got && it.life > 0; });
+    if (window.__bot) botItems();
+  }
+  function dropPick(x, y, id) {
+    if (S.items.length >= BAL.groundMax) return;
+    if (!id) { var tot = PICKS.reduce(function (a, q) { return a + q.w; }, 0), r = Math.random() * tot; for (var i = 0; i < PICKS.length; i++) { r -= PICKS[i].w; if (r <= 0) { id = PICKS[i].id; break; } } }
+    S.items.push({ x: x, y: y, id: id || 'bull', life: 20, ph: Math.random() * 6 });
+  }
+  function renderSlots(fresh) {
+    for (var i = 0; i < 3; i++) {
+      var b = $('slot' + i), id = S && S.bag[i], d = id && pickDef(id);
+      b.className = 'slot' + (d ? '' : ' empty') + (fresh === i ? ' new' : '');
+      b.innerHTML = d ? '<i>' + (i + 1) + '</i><span class="g" style="background:' + d.c + '">' + d.g + '</span><small>' + d.name + '</small>' : '<i>' + (i + 1) + '</i>';
+      b.title = d ? d.name + '：' + d.tip : '空格子：打怪有几率掉道具';
+    }
+  }
+  function useSlot(i) {
+    if (!S || mode !== 'play' || !S.bag[i]) return;
+    var id = S.bag.splice(i, 1)[0], p = S.p, d = pickDef(id);
+    S.used++;
+    if (id === 'chalk') {
+      // 找怪最密集的位置
+      var best = null, bn = -1;
+      nearest(14).forEach(function (m) { var n = 0; S.mobs.forEach(function (o) { if (!o.dead && Math.hypot(o.x - m.x, o.y - m.y) < 100) n += o.kind === 'mob' ? 1 : 4; }); if (n > bn) { bn = n; best = m; } });
+      var tx = best ? best.x : p.x + p.fx * 120, ty = best ? best.y : p.y + p.fy * 120;
+      var dd = Math.hypot(tx - p.x, ty - p.y); if (dd > 260) { tx = p.x + (tx - p.x) / dd * 260; ty = p.y + (ty - p.y) / dd * 260; }
+      S.throws.push({ x0: p.x, y0: p.y, x: tx, y: ty, t: 0, dur: 0.45 }); sfx('whoosh');
+    } else if (id === 'bull') {
+      var add = Math.round(p.max * 0.45); p.hp = Math.min(p.max, p.hp + add);
+      S.nums.push({ x: p.x, y: p.y - 24, v: '+' + add, life: 0.9, color: '#7bd88f', txt: true }); sfx('level');
+    } else if (id === 'clock') {
+      S.freezeT = 3.5; S.ebullets = []; S.hz = S.hz.filter(function (h) { return h.k === 'pool' || h.then === 'appear'; });
+      banner('叮——全场定住！', 1.4); sfx('ring');
+    } else if (id === 'koi') {
+      p.inv = Math.max(p.inv, 5); S.koiT = 5; banner('锦鲤附体：无敌 5 秒', 1.4); sfx('level');
+    } else if (id === 'magnet') {
+      S.gems.forEach(function (g) { g.pull = true; }); banner('磁铁：知识点全部吸过来！', 1.4); sfx('gem');
+    }
+    renderSlots();
+  }
+  [0, 1, 2].forEach(function (i) {
+    $('slot' + i).addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+    $('slot' + i).addEventListener('click', function () { useSlot(i); });
+  });
+  // 测试用：自动驾驶也会用道具（普通玩家的用法）
+  function botItems() {
+    var p = S.p;
+    S.botUseT = (S.botUseT || 0) - 1 / 30; if (S.botUseT > 0) return;
+    S.botUseT = 0.5;
+    var near = 0, big = false;
+    S.mobs.forEach(function (m) { var d = Math.hypot(m.x - p.x, m.y - p.y); if (d < 130) near += m.kind === 'mob' ? 1 : 0; if (m.kind !== 'mob' && d < 170 && !m.ghost) big = true; });
+    for (var i = 0; i < S.bag.length; i++) {
+      var id = S.bag[i], go = false;
+      if (id === 'bull') go = p.hp < p.max * 0.4;
+      else if (id === 'chalk') go = near >= 9 || big;
+      else if (id === 'clock') go = p.hp < p.max * 0.55 && (big || near >= 8);
+      else if (id === 'koi') go = p.hp < p.max * 0.3;
+      else if (id === 'magnet') go = S.gems.length > 30;
+      if (go) { useSlot(i); return; }
+    }
+  }
   function bossAI(m, dt, ux, uy) {
+    if (m.st) return;
     m.timer -= dt; m.ring -= dt;
     if (m.state === 'chase' && m.timer <= 0) { m.state = 'tele'; m.timer = 0.75; m.dx = ux; m.dy = uy; }
     else if (m.state === 'tele' && m.timer <= 0) { m.state = 'dash'; m.timer = 0.5; S.shake = Math.max(S.shake, 5); sfx('big'); }
@@ -3308,7 +3545,35 @@
       var s = g.v > 1 ? 4 : 3; ctx.fillStyle = g.v > 1 ? '#f4d35e' : '#7bd88f';
       ctx.fillRect(Math.round(g.x) - 1, Math.round(g.y) - s, 2, s * 2); ctx.fillRect(Math.round(g.x) - s, Math.round(g.y) - 1, s * 2, 2);
     });
+    // 毒池、预警圈（画在怪下面）
+    S.hz.forEach(function (h) {
+      if (h.k === 'pool') {
+        var a = Math.min(1, h.life / 0.6);
+        ctx.globalAlpha = 0.55 * a; ctx.fillStyle = '#5fae3a'; ctx.beginPath(); ctx.ellipse(h.x, h.y, h.r, h.r * 0.7, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 0.8 * a; ctx.fillStyle = '#b8f27a';
+        for (var bI = 0; bI < 4; bI++) { var ba = S.t * 1.7 + bI * 1.6 + h.x; ctx.fillRect(Math.round(h.x + Math.cos(ba) * h.r * 0.5) - 2, Math.round(h.y + Math.sin(ba * 1.3) * h.r * 0.35) - 2, 4, 4); }
+        ctx.globalAlpha = 1;
+      } else if (h.k === 'warn') {
+        var u = 1 - h.t / h.t0, red = h.then === 'appear' ? '#c08cff' : (h.then === 'pool' ? '#9be15d' : '#ff5c5c');
+        ctx.save(); ctx.globalAlpha = 0.18 + 0.25 * u; ctx.fillStyle = red; ctx.beginPath(); ctx.ellipse(h.x, h.y, h.r * u, h.r * u * 0.7, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 0.6 + 0.4 * Math.sin(S.t * 30); ctx.strokeStyle = red; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.ellipse(h.x, h.y, h.r, h.r * 0.7, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      }
+    });
+    // 地上的道具
+    S.items.forEach(function (it) {
+      if (it.life < 4 && Math.floor(S.t * 8) % 2) return;
+      var d = pickDef(it.id), bob = Math.round(Math.sin(S.t * 4 + it.ph) * 2), x = Math.round(it.x), y = Math.round(it.y) + bob;
+      ctx.fillStyle = 'rgba(255,255,220,' + (0.18 + 0.12 * Math.sin(S.t * 6 + it.ph)) + ')'; ctx.fillRect(x - 15, y - 15, 30, 30);
+      ctx.fillStyle = INK; ctx.fillRect(x - 11, y - 11, 22, 22); ctx.fillStyle = d.c; ctx.fillRect(x - 9, y - 9, 18, 18);
+      ctx.fillStyle = INK; ctx.font = '400 13px "ZCOOL QingKe HuangYou", "Noto Sans SC", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(d.g, x, y + 1);
+      ctx.textBaseline = 'alphabetic';
+    });
     S.mobs.forEach(function (m) {
+      if (m.st === 'tele') {
+        ctx.save(); ctx.globalAlpha = 0.25 + 0.25 * Math.sin(S.t * 40); ctx.strokeStyle = '#ff5c5c'; ctx.lineWidth = m.r * 1.4;
+        ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(m.x + m.dx * 210, m.y + m.dy * 210); ctx.stroke(); ctx.restore();
+      }
       if (m.kind === 'boss' && m.state === 'tele') {
         ctx.save(); ctx.globalAlpha = 0.25 + 0.25 * Math.sin(S.t * 40); ctx.strokeStyle = '#ff5c5c'; ctx.lineWidth = m.r * 1.6;
         ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(m.x + m.dx * 300, m.y + m.dy * 300); ctx.stroke(); ctx.restore();
@@ -3327,11 +3592,18 @@
 
     S.mobs.slice().sort(function (a, b) { return a.y - b.y; }).forEach(function (m) {
       var t = Math.floor(S.t * 3 + m.ph) % 2;
+      if (m.ghost) {   // 隐入虚空：只剩一个淡淡的影子在抖
+        if (Math.floor(S.t * 10) % 3 === 0) spr(m.def, t, m.x + (Math.random() - 0.5) * 6, m.y, m.scale, { flip: m.face, alpha: 0.12 });
+        return;
+      }
       if (m.kind === 'elite') { ctx.fillStyle = 'rgba(255,70,70,' + (0.18 + 0.1 * Math.sin(S.t * 6)) + ')'; ctx.beginPath(); ctx.ellipse(m.x, m.y + 4, m.r * 1.3, m.r * 0.9, 0, 0, Math.PI * 2); ctx.fill(); }
+      if (m.kami) { ctx.fillStyle = m.fuse > 0 ? 'rgba(255,90,40,0.55)' : 'rgba(255,90,40,0.22)'; ctx.beginPath(); ctx.ellipse(m.x, m.y + 2, m.r * 1.2, m.r * 0.9, 0, 0, Math.PI * 2); ctx.fill(); }
+      if (m.fuse > 0) { ctx.save(); ctx.strokeStyle = '#ff5c5c'; ctx.globalAlpha = 0.7; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.ellipse(m.x, m.y, 64, 45, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
       var sq = m.flash > 0 ? 1 + m.flash * (m.kind === 'mob' ? 2 : 0.6) : 1;
       var o = { flip: m.face, sx: sq, sy: 1 / sq };
       spr(m.def, t, m.x, m.y, m.scale, o);
       if (m.flash > 0) { o.white = true; o.alpha = m.kind === 'mob' ? 0.85 : 0.4; spr(m.def, t, m.x, m.y, m.scale, o); }
+      if (S.freezeT > 0) { spr(m.def, t, m.x, m.y, m.scale, { flip: m.face, white: true, alpha: 0.35 }); }
       if (m.kind === 'elite') {
         var w = 48, f = Math.max(0, m.hp / m.max);
         ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(m.x - w / 2, m.y - m.r - 14, w, 4);
@@ -3341,6 +3613,7 @@
 
     var mv = inputDir(), pt = ((mv.x || mv.y) ? Math.floor(S.t * 8) : Math.floor(S.t * 2)) % 2;
     var blink = p.inv > 0 && Math.floor(S.t * 20) % 2 === 0;
+    if (S.koiT > 0) { blink = false; ctx.fillStyle = 'rgba(244,167,66,' + (0.25 + 0.15 * Math.sin(S.t * 10)) + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, 28, 0, Math.PI * 2); ctx.fill(); }
     spr(GM.player, pt, p.x, p.y, 2, { flip: p.face, alpha: blink ? 0.35 : 1 });
     if (p.hurt > 0) spr(GM.player, pt, p.x, p.y, 2, { flip: p.face, white: true, alpha: p.hurt * 3 });
 
@@ -3364,14 +3637,28 @@
       ctx.fillStyle = '#ff5c5c'; ctx.fillRect(Math.round(b.x) - 4, Math.round(b.y) - 4, 8, 8);
       ctx.fillStyle = '#ffd0d0'; ctx.fillRect(Math.round(b.x) - 2, Math.round(b.y) - 2, 2, 2);
     });
+    S.throws.forEach(function (t) {
+      var u = t.t / t.dur, x = t.x0 + (t.x - t.x0) * u, y = t.y0 + (t.y - t.y0) * u - Math.sin(u * Math.PI) * 70;
+      ctx.fillStyle = INK; ctx.fillRect(Math.round(x) - 6, Math.round(y) - 6, 12, 12); ctx.fillStyle = '#f2efe6'; ctx.fillRect(Math.round(x) - 4, Math.round(y) - 4, 8, 8);
+      ctx.save(); ctx.globalAlpha = 0.5; ctx.strokeStyle = '#fff'; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.ellipse(t.x, t.y, 100, 70, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+    });
+    S.hz.forEach(function (h) {
+      if (h.k === 'warn' && h.then === 'pool') {   // 飞在空中的毒液
+        var u = 1 - h.t / h.t0, x = h.fx + (h.x - h.fx) * u, y = h.fy + (h.y - h.fy) * u - Math.sin(u * Math.PI) * 60;
+        ctx.fillStyle = INK; ctx.fillRect(Math.round(x) - 6, Math.round(y) - 6, 12, 12); ctx.fillStyle = '#7ccf45'; ctx.fillRect(Math.round(x) - 4, Math.round(y) - 4, 8, 8);
+      } else if (h.k === 'fx') {
+        var k = 1 - h.life / 0.4;
+        ctx.save(); ctx.globalAlpha = Math.max(0, 1 - k); ctx.strokeStyle = h.c; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(h.x, h.y, h.r * (0.5 + k * 0.6), h.r * 0.7 * (0.5 + k * 0.6), 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      }
+    });
     S.parts.forEach(function (q) { ctx.globalAlpha = Math.min(1, q.life * 4); ctx.fillStyle = q.c; ctx.fillRect(Math.round(q.x), Math.round(q.y), q.size, q.size); });
     ctx.globalAlpha = 1;
     ctx.textAlign = 'center'; ctx.lineJoin = 'round';
     S.nums.forEach(function (n) {
       var age = 0.7 - n.life, pop = age < 0.08 ? 1 + (0.08 - age) * 6 : 1;
-      ctx.font = '700 ' + ((n.crit ? 17 : 12) * pop) + 'px "Noto Sans SC", system-ui, sans-serif';
+      ctx.font = '700 ' + ((n.crit ? 17 : n.txt ? 13 : 12) * pop) + 'px "Noto Sans SC", system-ui, sans-serif';
       ctx.globalAlpha = Math.min(1, n.life * 3); ctx.lineWidth = 3; ctx.strokeStyle = INK; ctx.strokeText(n.v, n.x, n.y);
-      ctx.fillStyle = n.crit ? '#f4d35e' : '#ffffff'; ctx.fillText(n.v, n.x, n.y);
+      ctx.fillStyle = n.color || (n.crit ? '#f4d35e' : '#ffffff'); ctx.fillText(n.v, n.x, n.y);
     });
     ctx.globalAlpha = 1;
     ctx.restore();
@@ -3382,6 +3669,7 @@
       ctx.strokeStyle = 'rgba(233,239,230,0.25)'; ctx.lineWidth = 2; ctx.stroke();
       ctx.fillStyle = 'rgba(233,239,230,0.35)'; ctx.beginPath(); ctx.arc(joy.bx + dx * k, joy.by + dy * k, 20, 0, Math.PI * 2); ctx.fill();
     }
+    if (S.freezeT > 0) { ctx.fillStyle = 'rgba(127,209,255,' + Math.min(0.14, S.freezeT * 0.1) + ')'; ctx.fillRect(0, 0, W, H); }
     if (p.hurt > 0) {
       ctx.fillStyle = 'rgba(229,72,77,' + (p.hurt * 0.8) + ')';
       ctx.fillRect(0, 0, W, 6); ctx.fillRect(0, H - 6, W, 6); ctx.fillRect(0, 0, 6, H); ctx.fillRect(W - 6, 0, 6, H);
@@ -3452,7 +3740,7 @@
     mode = 'done';
     overlay('levelOv', false);
     var r = { kills: S.kills, lv: S.lv, t: S.t, won: S.won, completed: S.completed, died: S.p.hp <= 0, quit: S.quit,
-      eliteDown: S.eliteDown, minHp: S.minHp, results: S.results.slice(), bossSpawned: S.bossSpawned, bossFrac: S.boss ? Math.max(0, S.boss.hp / S.boss.max) : 1 };
+      eliteDown: S.eliteDown, mainDown: S.mainDown, allDown: S.eliteKills >= (S.cfg.elites || []).length, minHp: S.minHp, results: S.results.slice(), bossSpawned: S.bossSpawned, bossFrac: S.boss ? Math.max(0, S.boss.hp / S.boss.max) : 1 };
     S.cfg.onEnd(r);
   }
 
@@ -3464,7 +3752,8 @@
     var ch = CHAPTERS[sub.id], t = tierOf(sub.id, ci);
     return {
       kind: 'daily', hpMul: tierVal(TIER.hp, t), rateMul: tierVal(TIER.rate, t), mobDmg: tierVal(TIER.dmg, t), mobSpeed: tierVal(TIER.speed, t),
-      duration: 120, bossAt: 0, elites: [70], eliteSpec: ch.el[ci], eliteHp: 300,
+      duration: BAL.chapterDur, bossAt: 0, eliteSpec: ch.el[ci], eliteHp: 300,
+      elites: [{ at: 100, spec: ch.el[Math.max(0, ci - 1)], hpK: 0.6 }, { at: 215, spec: ch.el[ci], hpK: 1, main: true }],
       phases: [{ group: sub.id, until: 1e9, label: sub.name + ' · ' + ch.list[ci] }], onEnd: onEnd
     };
   }
@@ -3473,13 +3762,13 @@
     if (save.energy <= 0) return;
     audioInit(); spendEnergy();
     var ch = CHAPTERS[sub.id];
-    showLoading({ sub: sub.name + ' · 第 ' + (ci + 1) + ' 章', title: ch.list[ci], spec: ch.el[ci], done: function () {
+    showLoading({ sub: sub.name + ' · 第 ' + (ci + 1) + ' 章', title: ch.list[ci], kind: '章末精英', spec: ch.el[ci], done: function () {
       startBattle(chapterCfg(sub, ci, function (r) { chapterResult(sub, ci, r); }));
     } });
   }
   function chapterResult(sub, ci, r) {
     var ch = CHAPTERS[sub.id];
-    var stars = r.completed ? (r.eliteDown ? (r.minHp >= 0.5 ? 3 : 2) : 1) : 0;
+    var stars = r.completed ? (r.mainDown ? (r.allDown ? 3 : 2) : 1) : 0;
     var old = starsOf(sub.id, ci), score0 = totalScore(), sub0 = subScore(sub.id);
     if (!save.stars[sub.id]) save.stars[sub.id] = [];
     if (stars > old) save.stars[sub.id][ci] = stars;
@@ -3493,7 +3782,7 @@
     var title = ['被题海淹没了…', '下课！这章刷完了', '下课！本章通关', '下课！完美通关'][stars];
     var note = stars === 0 ? '没撑到下课铃，这章没拿到星。去升级道具和学习素质再来。'
       : stars === 1 ? '撑到了下课，但本章精英“' + ch.el[ci].name + '”还活着。打倒它能拿 ★★。'
-      : stars === 2 ? '打倒了精英！全程血量不低于一半就能拿 ★★★。' : '三颗星，这章吃透了。';
+      : stars === 2 ? '打倒了章末精英！把中途那只也打倒就能拿 ★★★。' : '三颗星，这章吃透了。';
     if (stars > 0 && !fresh) note += '（没有新星，只拿击杀学习力）';
     var acts = [{ label: '回书桌', primary: true, fn: backHome }];
     if (stars > 0 && ci + 1 < ch.list.length && !starsOf(sub.id, ci + 1) && save.energy > 0)
@@ -3539,18 +3828,18 @@
   function accidentChance() { return Math.min(0.5, BAL.accidentBase + save.stress * BAL.accidentPerStress); }
   var ACCIDENTS = ['押题押错了，背的一道都没考', '昨晚紧张失眠，状态不稳', '忘带 2B 铅笔，心态崩了', '考场空调太冷，手都冻僵了', '早饭吃坏了肚子'];
   function examCfg(s, accident, onEnd) {
-    function boss(def, name, say, die, k, sub, ring, ringCd) {
-      return { def: def, name: name, say: say, die: die, ring: ring, ringCd: ringCd,
+    function boss(def, name, say, die, k, sub, ring, ringCd, sk) {
+      return { def: def, name: name, say: say, die: die, ring: ring, ringCd: ringCd, sk: sk,
         hp: Math.round((sub ? BAL.examBossHp : BAL.retestBossHp) * k * s.hp * (sub ? examMul(sub) : 1)) };
     }
     return {
       kind: 'exam', hpMul: s.hp, mobDmg: 1, rateMul: 0.9, duration: 0, bossAt: 0, elites: [], accident: accident, phases: [{ group: 'po', until: 1e9, label: '' }],
       rounds: [
-        { group: 'po', name: '政治', tag: '第一科 · 政治（3 分钟）', boss: boss(BOSS_PO, '材料分析巨卷', '辨析题：论你上岸的必然性与偶然性！', '答……答到点子上了……', 0.9, 'po', 12, 6) },
-        { group: 'en', name: '英语', tag: '第二科 · 英语（3 分钟）', boss: boss(BOSS_EN, '作文阅卷官', '这个模板，我今天已经看了一万遍。', '……这篇，给你个高分吧。', 1.4, 'en', 14, 5.5) },
-        { group: 'ma', name: '数学', tag: '第三科 · 数学（3 分钟）', boss: boss(BOSS_MA, '压轴大题', '前面都是送分，我才是真正的数学。', '步骤分……被你拿满了……', 1.6, 'ma', 16, 5) },
-        { group: 'cs', name: '专业课', tag: '第四科 · 专业课 408（3 分钟）', boss: boss(BOSS, '408 缝合怪', '四门课，我全都要！', '四门课缝在一起……还是被你一门一门拆开了……', 1.8, 'cs', 18, 5) },
-        { group: 'all', name: '复试', tag: '复试 · 导师组面试（3 分钟）', boss: boss(BOSS_RE, '复试导师', '同学，先用英文介绍一下你自己。', '……嗯，这个学生，我要了。', 2.0, null, 20, 4) }
+        { group: 'po', name: '政治', tag: '第一科 · 政治（3 分钟）', boss: boss(BOSS_PO, '材料分析巨卷', '辨析题：论你上岸的必然性与偶然性！', '答……答到点子上了……', 0.9, 'po', 12, 6, ['spit']) },
+        { group: 'en', name: '英语', tag: '第二科 · 英语（3 分钟）', boss: boss(BOSS_EN, '作文阅卷官', '这个模板，我今天已经看了一万遍。', '……这篇，给你个高分吧。', 1.4, 'en', 14, 5.5, ['blink']) },
+        { group: 'ma', name: '数学', tag: '第三科 · 数学（3 分钟）', boss: boss(BOSS_MA, '压轴大题', '前面都是送分，我才是真正的数学。', '步骤分……被你拿满了……', 1.9, 'ma', 16, 5, ['bomb']) },
+        { group: 'cs', name: '专业课', tag: '第四科 · 专业课 408（3 分钟）', boss: boss(BOSS, '408 缝合怪', '四门课，我全都要！', '四门课缝在一起……还是被你一门一门拆开了……', 1.9, 'cs', 18, 5, ['spit', 'bomb']) },
+        { group: 'all', name: '复试', tag: '复试 · 导师组面试（3 分钟）', boss: boss(BOSS_RE, '复试导师', '同学，先用英文介绍一下你自己。', '……嗯，这个学生，我要了。', 2.0, null, 20, 4, ['blink', 'spit', 'bomb']) }
       ],
       onEnd: onEnd
     };
@@ -3559,7 +3848,7 @@
     audioInit();
     var s = SCHOOLS[save.school];
     var accident = Math.random() < accidentChance() ? ACCIDENTS[Math.floor(Math.random() * ACCIDENTS.length)] : null;
-    showLoading({ sub: '考研日 · ' + s.name, title: '四门连考', kind: '第一科 Boss', spec: { name: '材料分析巨卷', say: '辨析题：论你上岸的必然性与偶然性！', boss: BOSS_PO }, done: function () {
+    showLoading({ sub: '考研日 · ' + s.name, title: '四门连考', kind: '第一科 Boss', spec: { name: '材料分析巨卷', say: '辨析题：论你上岸的必然性与偶然性！', boss: BOSS_PO, sk: ['spit'] }, done: function () {
       startBattle(examCfg(s, accident, function (r) { examResult(s, r); }));
       if (accident) { banner('考场意外！攻击 −30%', 2.6); battleSay(GM.player, '你（内心）', accident + '……', 4); }
     } });
@@ -3784,18 +4073,24 @@
       else cfg = examCfg(SCHOOLS[opt.school == null ? 1 : opt.school], opt.accident || null, done);
       window.__bot = true; startBattle(cfg);
       for (var i = 0; i < (opt.maxT || 1500) * 30 && !out; i++) {
-        if (mode === 'level') { var cs = document.querySelectorAll('#choices .choice'); cs[Math.floor(Math.random() * cs.length)].click(); }
+        if (mode === 'level') {
+          // 像普通玩家一样选：多数时候优先拿输出技能，偶尔随手点
+          var cs = [].slice.call(document.querySelectorAll('#choices .choice')), pick = cs[Math.floor(Math.random() * cs.length)];
+          if (Math.random() < 0.75) { var pri = ['背单词飞镖', '公式护盾', '错题本', '荧光笔激光', '降噪耳机', '保温杯', '咖啡续命', '大书包'];
+            cs.sort(function (a, b) { var f = function (el) { var t = el.querySelector('.t').textContent; for (var q = 0; q < pri.length; q++) if (t.indexOf(pri[q]) >= 0) return q; return 9; }; return f(a) - f(b); }); pick = cs[0]; }
+          pick.click();
+        }
         if (mode === 'cele') { stepCele(1 / 30); continue; }
         if (mode !== 'play') break;
         if (S.hitstop > 0) S.hitstop -= 1 / 30; else update(1 / 30);
       }
       window.__bot = false;
-      var res = { t: Math.round(S.t), kills: S.kills, lv: S.lv, hp: Math.round(S.p.hp), completed: S.completed, elite: S.eliteDown, minHp: +S.minHp.toFixed(2), results: S.results.slice(), ttk: S.ttk.slice(), hits: [S.hitC || 0, S.hitB || 0, S.hitBoss || 0], max: S.p.max };
+      var res = { t: Math.round(S.t), kills: S.kills, lv: S.lv, hp: Math.round(S.p.hp), completed: S.completed, elite: S.eliteDown, minHp: +S.minHp.toFixed(2), results: S.results.slice(), ttk: S.ttk.slice(), hits: [S.hitC || 0, S.hitB || 0, S.hitBoss || 0, S.hitHz || 0, S.poolHits || 0], max: S.p.max, used: S.used, main: S.mainDown, allEl: S.eliteKills };
       save.up = keep.up; save.attrs = keep.attrs; save.review = keep.review; save.stars = keep.stars;
       mode = 'idle'; ['levelOv', 'resultOv', 'celeOv', 'letterOv'].forEach(function (o) { overlay(o, false); }); $('bsay').hidden = true;
       return res;
     },
-    totalCost: TOTAL_COST, starUnit: STAR_UNIT,
+    totalCost: TOTAL_COST, starUnit: STAR_UNIT, bal: BAL, tier: TIER,
     // 不依赖画面刷新，直接按 1/30 秒步进模拟；升级时自动选第一个
     sim: function (sec) {
       for (var i = 0; i < Math.round(sec * 30); i++) {
