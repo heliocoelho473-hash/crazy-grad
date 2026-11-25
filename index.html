@@ -490,7 +490,7 @@
       <div class="form-head">
         <div class="eyebrow">考研报名表 · 第 2 栏</div>
         <h2>目标院校</h2>
-        <p class="muted">院校越好，考场上的怪越厚。没考上可以调剂，也可以二战，学习力和道具全部保留。</p>
+        <p class="muted">院校越好，考场上的怪越厚。没考上可以调剂，也可以再战一年（二战、三战……），学习力和道具全部保留。</p>
       </div>
       <div id="schoolList"></div>
     </div>
@@ -541,7 +541,7 @@
       <div class="stack">
         <h3 class="sec-title">其他</h3>
         <div class="tickets">
-          <button class="ticket" id="shopBtn" type="button"><span class="ic" style="background:#ff9f7a">本</span><span><span class="t">道具与学习素质</span><br><span class="d">用学习力升级，二战也保留</span></span><small>升级</small></button>
+          <button class="ticket" id="shopBtn" type="button"><span class="ic" style="background:#ff9f7a">本</span><span><span class="t">道具与学习素质</span><br><span class="d">用学习力升级，再战也保留</span></span><small>升级</small></button>
           <button class="ticket" id="relaxBtn" type="button"><span class="ic" style="background:#9bd3b0">鱼</span><span><span class="t">摸鱼放松</span><br><span class="d" id="relaxD">刷会儿短视频，压力 −35</span></span><small>免费 · 1 小时 1 次</small></button>
           <button class="ticket" id="adBtn" type="button"><span class="ic" style="background:#c8a27a">咖</span><span><span class="t">喝杯咖啡续命</span><br><span class="d">精力 +1</span></span><small>看广告</small></button>
           <button class="ticket" type="button" disabled><span class="ic" style="background:#cfe0ff">读</span><span><span class="t">晨读</span><br><span class="d">英文阅读理解，学习力 ×2</span></span><small>即将开放</small></button>
@@ -626,7 +626,7 @@
   <div class="ov" id="shopOv" hidden>
     <div class="panel">
       <h2>道具</h2>
-      <p class="muted">学习力：<b id="shopStudy">0</b>。升级永久生效，二战也保留。<br><span id="shopProg"></span></p>
+      <p class="muted">学习力：<b id="shopStudy">0</b>。升级永久生效，再战也保留。<br><span id="shopProg"></span></p>
       <div class="stack" id="shopList"></div>
       <button class="btn ghost" id="shopClose" type="button">回书桌</button>
     </div>
@@ -710,7 +710,7 @@
     <div class="panel">
       <div class="eyebrow">考研日</div>
       <h2>四门连考</h2>
-      <p class="muted">四科各 3 分钟：每科开考 15 秒后出 Boss，3 分钟内打倒才算这科过关。四科都过才算考完……吗？三科以上可以调剂，否则二战（星星、学习力、道具全保留）。预估分越高，那一科的 Boss 越弱。</p>
+      <p class="muted">四科各 3 分钟：每科开考 15 秒后出 Boss，3 分钟内打倒才算这科过关。四科都过才算考完……吗？三科以上可以调剂，否则再战一年（星星、学习力、道具全保留）。预估分越高，那一科的 Boss 越弱。</p>
       <dl class="result" id="preExamStats"></dl>
       <p class="warn" id="preExamWarn" hidden></p>
       <button class="btn" id="examGo" type="button">进入考场</button>
@@ -2392,11 +2392,14 @@
     return c;
   }
   function dayKey() { return save.week + '-' + dayNum(); }
+  // 第几战：1 → 一战，2 → 二战 …… 超过十就写数字
+  var CN_NUM = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+  function zhan(w) { return (w <= 10 ? CN_NUM[w - 1] : w + ' ') + '战'; }
 
   // 自习室
   function homeMessage(d) {
     if (d >= 7) return '<b>今天考研！</b>不管准备得怎么样，都得进考场了。';
-    if (save.week > 1 && d === 1) return '<b>二战第 1 天。</b>星星、学习力、道具全都还在，这次稳了。';
+    if (save.week > 1 && d === 1) return '<b>' + zhan(save.week) + '第 1 天。</b>星星、学习力、道具全都还在，' + (save.week === 2 ? '这次稳了。' : '越挫越勇，这次一定行。');
     var tips = [
       '<b>第 1 天。</b>先把四门课的第 1 章都打通，预估分涨得最快。',
       '研友说：“专业课 408 的怪最难，但学习力给得最多。”',
@@ -2413,7 +2416,7 @@
     list.push({ who: '考研倒计时', av: '倒', c: '#d9503f', text: d >= 7 ? '<b>今天考研。</b>带好准考证和 2B 铅笔。' : '距离考研还有 <b>' + left + ' 天</b>。' });
     var fam = ['吃饭了没？别老吃泡面。', '你二姨问你考上没。', '少熬夜！头发要紧。', '家里给你寄了一箱牛奶。', '隔壁小张考公上岸了哦。', '考完回家吃饭。', '妈妈相信你。'];
     list.push({ who: '妈妈', av: '妈', c: '#e0a43a', text: fam[Math.min(d, 7) - 1] });
-    if (save.week > 1) list.push({ who: '研友 老王', av: '王', c: '#3d7bd9', text: '二战的人最可怕，我看好你。' });
+    if (save.week > 1) list.push({ who: '研友 老王', av: '王', c: '#3d7bd9', text: save.week === 2 ? '二战的人最可怕，我看好你。' : '都' + zhan(save.week) + '了，你是我见过最能扛的人。冲！' });
     return list;
   }
   function openPhone() {
@@ -2440,7 +2443,7 @@
     var d = dayNum(), exam = d >= 7, dd = Math.min(d, 7);
     var m = MAJORS.filter(function (x) { return x.id === save.major; })[0];
     var s = SCHOOLS[save.school];
-    $('homeWho').textContent = (save.week > 1 ? '二战 · ' : '') + m.name + ' → ' + s.name;
+    $('homeWho').textContent = (save.week > 1 ? zhan(save.week) + ' · ' : '') + m.name + ' → ' + s.name;
     $('dayBig').innerHTML = '第 ' + dd + ' 天 <small>/ 7</small>';
     $('countdown').textContent = exam ? '今天考研！' : '距考研 ' + (7 - d) + ' 天';
     $('calNum').textContent = exam ? '考' : (7 - d);
@@ -2669,7 +2672,7 @@
   function renderEnd() {
     var s = save.finalSchool || SCHOOLS[save.school].name;
     $('endTitle').textContent = save.outcome === 'adjust' ? '调剂上岸！' : '上岸！';
-    $('endText').textContent = (save.outcome === 'adjust' ? '虽然没考上第一志愿，但你调剂到了 ' : '你考上了 ') + s + '。' + (save.week > 1 ? '二战终于成功了。' : '一战上岸。');
+    $('endText').textContent = (save.outcome === 'adjust' ? '虽然没考上第一志愿，但你调剂到了 ' : '你考上了 ') + s + '。' + (save.week > 1 ? zhan(save.week) + '终于成功了。' : '一战上岸。');
     var dl = $('endStats'); dl.innerHTML = '';
     addStat(dl, '备考周数', save.week + ' 周');
     addStat(dl, '刷题局数', save.runs + ' 局');
@@ -3894,20 +3897,20 @@
     save.runs++; save.totalKills += r.kills;
     var res = r.results || [], passed = res.slice(0, 4).filter(Boolean).length, lower = SCHOOLS[Math.max(0, save.school - 1)];
     var adj = save.school > 0 ? lower.name : '青藤学院（调剂）';
-    var stats = [['考场状态', acc ? acc.label : '正常发挥'], ['初试过关科目', passed + ' / 4'], ['复试', res[4] === true ? '通过' : (passed === 4 ? '没通过' : '没进复试')], ['击杀', r.kills]];
+    var stats = [['这是', zhan(save.week)], ['考场状态', acc ? acc.label : '正常发挥'], ['初试过关科目', passed + ' / 4'], ['复试', res[4] === true ? '通过' : (passed === 4 ? '没通过' : '没进复试')], ['击杀', r.kills]];
     if (res[4] === true) {
       save.outcome = 'pass'; save.finalSchool = s.name; persist();
       showLetter(s.name, false);
     } else if (passed >= 3 && !r.quit) {
       persist();
       showResult(passed === 4 ? '复试没过…但可以调剂！' : '差一科…可以调剂！',
-        (passed === 4 ? '初试四科都过了，复试被导师问倒了。' : acc && acc.late && !res[0] && passed === 3 ? '睡过头错过了政治，剩下三科全过。' : '四科里过了三科。') + '可以调剂到 ' + adj + '，也可以二战再冲 ' + s.name + '（星星、学习力、道具全保留）。',
+        (passed === 4 ? '初试四科都过了，复试被导师问倒了。' : acc && acc.late && !res[0] && passed === 3 ? '睡过头错过了政治，剩下三科全过。' : '四科里过了三科。') + '可以调剂到 ' + adj + '，也可以' + zhan(save.week + 1) + '再冲 ' + s.name + '（星星、学习力、道具全保留）。',
         stats, [{ label: '接受调剂：' + adj, primary: true, fn: function () { save.outcome = 'adjust'; save.finalSchool = adj; persist(); showLetter(adj, true); } },
-                { label: '不甘心，二战', fn: secondTry }]);
+                { label: '不甘心，' + zhan(save.week + 1), fn: secondTry }]);
     } else {
       persist();
-      showResult('没过线…', '星星、学习力、道具和学习素质都保留。二战从今天开始，每天的高级复习还会继续叠加。', stats.concat([['当前学习力', save.study, true]]),
-        [{ label: '开始二战', primary: true, fn: secondTry }]);
+      showResult('没过线…', '星星、学习力、道具和学习素质都保留。' + zhan(save.week + 1) + '从今天开始，每天的高级复习还会继续叠加。', stats.concat([['当前学习力', save.study, true]]),
+        [{ label: '开始' + zhan(save.week + 1), primary: true, fn: secondTry }]);
     }
   }
   // 录取通知书
@@ -3922,7 +3925,7 @@
   $('letterGo').addEventListener('click', function () { overlay('letterOv', false); renderEnd(); show('vEnd'); });
   function secondTry() {
     save.week++; save.outcome = null; save.finalSchool = null;
-    // 二战从今天算第 1 天，今天剩下的精力照常可用
+    // 再战从今天算第 1 天，今天剩下的精力照常可用
     save.start = today(); save.stress = 30; save.dayLog = null; save.seenDay = null;
     persist(); backHome();
   }
@@ -3984,7 +3987,7 @@
     var dl = $('dailyStats'); dl.innerHTML = '';
     var gapTxt = sc >= line ? '已过线 ✓' : '还差 ' + (line - sc) + ' 分';
     if (!log || log.key === key) {
-      $('dailyEyebrow').textContent = (save.week > 1 ? '二战 · ' : '') + '主线任务';
+      $('dailyEyebrow').textContent = (save.week > 1 ? zhan(save.week) + ' · ' : '') + '主线任务';
       $('dailyTitle').textContent = '7 天后，考研。';
       addStat(dl, '目标院校', s.name + '（' + s.tier + '）');
       addStat(dl, '分数线', line + ' 分');
