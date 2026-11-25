@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>疯狂研究生小怪图鉴</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+  /* 布局：自习室黑板上的“怪物图鉴”——顶部是割草预览，下面按科目分组的卡片网格 */
+  :root {
+    --board: #1c2823;
+    --board-2: #233229;
+    --board-3: #2b3d33;
+    --chalk: #e9efe6;
+    --chalk-dim: #a3b4a8;
+    --hi: #f4d35e;
+    --rule: rgba(233, 239, 230, 0.12);
+    --display: "ZCOOL QingKe HuangYou", "PingFang SC", "Microsoft YaHei", sans-serif;
+    --body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    background: var(--board);
+    color: var(--chalk);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-block: 32px 64px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: grid;
+    gap: 40px;
+  }
+  header { display: grid; gap: 8px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.12em; color: var(--chalk-dim); }
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(36px, 7vw, 56px);
+    line-height: 1.1;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h1 mark { background: none; color: var(--hi); }
+  .lead { margin: 0; max-width: 62ch; color: var(--chalk-dim); }
+
+  /* 割草预览 */
+  .arena { display: grid; gap: 12px; }
+  .arena-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; justify-content: space-between; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tab {
+    font: inherit; font-size: 14px;
+    color: var(--chalk);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 4px 12px;
+    cursor: pointer;
+  }
+  .tab[aria-pressed="true"] { background: var(--hi); color: var(--board); border-color: var(--hi); font-weight: 700; }
+  .tab:focus-visible, .ctrl:focus-visible { outline: 2px solid var(--hi); outline-offset: 2px; }
+  .ctrl {
+    font: inherit; font-size: 14px;
+    color: var(--chalk);
+    background: var(--board-3);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 4px 12px;
+    cursor: pointer;
+  }
+  .stage {
+    position: relative;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--board-2);
+  }
+  #arena { display: block; width: 100%; height: 400px; touch-action: none; image-rendering: pixelated; }
+  .hud {
+    position: absolute; left: 12px; top: 10px; right: 12px;
+    display: flex; flex-wrap: wrap; gap: 4px 16px;
+    font-size: 13px; color: var(--chalk);
+    pointer-events: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .hud b { color: var(--hi); font-weight: 700; }
+  .xpbar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(0,0,0,0.3); }
+  .xpbar span { display: block; height: 100%; width: 0; background: var(--hi); transition: width 0.15s; }
+  .levelup {
+    position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%);
+    font-family: var(--display); font-size: 28px; color: var(--hi);
+    text-shadow: 0 2px 0 #000;
+    pointer-events: none; white-space: nowrap;
+  }
+  .hint { margin: 0; font-size: 13px; color: var(--chalk-dim); }
+
+  /* 图鉴 */
+  .group { display: grid; gap: 16px; }
+  .group-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; border-bottom: 1px solid var(--rule); padding-bottom: 8px; }
+  h2 { font-family: var(--display); font-weight: 400; font-size: 30px; margin: 0; line-height: 1.2; }
+  .count { font-size: 13px; color: var(--hi); font-variant-numeric: tabular-nums; }
+  .note { font-size: 13px; color: var(--chalk-dim); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .card { display: grid; grid-template-rows: auto 1fr; gap: 10px; min-width: 0; }
+  .tile {
+    position: relative;
+    display: grid; place-items: center;
+    aspect-ratio: 4 / 3;
+    max-width: 100%;
+    border-radius: 6px;
+    background-color: var(--board-2);
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px),
+      linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .tile canvas { width: 120px; height: 120px; image-rendering: pixelated; }
+  .badge {
+    position: absolute; top: 8px; left: 8px;
+    font-size: 12px; font-weight: 700;
+    color: var(--board); background: var(--hi);
+    padding: 0 6px; border-radius: 4px;
+  }
+  .info { display: grid; gap: 4px; align-content: start; min-width: 0; }
+  .name-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+  .name { font-weight: 700; font-size: 16px; }
+  .course { font-size: 12px; color: var(--chalk-dim); border: 1px solid var(--rule); border-radius: 4px; padding: 0 6px; }
+  .behavior { margin: 0; font-size: 14px; }
+  .origin { margin: 0; font-size: 13px; color: var(--chalk-dim); }
+  .line { margin: 0; font-size: 13px; color: var(--hi); }
+  footer { font-size: 13px; color: var(--chalk-dim); border-top: 1px solid var(--rule); padding-top: 16px; }
+
+  @media (max-width: 480px) {
+    #arena { height: 340px; }
+    .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .tile canvas { width: 96px; height: 96px; }
+    .name { font-size: 15px; }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">疯狂的研究生 · 原型 v0.1 · 像素草图</div>
+    <h1>小怪<mark>图鉴</mark></h1>
+    <p class="lead">首发两个专业（计算机、法学）要打的 23 种小怪。每只都是 24×24 像素、两帧待机动画的草图，用来定体型、配色和动作；正式素材再按这个尺寸精修。</p>
+  </header>
+
+  <section class="arena" aria-label="割草预览">
+    <div class="arena-bar">
+      <div class="tabs" id="tabs" role="group" aria-label="选择科目"></div>
+      <button class="ctrl" id="pause" type="button">暂停</button>
+    </div>
+    <div class="stage">
+      <canvas id="arena" aria-label="割草预览：小怪从四周涌向考研人，考研人自动攻击"></canvas>
+      <div class="hud">
+        <span>击杀 <b id="kills">0</b></span>
+        <span>等级 <b id="level">1</b></span>
+        <span>同屏 <b id="onscreen">0</b></span>
+        <span>时间 <b id="clock">0:00</b></span>
+      </div>
+      <div class="levelup" id="levelup" hidden>升级！</div>
+      <div class="xpbar"><span id="xp"></span></div>
+    </div>
+    <p class="hint">按住画面拖动可以控制考研人走位，松手后自动走位。攻击和升级都是自动的；3 级起多一个环绕护盾，5 级起两个。精英和 Boss 不在这里。</p>
+  </section>
+
+  <div id="book" style="display:grid;gap:40px"></div>
+
+  <footer>草图由代码逐像素生成，文件在项目的 crazy-grad/prototype/ 里。下一步：把割草预览改成可玩的战斗原型，再按手感调数量和速度。</footer>
+</div>
+
+<script>
+/* 疯狂的研究生 · 像素小怪原型 v0.1
+   每只怪都是在 24×24 像素网格上作画的函数，t 是待机动画帧（0 或 1）。
+   渲染时自动加一圈深色描边，再整数倍放大，保证像素风。
+   后续做正式素材时，可以把这些草图当作尺寸、配色和动作的参考。 */
+(function (root) {
+  'use strict';
+
+  var N = 24;
+  var INK = '#17130f';
+
+  // ---------- 像素画布 ----------
+  function Grid() { this.d = new Array(N * N).fill(null); }
+  Grid.prototype.p = function (x, y, c) {
+    x = Math.round(x); y = Math.round(y);
+    if (x >= 0 && y >= 0 && x < N && y < N) this.d[y * N + x] = c;
+  };
+  Grid.prototype.get = function (x, y) {
+    return (x >= 0 && y >= 0 && x < N && y < N) ? this.d[y * N + x] : null;
+  };
+  Grid.prototype.rect = function (x, y, w, h, c) {
+    for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) this.p(x + i, y + j, c);
+  };
+  Grid.prototype.ell = function (cx, cy, rx, ry, c) {
+    for (var y = -ry; y <= ry; y++) for (var x = -rx; x <= rx; x++) {
+      if ((x * x) / (rx * rx + 0.5) + (y * y) / (ry * ry + 0.5) <= 1) this.p(cx + x, cy + y, c);
+    }
+  };
+  Grid.prototype.circ = function (cx, cy, r, c) { this.ell(cx, cy, r, r, c); };
+  Grid.prototype.line = function (x0, y0, x1, y1, c) {
+    var dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+    var dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+    var err = dx + dy;
+    for (;;) {
+      this.p(x0, y0, c);
+      if (x0 === x1 && y0 === y1) break;
+      var e2 = 2 * err;
+      if (e2 >= dy) { err += dy; x0 += sx; }
+      if (e2 <= dx) { err += dx; y0 += sy; }
+    }
+  };
+  Grid.prototype.eye = function (x, y) {
+    this.rect(x, y, 2, 2, '#ffffff');
+    this.p(x + 1, y + 1, INK);
+  };
+
+  // 3×5 小字（英文、数字、符号）和 5×5 汉字
+  var FONT = {
+    'A': ['.#.', '#.#', '###', '#.#', '#.#'],
+    'Z': ['###', '..#', '.#.', '#..', '###'],
+    'X': ['#.#', '#.#', '.#.', '#.#', '#.#'],
+    '?': ['##.', '..#', '.#.', '...', '.#.'],
+    '!': ['.#.', '.#.', '.#.', '...', '.#.'],
+    '0': ['###', '#.#', '#.#', '#.#', '###'],
+    '1': ['.#.', '##.', '.#.', '.#.', '###'],
+    '3': ['##.', '..#', '.#.', '..#', '##.'],
+    '§': ['.##', '#..', '###', '..#', '##.'],
+    '甲': ['#####', '#.#.#', '#####', '..#..', '..#..'],
+    '乙': ['####.', '...#.', '..#..', '.#...', '#####'],
+    '丙': ['#####', '..#..', '#####', '#.#.#', '#...#']
+  };
+  Grid.prototype.glyph = function (ch, x, y, c) {
+    var rows = FONT[ch];
+    if (!rows) return 0;
+    for (var j = 0; j < rows.length; j++) {
+      for (var i = 0; i < rows[j].length; i++) if (rows[j][i] === '#') this.p(x + i, y + j, c);
+    }
+    return rows[0].length;
+  };
+  Grid.prototype.text = function (s, x, y, c) {
+    for (var k = 0; k < s.length; k++) x += this.glyph(s[k], x, y, c) + 1;
+  };
+
+  function outline(g) {
+    var o = new Grid();
+    o.d = g.d.slice();
+    for (var y = 0; y < N; y++) for (var x = 0; x < N; x++) {
+      if (g.get(x, y)) continue;
+      if (g.get(x - 1, y) || g.get(x + 1, y) || g.get(x, y - 1) || g.get(x, y + 1)) o.d[y * N + x] = INK;
+    }
+    return o;
+  }
+
+  // ---------- 怪物 ----------
+  var MONSTERS = [
+    // 英语
+    {
+      id: 'abandon', group: 'en', name: 'Abandon 幽灵', course: '英语', main: true, speed: 34,
+      origin: '单词书永远背到第一个词', behavior: '数量最多、血最少，成群涌来', line: '你又从我开始背了？',
+      draw: function (g, t) {
+        var c = '#d6ebff', s = '#a6c8ef';
+        g.circ(12, 9 + t, 7, c);
+        g.rect(5, 9 + t, 15, 9, c);
+        g.rect(5, 15 + t, 15, 3, s);
+        for (var x = 5; x < 20; x++) if (((x + t * 2) % 4) < 2) g.p(x, 18 + t, s);
+        g.eye(8, 7 + t); g.eye(14, 7 + t);
+        g.text('A', 11, 10 + t, '#5b7fb3');
+      }
+    },
+    {
+      id: 'shuci', group: 'en', name: '熟词僻义怪', course: '英语', speed: 30,
+      origin: '熟悉的词有生僻意思', behavior: '长得像友军，靠近才变脸', line: '我认识你，你不认识我',
+      draw: function (g, t) {
+        var c = '#93d36b', s = '#5fa848';
+        g.ell(12, 14, 8, 6, c);
+        g.ell(12, 17, 6, 2, s);
+        if (!t) {
+          g.p(8, 12, INK); g.p(9, 11, INK); g.p(10, 12, INK);
+          g.p(14, 12, INK); g.p(15, 11, INK); g.p(16, 12, INK);
+          g.p(6, 14, '#f29bb0'); g.p(18, 14, '#f29bb0');
+          g.p(10, 15, INK); g.p(11, 16, INK); g.p(12, 16, INK); g.p(13, 16, INK); g.p(14, 15, INK);
+        } else {
+          g.eye(8, 12); g.eye(14, 12);
+          g.p(9, 13, '#d62828'); g.p(15, 13, '#d62828');
+          g.p(7, 10, INK); g.p(8, 10, INK); g.p(9, 11, INK);
+          g.p(17, 10, INK); g.p(16, 10, INK); g.p(15, 11, INK);
+          g.rect(9, 16, 7, 2, INK);
+          g.p(10, 16, '#ffffff'); g.p(12, 16, '#ffffff'); g.p(14, 16, '#ffffff');
+        }
+      }
+    },
+    {
+      id: 'wanxing', group: 'en', name: '完形填空格', course: '英语', speed: 32,
+      origin: '完形填空的空格', behavior: '排成一行横扫过来', line: '___',
+      draw: function (g, t) {
+        g.rect(5, 5, 14, 12, '#f6f1e4');
+        g.rect(5, 16, 14, 1, '#d8cfb8');
+        g.eye(8, 8); g.eye(14, 8);
+        g.rect(8, 13, 8, 1, INK);
+        if (!t) { g.rect(7, 17, 1, 3, INK); g.rect(16, 17, 1, 3, INK); }
+        else { g.rect(6, 17, 1, 2, INK); g.p(7, 19, INK); g.rect(17, 17, 1, 2, INK); g.p(16, 19, INK); }
+      }
+    },
+    {
+      id: 'luanxu', group: 'en', name: '新题型乱序卡', course: '英语', speed: 38,
+      origin: '段落排序题', behavior: '散乱飞行，偶尔互换位置', line: '我本来在第几段来着？',
+      draw: function (g, t) {
+        var off = t ? 2 : 0;
+        g.rect(9 + off, 3, 10, 13, '#e3cf9f');
+        g.rect(5, 7, 10, 13, '#fff8e6');
+        g.p(7, 9, INK); g.p(11, 9, INK);
+        g.text(t ? '1' : '3', 8, 12, '#c2412d');
+      }
+    },
+
+    // 政治
+    {
+      id: 'danxuan', flip: true, group: 'po', name: '单选题小兵', course: '政治', main: true, speed: 36,
+      origin: '单选题', behavior: '成片冲过来，一碰就碎', line: '四选一，选不出来？',
+      draw: function (g, t) {
+        g.line(18, 4, 18, 20, '#8a6b3d');
+        g.p(18, 2, '#d7dde2'); g.p(18, 3, '#d7dde2'); g.p(17, 4, '#d7dde2'); g.p(19, 4, '#d7dde2');
+        g.circ(11, 10, 6, '#f2c94c');
+        g.circ(11, 10, 4, '#ffe7a0');
+        g.text('A', 10, 8, INK);
+        g.rect(16, 12, 2, 1, '#f2c94c');
+        if (!t) { g.rect(8, 17, 2, 3, INK); g.rect(13, 16, 2, 3, INK); }
+        else { g.rect(9, 16, 2, 3, INK); g.rect(12, 17, 2, 3, INK); }
+      }
+    },
+    {
+      id: 'datika', group: 'po', name: '答题卡方格', course: '政治', speed: 26,
+      origin: '涂错的答题卡格子', behavior: '排成方阵往前推', line: '2B 铅笔带了吗？',
+      draw: function (g, t) {
+        g.rect(4, 4, 16, 15, '#f7f3ea');
+        g.rect(4, 4, 16, 2, '#e05a5a');
+        g.p(8, 5, '#ffffff'); g.p(15, 5, '#ffffff');
+        for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+          var filled = ((r * 4 + c + t) % 3) === 0;
+          g.rect(6 + c * 3, 8 + r * 3, 2, 1, filled ? '#2b2b2b' : '#f0b4b4');
+        }
+      }
+    },
+    {
+      id: 'dice', group: 'po', name: '蒙题骰子', course: '政治', speed: 40,
+      origin: '不会就蒙', behavior: '路线随机乱滚', line: '三长一短选最短',
+      draw: function (g, t) {
+        g.rect(5, 4, 14, 14, '#fbfbf6');
+        g.rect(17, 5, 2, 13, '#d9d5c8');
+        g.rect(6, 16, 13, 2, '#d9d5c8');
+        var pip = function (x, y) { g.rect(x, y, 2, 2, '#c0392b'); };
+        if (!t) { pip(7, 6); pip(10, 9); pip(13, 12); }
+        else { pip(7, 6); pip(13, 6); pip(10, 9); pip(7, 12); pip(13, 12); }
+      }
+    },
+
+    // 数学
+    {
+      id: 'wuqiong', group: 'ma', name: '无穷小量', course: '数学', main: true, speed: 46,
+      origin: '极限', behavior: '体型很小、数量很多，不好打中', line: '趋近于零，但永远不等于零',
+      draw: function (g, t) {
+        var r = t ? 2 : 3;
+        g.circ(12, 15, r, '#b58cff');
+        g.p(11, 14, '#e6d7ff');
+        g.p(11, 15, INK); g.p(13, 15, INK);
+        if (!t) g.p(17, 11, '#b58cff');
+      }
+    },
+    {
+      id: 'zhengfu', group: 'ma', name: '正负号小虫', course: '数学', speed: 34,
+      origin: '算错符号', behavior: '一加一减成对出现，碎了会变成反号', line: '一个负号，整题白做',
+      draw: function (g, t) {
+        var c = t ? '#3b82f6' : '#e74c3c', s = t ? '#245fbf' : '#b83227';
+        [7, 10, 14, 17].forEach(function (x) { g.rect(x, 18, 1, 2, INK); });
+        g.ell(12, 14, 8, 5, c);
+        g.ell(12, 16, 7, 2, s);
+        g.p(8, 9, INK); g.p(7, 8, INK); g.p(16, 9, INK); g.p(17, 8, INK);
+        g.rect(9, 13, 6, 2, '#ffffff');
+        if (!t) g.rect(11, 11, 2, 6, '#ffffff');
+      }
+    },
+    {
+      id: 'changshu', group: 'ma', name: '常数 C', course: '数学', speed: 30,
+      origin: '不定积分的 +C', behavior: '跟在其他怪身后，漏打会扣分', line: '别忘了我',
+      draw: function (g, t) {
+        var c = '#f5c542';
+        g.circ(12, 11, 8, c);
+        g.circ(12, 11, 4, null);
+        g.rect(13, 8, 9, 7, null);
+        g.ell(10, 17, 4, 1, '#d99a1e');
+        g.eye(7, 6); g.eye(11, 4);
+        g.p(19, 16, c); g.p(20, 16 + t, c);
+      }
+    },
+    {
+      id: 'caogao', group: 'ma', name: '草稿纸碎屑', course: '数学', speed: 28,
+      origin: '满张草稿纸', behavior: '成片飘过来，挡住视线', line: '我算到哪了？',
+      draw: function (g, t) {
+        var p = '#efe8d8';
+        g.ell(12, 12, 7, 6, p);
+        var j = t ? [[5, 8], [18, 15], [9, 18]] : [[18, 7], [6, 15], [14, 18]];
+        j.forEach(function (q) { g.p(q[0], q[1], p); g.p(q[0] + (q[0] < 12 ? -1 : 1), q[1], p); });
+        g.line(7, 9, 15, 8, '#8aa0bf');
+        g.line(8, 14, 16, 13, '#8aa0bf');
+        g.line(9, 16, 13, 15, '#e07a5f');
+        g.p(10, 11, INK); g.p(14, 11, INK);
+      }
+    },
+
+    // 计算机 408
+    {
+      id: 'jiangshi', flip: true, group: 'cs', name: '僵尸进程', course: '操作系统', main: true, speed: 20,
+      origin: '已经结束但没被回收的进程', behavior: '数量最多，慢吞吞地成群挤过来', line: 'kill -9 也没用',
+      draw: function (g, t) {
+        var skin = '#86b86a', shirt = '#4b6584', pants = '#2f3e57';
+        g.rect(7, 2, 9, 8, skin);
+        g.rect(7, 2, 9, 2, '#5c8a46');
+        g.rect(9, 5, 2, 1, '#eaffd6'); g.rect(13, 5, 2, 1, '#eaffd6');
+        g.rect(10, 8, 4, 1, '#3d5a2e');
+        g.rect(8, 10, 8, 7, shirt);
+        g.text('X', 10, 11, '#cfe3ff');
+        g.rect(16, 11 + t, 5, 2, skin);
+        g.rect(16, 14 - t, 5, 2, skin);
+        g.rect(9, 17, 2, 4 - t, pants);
+        g.rect(13, 17, 2, 3 + t, pants);
+      }
+    },
+    {
+      id: 'diubao', group: 'cs', name: '丢包数据包', course: '计算机网络', speed: 44,
+      origin: '网络丢包', behavior: '成串飞来，偶尔凭空消失又出现', line: '请求超时，正在重传…',
+      alpha: function (t) { return t ? 0.35 : 1; },
+      draw: function (g) {
+        g.rect(5, 7, 14, 10, '#f1e7d1');
+        g.line(5, 7, 12, 12, '#b59c72');
+        g.line(18, 7, 12, 12, '#b59c72');
+        g.text('01', 8, 12, '#3c6e71');
+        g.p(2, 10, '#cbd5e1'); g.rect(1, 13, 3, 1, '#cbd5e1');
+      }
+    },
+    {
+      id: 'yezhizhen', flip: true, group: 'cs', name: '野指针幽灵', course: '数据结构', speed: 36,
+      origin: '指向未知内存的指针', behavior: '随机瞬移一小段', line: '段错误（核心已转储）',
+      draw: function (g, t) {
+        var c = '#b48ce6', s = '#8d63c4';
+        g.circ(11, 9, 7, c);
+        g.rect(4, 9, 15, 8, c);
+        g.rect(4, 14, 15, 3, s);
+        for (var x = 4; x < 19; x++) if (((x + t) % 4) < 2) g.p(x, 17, s);
+        g.eye(7, 8); g.eye(13, 8);
+        g.rect(18, 11, 4, 1, '#ffd166');
+        g.p(21, 10, '#ffd166'); g.p(21, 12, '#ffd166'); g.p(22, 11, '#ffd166');
+        if (t) {
+          g.rect(3, 5, 3, 1, '#ff4fd8');
+          g.rect(15, 16, 4, 1, '#4fe3ff');
+          g.rect(1, 12, 2, 1, '#4fe3ff');
+        }
+      }
+    },
+    {
+      id: 'taowa', group: 'cs', name: '递归套娃', course: '数据结构', speed: 30,
+      origin: '递归调用', behavior: '碎掉时分裂成两个更小的自己', line: '栈溢出了…',
+      draw: function (g, t) {
+        var outer = t ? '#2f80ed' : '#d94841', inner = t ? '#d94841' : '#f2a541';
+        g.ell(12, 14, 7, 8, outer);
+        g.circ(12, 7, 5, outer);
+        g.circ(12, 7, 3, '#f6d7b0');
+        g.p(11, 7, INK); g.p(13, 7, INK); g.p(12, 9, '#e07a7a');
+        g.ell(12, 17, 3, 4, inner);
+        g.circ(12, 13, 2, inner);
+        g.p(12, 13, '#f6d7b0');
+      }
+    },
+    {
+      id: 'cache', group: 'cs', name: 'Cache 未命中', course: '组成原理', speed: 32,
+      origin: '缓存未命中', behavior: '碰到玩家会短暂拖慢攻速', line: '去主存里找吧',
+      draw: function (g, t) {
+        g.rect(6, 6, 12, 12, '#3d4451');
+        g.rect(7, 7, 10, 10, '#4d5666');
+        for (var i = 0; i < 4; i++) {
+          var o = 7 + i * 3;
+          g.rect(o, 4, 1, 2, '#c8ccd2'); g.rect(o, 18, 1, 2, '#c8ccd2');
+          g.rect(4, o, 2, 1, '#c8ccd2'); g.rect(18, o, 2, 1, '#c8ccd2');
+        }
+        g.text(t ? '!' : '?', 11, 10, t ? '#ff6b6b' : '#ffd166');
+      }
+    },
+
+    // 法学
+    {
+      id: 'fatiao', group: 'law', name: '法条纸片', course: '专业基础·民法', main: true, speed: 34,
+      origin: '大量法条', behavior: '数量最多，一整片飘过来', line: '第……条……',
+      draw: function (g, t) {
+        var dx = t, ln = '#a8957a';
+        g.rect(6 + dx, 4, 12, 16, '#f5ecd7');
+        g.rect(5 + dx, 3, 14, 2, '#c9a66b');
+        g.rect(5 + dx, 19, 14, 2, '#c9a66b');
+        g.text('§', 7 + dx, 6, '#b23a3a');
+        g.p(13 + dx, 7, INK); g.p(16 + dx, 7, INK);
+        g.rect(8 + dx, 12, 8, 1, ln);
+        g.rect(8 + dx, 14, 6, 1, ln);
+        g.rect(8 + dx, 16, 7, 1, ln);
+      }
+    },
+    {
+      id: 'jiayibing', group: 'law', name: '案例主角甲乙丙', course: '专业基础·刑法', speed: 32,
+      origin: '案例题里的甲、乙、丙', behavior: '三个一组冲来', line: '甲欺骗了乙，乙又盗窃了丙…',
+      draw: function (g, t) {
+        var cols = ['#e76f51', '#2a9d8f', '#457b9d'], chars = ['甲', '乙', '丙'];
+        for (var k = 0; k < 3; k++) {
+          var cx = 4 + k * 8, up = ((k + t) % 2) ? 1 : 0;
+          g.circ(cx, 7 + up, 3, '#f3c9a0');
+          g.p(cx - 1, 7 + up, INK); g.p(cx + 1, 7 + up, INK);
+          g.rect(cx - 2, 11 + up, 5, 6, cols[k]);
+          g.glyph(chars[k], cx - 2, 11 + up, '#ffffff');
+          g.rect(cx - 2, 17 + up, 2, 2, INK);
+          g.rect(cx + 1, 17 + up, 2, 2, INK);
+        }
+      }
+    },
+    {
+      id: 'danshu', flip: true, group: 'law', name: '但书小尾巴', course: '专业基础', speed: 38,
+      origin: '法条后面的“但是……”', behavior: '冲到一半突然掉头', line: '但是，法律另有规定的除外',
+      mirror: function (t) { return t === 1; },
+      draw: function (g) {
+        var c = '#9b6bd3', s = '#7a4fb3';
+        [[9, 12], [9, 13], [8, 13], [8, 14], [7, 14], [7, 15], [6, 15], [6, 16], [7, 17], [8, 18]]
+          .forEach(function (q) { g.p(q[0], q[1], c); });
+        g.circ(14, 10, 5, c);
+        g.ell(14, 13, 4, 1, s);
+        g.eye(15, 8);
+        g.p(18, 11, INK);
+      }
+    },
+    {
+      id: 'buding', group: 'law', name: '司法解释补丁', course: '专业基础', speed: 30,
+      origin: '法条之外的司法解释', behavior: '贴在其他小怪身上给它们加血', line: '还有一条解释你没看',
+      draw: function (g, t) {
+        var y0 = 10 + t, tan = '#f2c48d', pad = '#e3a566', dot = '#c98a4b';
+        g.rect(4, y0, 16, 6, tan);
+        g.rect(3, y0 + 1, 1, 4, tan);
+        g.rect(20, y0 + 1, 1, 4, tan);
+        g.rect(9, y0 + 1, 6, 4, pad);
+        g.p(10, y0 + 2, dot); g.p(13, y0 + 2, dot); g.p(11, y0 + 3, dot); g.p(14, y0 + 3, dot);
+        g.p(6, y0 + 2, INK); g.p(17, y0 + 2, INK);
+        g.rect(11, y0 - 6, 2, 4, '#4ade80');
+        g.rect(10, y0 - 5, 4, 2, '#4ade80');
+      }
+    },
+    {
+      id: 'paopao', group: 'law', name: '概念泡泡', course: '综合·法理学', speed: 24,
+      origin: '抽象的法理概念', behavior: '轻飘飘地成群飘来', line: '权利还是权力？',
+      alpha: function () { return 0.9; },
+      draw: function (g, t) {
+        var r = t ? 7 : 8;
+        g.circ(12, 12, r, '#8fd3ff');
+        g.circ(12, 12, r - 1, '#d6f0ff');
+        g.text('?', 11, 10, '#2f6fd1');
+        g.p(8, 8, '#ffffff'); g.p(9, 7, '#ffffff'); g.p(8, 9, '#ffffff');
+      }
+    },
+    {
+      id: 'zhujian', flip: true, group: 'law', name: '律令竹简兵', course: '综合·法制史', speed: 22,
+      origin: '古代律令竹简', behavior: '排成方阵正面推进', line: '哪个朝代的来着？',
+      draw: function (g, t) {
+        for (var i = 0; i < 5; i++) g.rect(4 + i * 3, 4, 2, 14, '#d2bc7c');
+        for (var k = 0; k < 4; k++) g.rect(6 + k * 3, 4, 1, 14, '#a88d4f');
+        g.rect(4, 7, 14, 1, '#6b4f2a');
+        g.rect(4, 14, 14, 1, '#6b4f2a');
+        g.p(9, 10, INK); g.p(13, 10, INK);
+        g.rect(10, 12, 3, 1, INK);
+        g.line(20, 2, 20, 20, '#6b4f2a');
+        g.p(20, 1, '#d7dde2'); g.p(19, 2, '#d7dde2'); g.p(21, 2, '#d7dde2');
+        g.rect(18, 11, 2, 1, '#d2bc7c');
+        g.rect(7, 18, 2, 2 + t, INK);
+        g.rect(13, 18, 2, 3 - t, INK);
+      }
+    },
+    {
+      id: 'yingwu', flip: true, group: 'law', name: '法谚鹦鹉', course: '综合·法理学', speed: 42,
+      origin: '反复背诵的法谚', behavior: '绕着玩家飞，念句子干扰', line: '法无明文规定不为罪！',
+      draw: function (g, t) {
+        var c = '#3fbf5f', s = '#2a8f45';
+        g.line(10, 19, 8, 22, '#e64b3b');
+        g.line(11, 19, 10, 22, '#f2a33a');
+        g.ell(11, 14, 5, 6, c);
+        g.circ(11, 7, 4, c);
+        g.ell(9, 14 + t, 3, 4, s);
+        g.p(16, 7, '#f2a33a'); g.p(17, 7, '#f2a33a'); g.p(16, 8, '#d9822b');
+        g.eye(11, 5);
+        if (!t) {
+          g.rect(16, 0, 7, 6, '#ffffff');
+          g.p(18, 6, '#ffffff');
+          g.text('!', 18, 0, '#e64b3b');
+        }
+      }
+    }
+  ];
+
+  // 考研人（玩家），只在割草预览里用
+  var PLAYER = {
+    id: 'player', flip: true, name: '考研人',
+    draw: function (g, t) {
+      g.rect(6, 11, 2, 6, '#ffbe0b');
+      g.rect(8, 11, 9, 7, '#3a86ff');
+      g.circ(12, 7, 4, '#f3c9a0');
+      g.rect(8, 2, 9, 3, '#2b2d42');
+      g.rect(9, 7, 3, 2, INK); g.p(10, 7, '#bfe3ff');
+      g.rect(13, 7, 3, 2, INK); g.p(14, 7, '#bfe3ff');
+      g.p(12, 7, INK);
+      g.rect(9, 18, 2, 3 - t, '#2b2d42');
+      g.rect(14, 18, 2, 2 + t, '#2b2d42');
+    }
+  };
+
+  var GROUPS = [
+    { id: 'en', name: '英语', note: '公共课 · 所有专业都要打' },
+    { id: 'po', name: '政治', note: '公共课 · 只按题型做怪' },
+    { id: 'ma', name: '数学', note: '公共课 · 计算机要考，法学不考' },
+    { id: 'cs', name: '计算机 408', note: '专业课 · 数据结构、组成原理、操作系统、计算机网络' },
+    { id: 'law', name: '法学（法硕）', note: '专业课 · 专业基础（刑法、民法）+ 综合（法理学、法制史）' }
+  ];
+
+  // 帧缓存：每只怪每帧只画一次，之后直接放大贴图
+  var cache = {};
+  function frame(def, t) {
+    var key = def.id + ':' + t;
+    if (cache[key]) return cache[key];
+    var g = new Grid();
+    def.draw(g, t);
+    var o = outline(g);
+    var cv = document.createElement('canvas');
+    cv.width = N; cv.height = N;
+    var ctx = cv.getContext('2d');
+    for (var y = 0; y < N; y++) for (var x = 0; x < N; x++) {
+      var c = o.d[y * N + x];
+      if (c) { ctx.fillStyle = c; ctx.fillRect(x, y, 1, 1); }
+    }
+    cache[key] = cv;
+    return cv;
+  }
+
+  function drawSprite(ctx, def, t, x, y, scale, flip) {
+    var img = frame(def, t);
+    var a = def.alpha ? def.alpha(t) : 1;
+    var mirror = def.mirror ? def.mirror(t) : false;
+    if (flip && def.flip) mirror = !mirror;
+    var size = N * scale;
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.imageSmoothingEnabled = false;
+    if (mirror) {
+      ctx.translate(x + size, y);
+      ctx.scale(-1, 1);
+      ctx.drawImage(img, 0, 0, size, size);
+    } else {
+      ctx.drawImage(img, x, y, size, size);
+    }
+    ctx.restore();
+  }
+
+  root.GradMonsters = { N: N, list: MONSTERS, groups: GROUPS, player: PLAYER, frame: frame, drawSprite: drawSprite };
+})(window);
+
+</script>
+<script>
+(function () {
+  'use strict';
+  var GM = window.GradMonsters;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- 图鉴卡片 ----------
+  var book = document.getElementById('book');
+  var cardCanvases = [];
+  GM.groups.forEach(function (grp) {
+    var mons = GM.list.filter(function (m) { return m.group === grp.id; });
+    var sec = document.createElement('section');
+    sec.className = 'group';
+    sec.innerHTML =
+      '<div class="group-head"><h2></h2><span class="count"></span><span class="note"></span></div><div class="grid"></div>';
+    sec.querySelector('h2').textContent = grp.name;
+    sec.querySelector('.count').textContent = mons.length + ' 种小怪';
+    sec.querySelector('.note').textContent = grp.note;
+    var grid = sec.querySelector('.grid');
+    mons.forEach(function (m) {
+      var card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML =
+        '<div class="tile"><canvas width="120" height="120"></canvas></div>' +
+        '<div class="info"><div class="name-row"><span class="name"></span><span class="course"></span></div>' +
+        '<p class="behavior"></p><p class="origin"></p><p class="line"></p></div>';
+      if (m.main) {
+        var b = document.createElement('span');
+        b.className = 'badge';
+        b.textContent = '主力';
+        card.querySelector('.tile').appendChild(b);
+      }
+      card.querySelector('.name').textContent = m.name;
+      card.querySelector('.course').textContent = m.course;
+      card.querySelector('.behavior').textContent = m.behavior;
+      card.querySelector('.origin').textContent = '原型：' + m.origin;
+      card.querySelector('.line').textContent = '「' + m.line + '」';
+      var cv = card.querySelector('canvas');
+      cv.setAttribute('role', 'img');
+      cv.setAttribute('aria-label', m.name + '的像素草图');
+      cardCanvases.push({ cv: cv, def: m });
+      grid.appendChild(card);
+    });
+    book.appendChild(sec);
+  });
+
+  var tick = 0;
+  function drawCards() {
+    cardCanvases.forEach(function (c, i) {
+      var ctx = c.cv.getContext('2d');
+      ctx.clearRect(0, 0, 120, 120);
+      GM.drawSprite(ctx, c.def, (tick + (i % 2)) % 2, 0, 0, 5, false);
+    });
+  }
+  drawCards();
+  if (!reduceMotion) setInterval(function () { tick = (tick + 1) % 2; drawCards(); }, 420);
+
+  // ---------- 割草预览 ----------
+  var canvas = document.getElementById('arena');
+  var ctx = canvas.getContext('2d');
+  var W = 0, H = 0, dpr = 1;
+  var SCALE = 2, SIZE = GM.N * SCALE;
+
+  function resize() {
+    var r = canvas.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var groupId = 'cs';
+  var S;
+  function reset() {
+    S = {
+      mobs: [], shots: [], gems: [],
+      px: W / 2, py: H / 2,
+      kills: 0, xp: 0, lv: 1,
+      time: 0, spawnAcc: 0, fireAcc: 0,
+      levelFlash: 0, face: false
+    };
+  }
+  reset();
+
+  var tabs = document.getElementById('tabs');
+  GM.groups.forEach(function (grp) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tab';
+    b.id = 'tab-' + grp.id;
+    b.textContent = grp.name;
+    b.setAttribute('aria-pressed', grp.id === groupId ? 'true' : 'false');
+    b.addEventListener('click', function () {
+      groupId = grp.id;
+      Array.prototype.forEach.call(tabs.children, function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      reset();
+    });
+    tabs.appendChild(b);
+  });
+
+  function pool() {
+    var arr = [];
+    GM.list.forEach(function (m) {
+      if (m.group !== groupId) return;
+      var w = m.main ? 5 : 1;
+      for (var i = 0; i < w; i++) arr.push(m);
+    });
+    return arr;
+  }
+
+  function spawn() {
+    var p = pool();
+    var def = p[Math.floor(Math.random() * p.length)];
+    var side = Math.floor(Math.random() * 4), x, y, pad = SIZE;
+    if (side === 0) { x = Math.random() * W; y = -pad; }
+    else if (side === 1) { x = W + pad; y = Math.random() * H; }
+    else if (side === 2) { x = Math.random() * W; y = H + pad; }
+    else { x = -pad; y = Math.random() * H; }
+    S.mobs.push({ def: def, x: x, y: y, vx: 0, sp: (def.speed || 30) * (0.85 + Math.random() * 0.3), ph: Math.random() * 2, hit: 0 });
+  }
+
+  function need() { return 6 + S.lv * 4; }
+
+  var pointer = null, pointerDown = false;
+  function setPointer(e) {
+    var r = canvas.getBoundingClientRect();
+    pointer = { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+  canvas.addEventListener('pointerdown', function (e) { pointerDown = true; setPointer(e); canvas.setPointerCapture(e.pointerId); });
+  canvas.addEventListener('pointermove', function (e) { if (pointerDown || e.pointerType === 'mouse') setPointer(e); });
+  canvas.addEventListener('pointerup', function () { pointerDown = false; pointer = null; });
+  canvas.addEventListener('pointercancel', function () { pointerDown = false; pointer = null; });
+  canvas.addEventListener('pointerleave', function () { if (!pointerDown) pointer = null; });
+
+  function update(dt) {
+    S.time += dt;
+    var cap = W < 500 ? 90 : 150;
+
+    // 刷怪：越往后越密
+    var rate = Math.min(6 + S.time * 0.8, 30);
+    S.spawnAcc += dt * rate;
+    while (S.spawnAcc >= 1) { S.spawnAcc -= 1; if (S.mobs.length < cap) spawn(); }
+
+    // 走位
+    var tx, ty;
+    if (pointer) { tx = pointer.x; ty = pointer.y; }
+    else {
+      tx = W / 2 + Math.cos(S.time * 0.45) * W * 0.28;
+      ty = H / 2 + Math.sin(S.time * 0.7) * H * 0.25;
+    }
+    var dx = tx - S.px, dy = ty - S.py, d = Math.hypot(dx, dy);
+    var spd = pointer ? 170 : 70;
+    if (d > 2) {
+      var step = Math.min(d, spd * dt);
+      S.px += dx / d * step; S.py += dy / d * step;
+      if (Math.abs(dx) > 1) S.face = dx < 0;
+    }
+    S.px = Math.max(SIZE / 2, Math.min(W - SIZE / 2, S.px));
+    S.py = Math.max(SIZE / 2, Math.min(H - SIZE / 2, S.py));
+
+    // 小怪追玩家
+    S.mobs.forEach(function (m) {
+      var mx = S.px - m.x, my = S.py - m.y, md = Math.hypot(mx, my) || 1;
+      if (md > 20) { m.x += mx / md * m.sp * dt; m.y += my / md * m.sp * dt; }
+      else { m.x -= mx / md * 30 * dt; m.y -= my / md * 30 * dt; }
+      m.vx = mx;
+    });
+
+    // 自动攻击：射向最近的小怪
+    var interval = Math.max(0.09, 0.32 - S.lv * 0.025);
+    S.fireAcc += dt;
+    while (S.fireAcc >= interval) {
+      S.fireAcc -= interval;
+      var best = null, bd = 1e9;
+      S.mobs.forEach(function (m) {
+        var q = Math.hypot(m.x - S.px, m.y - S.py);
+        if (q < bd) { bd = q; best = m; }
+      });
+      if (best && bd < Math.max(W, H)) {
+        var ax = best.x - S.px, ay = best.y - S.py, al = Math.hypot(ax, ay) || 1;
+        S.shots.push({ x: S.px, y: S.py, vx: ax / al * 360, vy: ay / al * 360, life: 1.2 });
+      }
+    }
+
+    function kill(m) {
+      m.dead = true;
+      S.kills++;
+      S.gems.push({ x: m.x, y: m.y });
+    }
+
+    S.shots.forEach(function (s) {
+      s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
+      for (var i = 0; i < S.mobs.length; i++) {
+        var m = S.mobs[i];
+        if (!m.dead && Math.abs(m.x - s.x) < 16 && Math.abs(m.y - s.y) < 16) { kill(m); s.life = 0; break; }
+      }
+    });
+
+    // 环绕护盾
+    var orbs = S.lv >= 5 ? 2 : (S.lv >= 3 ? 1 : 0);
+    S.orbs = [];
+    for (var k = 0; k < orbs; k++) {
+      var ang = S.time * 3 + k * Math.PI;
+      S.orbs.push({ x: S.px + Math.cos(ang) * 56, y: S.py + Math.sin(ang) * 56 });
+    }
+    S.orbs.forEach(function (o) {
+      S.mobs.forEach(function (m) { if (!m.dead && Math.hypot(m.x - o.x, m.y - o.y) < 20) kill(m); });
+    });
+
+    S.mobs = S.mobs.filter(function (m) { return !m.dead; });
+    S.shots = S.shots.filter(function (s) { return s.life > 0; });
+
+    // 知识点（经验）
+    S.gems.forEach(function (g) {
+      var gx = S.px - g.x, gy = S.py - g.y, gd = Math.hypot(gx, gy) || 1;
+      if (gd < 110) { g.x += gx / gd * 300 * dt; g.y += gy / gd * 300 * dt; }
+      if (gd < 14) {
+        g.got = true;
+        S.xp++;
+        if (S.xp >= need()) { S.xp = 0; S.lv++; S.levelFlash = 1.2; }
+      }
+    });
+    S.gems = S.gems.filter(function (g) { return !g.got; });
+    if (S.gems.length > 400) S.gems.splice(0, S.gems.length - 400);
+    S.levelFlash = Math.max(0, S.levelFlash - dt);
+  }
+
+  function draw() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = '#233229';
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(233,239,230,0.05)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var x = 0; x < W; x += 24) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, H); }
+    for (var y = 0; y < H; y += 24) { ctx.moveTo(0, y + 0.5); ctx.lineTo(W, y + 0.5); }
+    ctx.stroke();
+
+    ctx.fillStyle = '#9be36b';
+    S.gems.forEach(function (g) {
+      ctx.fillRect(Math.round(g.x) - 1, Math.round(g.y) - 3, 2, 6);
+      ctx.fillRect(Math.round(g.x) - 3, Math.round(g.y) - 1, 6, 2);
+    });
+
+    S.mobs.sort(function (a, b) { return a.y - b.y; });
+    S.mobs.forEach(function (m) {
+      var t = Math.floor(S.time * 3 + m.ph) % 2;
+      GM.drawSprite(ctx, m.def, t, Math.round(m.x - SIZE / 2), Math.round(m.y - SIZE / 2), SCALE, m.vx < 0);
+    });
+
+    var pt = Math.floor(S.time * 4) % 2;
+    GM.drawSprite(ctx, GM.player, pt, Math.round(S.px - SIZE / 2), Math.round(S.py - SIZE / 2), SCALE, S.face);
+
+    ctx.fillStyle = '#f4d35e';
+    S.shots.forEach(function (s) { ctx.fillRect(Math.round(s.x) - 3, Math.round(s.y) - 2, 6, 4); });
+
+    (S.orbs || []).forEach(function (o) {
+      ctx.fillStyle = '#7fd1ff';
+      ctx.fillRect(Math.round(o.x) - 6, Math.round(o.y) - 6, 12, 12);
+      ctx.fillStyle = '#17130f';
+      ctx.fillRect(Math.round(o.x) - 3, Math.round(o.y) - 1, 6, 2);
+    });
+  }
+
+  var elKills = document.getElementById('kills'), elLevel = document.getElementById('level');
+  var elOn = document.getElementById('onscreen'), elClock = document.getElementById('clock');
+  var elXp = document.getElementById('xp'), elUp = document.getElementById('levelup');
+  function hud() {
+    elKills.textContent = S.kills;
+    elLevel.textContent = S.lv;
+    elOn.textContent = S.mobs.length;
+    var s = Math.floor(S.time);
+    elClock.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    elXp.style.width = Math.min(100, S.xp / need() * 100) + '%';
+    elUp.hidden = S.levelFlash <= 0;
+    elUp.textContent = '升级！Lv.' + S.lv;
+  }
+
+  var running = !reduceMotion, visible = true, last = 0;
+  var pauseBtn = document.getElementById('pause');
+  function syncPause() { pauseBtn.textContent = running ? '暂停' : '开始'; }
+  syncPause();
+  pauseBtn.addEventListener('click', function () { running = !running; syncPause(); });
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(canvas);
+  }
+
+  // 先模拟几秒，让静止画面里就有一群小怪
+  for (var i = 0; i < 150; i++) update(1 / 15);
+  draw(); hud();
+
+  function loop(ts) {
+    var dt = last ? Math.min(0.05, (ts - last) / 1000) : 0;
+    last = ts;
+    if (running && visible && dt > 0) { update(dt); draw(); hud(); }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
