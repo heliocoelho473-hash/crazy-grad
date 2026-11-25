@@ -526,7 +526,7 @@
         <span></span><span class="regen" id="regenTxt"></span>
         <span class="k">压力</span><div class="bar"><span id="stressBar"></span><em id="stressNum"></em></div>
       </div>
-      <p class="warn" id="stressWarn" hidden>压力太大了！考试当天出意外（押错题、失眠……攻击 −30%）的几率会变高，去摸鱼放松一下吧。</p>
+      <p class="warn" id="stressWarn" hidden>压力 60 以上，考试当天容易状态下滑；90 以上还可能睡过头迟到、政治基本保不住！去摸鱼放松一下吧。</p>
       <p class="msg" id="homeMsg"></p>
 
       <div class="stack" id="examBox" hidden>
@@ -712,6 +712,7 @@
       <h2>四门连考</h2>
       <p class="muted">四科各 3 分钟：每科开考 15 秒后出 Boss，3 分钟内打倒才算这科过关。四科都过才算考完……吗？三科以上可以调剂，否则二战（星星、学习力、道具全保留）。预估分越高，那一科的 Boss 越弱。</p>
       <dl class="result" id="preExamStats"></dl>
+      <p class="warn" id="preExamWarn" hidden></p>
       <button class="btn" id="examGo" type="button">进入考场</button>
       <button class="btn ghost" id="examBack" type="button">再准备一下</button>
     </div>
@@ -2157,9 +2158,8 @@
     replayPerKill: 0.12,      // 已拿到的星再刷：每击杀 0.12 学习力（5 分钟一局击杀多）
     reviewDmg: 0.12, reviewHp: 8,   // 每天登录的“高级复习”：伤害 +12%、生命 +8，可叠加
     endlessPerSec: 0.6, endlessPerKill: 0.08,
-    accidentBase: 0.10, accidentPerStress: 0.003, accidentMul: 0.7,
     examBossHp: 27000, retestBossHp: 34000, roundDur: 180, roundBossAt: 15,
-    relaxCdMs: 60 * 60 * 1000, celeTwistAt: 6,
+    relaxCdMs: 60 * 60 * 1000, celeTwistAt: 6, lateLeft: 60,
     baseHp: 40, chapterDur: 300, mobHit: 3, bulletHit: 6, eliteHit: 9, bossHit: 12, invTime: 1.0, rate0: 2.2, rateUp: 0.05, tierRamp0: 0.35, tierRampT: 140, endlessHpT: 40, endlessHp2: 120, endlessDmgT: 50, endlessSpT: 300, dropMob: 0.012, groundMax: 6
   };
   // 章节难度按“在本科里的位置”分 6 档（第 1 档到第 6 档），各科最后一章一样难
@@ -2226,7 +2226,7 @@
     '背书别只看，要讲出来、默写出来。', '打怪掉的道具点右边格子用：红牛回血、粉笔灰炸弹清场。', '地上出现虚线圈就快跑，那是精英要砸下来了。', '三天打鱼两天晒网，也比不打强。', '压力大就出去走走，图书馆不会跑。'
   ];
   var LOAD_MSG = ['正在削铅笔……', '正在占图书馆的座……', '正在泡速溶咖啡……', '正在给 2B 铅笔开光……', '正在翻开真题集……', '正在把手机调成静音……'];
-  var MAX_ENERGY = 10, REGEN_MS = 30 * 60 * 1000, ADS_PER_DAY = 2, RUN_STRESS = 10, STRESS_LIMIT = 70;
+  var MAX_ENERGY = 10, REGEN_MS = 30 * 60 * 1000, ADS_PER_DAY = 2, RUN_STRESS = 10, STRESS_LIMIT = 60;
   function tierOf(id, ci) { var n = CHAPTERS[id].list.length; return n > 1 ? ci / (n - 1) * 5 : 0; }
   function tierVal(arr, t) { var i = Math.min(4, Math.floor(t)), f = t - i; return arr[i] + (arr[i + 1] - arr[i]) * f; }
   // 每颗星的学习力：按章节档位加权，所有星加起来 = 全部升级花费 × 70%
@@ -2400,10 +2400,10 @@
     var tips = [
       '<b>第 1 天。</b>先把四门课的第 1 章都打通，预估分涨得最快。',
       '研友说：“专业课 408 的怪最难，但学习力给得最多。”',
-      '压力越高，考研那天出意外（押错题、失眠）的几率越大。摸鱼是免费的。',
+      '压力 60 以上考研那天容易状态下滑，90 以上可能睡过头迟到。摸鱼是免费的。',
       '精力每 30 分钟回 1 格，满了就不再回，记得常来刷。',
       '后面的章节越来越难，打不过就去“道具”里升级。',
-      '<b>明天就考研了。</b>把压力降下来，别在考场上出意外。'
+      '<b>明天就考研了。</b>压力降到 60 以下才能正常发挥，90 以上小心睡过头。'
     ];
     return tips[Math.min(d - 1, tips.length - 1)];
   }
@@ -2636,7 +2636,13 @@
     SUBJECTS.forEach(function (sub) {
       addStat($('preExamStats'), sub.name + ' ' + subScore(sub.id) + '/' + CHAPTERS[sub.id].full, '怪物血量 ×' + (examMul(sub.id) * s.hp).toFixed(2));
     });
-    addStat($('preExamStats'), '压力 ' + Math.round(save.stress), '考场意外几率 ' + Math.round(accidentChance() * 100) + '%');
+    var band = stressBand(save.stress);
+    addStat($('preExamStats'), '压力 ' + Math.round(save.stress) + '（' + band.name + '）', band.odds);
+    var w = $('preExamWarn');
+    w.hidden = save.stress < 60;
+    w.textContent = save.stress >= 90 ? '压力太大了！有 3 成概率闹钟没响、睡过头迟到，赶到时政治只剩 1 分钟。建议先回去摸鱼，把压力降到 90 以下再来。'
+      : '压力偏高，考场上大概率状态下滑。摸鱼一次能降 35 压力，降到 60 以下就能正常发挥。';
+    $('examGo').textContent = save.stress >= 90 ? '不管了，硬着头皮进考场' : '进入考场';
     overlay('preExamOv', true);
   });
   $('examBack').addEventListener('click', function () { overlay('preExamOv', false); });
@@ -2886,8 +2892,13 @@
       bag: [], items: [], hz: [], throws: [], freezeT: 0, mainDown: false, eliteKills: 0, used: 0
     };
     renderSlots();
-    if (cfg.accident) S.b.dmg *= BAL.accidentMul;
+    if (cfg.accident) S.b.dmg *= cfg.accident.mul;   // 水平 = 整体输出
     if (cfg.rounds) startRound();
+    if (cfg.rounds && cfg.accident && cfg.accident.late) {
+      // 睡过头：赶到考场政治只剩最后 1 分钟，Boss 直接在场，基本不可能写完
+      S.rt = BAL.roundDur - BAL.lateLeft;
+      banner('迟到！政治只剩 1 分钟', 2.8);
+    }
     $('bossbar').hidden = true; $('banner').hidden = true; $('bsay').hidden = true;
     $('bossName').textContent = '408 缝合怪';
     mode = 'play';
@@ -3825,8 +3836,30 @@
   // ---------- 考研日 ----------
   // 预估分越高考场越轻松，但不会轻松太多：0 分 ×1.25，满分 ×0.9
   function examMul(id) { return 1.25 - 0.35 * mastery(id); }
-  function accidentChance() { return Math.min(0.5, BAL.accidentBase + save.stress * BAL.accidentPerStress); }
-  var ACCIDENTS = ['押题押错了，背的一道都没考', '昨晚紧张失眠，状态不稳', '忘带 2B 铅笔，心态崩了', '考场空调太冷，手都冻僵了', '早饭吃坏了肚子'];
+  // 考场状态：开考前按压力掷一次。“水平”= 攻击和攻速一起变
+  var EXAM_STATE = {
+    late: { label: '睡过头迟到', mul: 1, late: true, banner: '迟到了！政治缺考', texts: ['闹钟没响……睁眼已经 8 点 50 了', '昨晚刷题到 4 点，一觉睡过了头'] },
+    down40: { label: '状态下滑 −40%', mul: 0.6, banner: '状态下滑！水平 −40%', texts: ['押题押错了，背的一道都没考', '昨晚紧张失眠，脑子一片空白', '忘带 2B 铅笔，心态崩了', '早饭吃坏了肚子'] },
+    down20: { label: '小失误 −20%', mul: 0.8, banner: '有点紧张，水平 −20%', texts: ['手心一直冒汗，有点紧张', '考场空调太冷，手有点僵', '旁边同学抖腿抖得我心慌'] },
+    buff10: { label: '状态不错 +10%', mul: 1.1, banner: '状态不错！水平 +10%', texts: ['今天脑子格外清楚', '第一道题就是做过的原题'] },
+    buff80: { label: '超常发挥 +80%', mul: 1.8, banner: '超常发挥！水平 +80%', texts: ['压力拉满，反而进入了心流', '昨晚梦到的题，今天全考了！'] }
+  };
+  var STRESS_BANDS = [
+    { min: 90, name: '高危', odds: '3 成迟到 · 6 成 −40% · 1 成 +80%', roll: [['late', 0.3], ['down40', 0.6], ['buff80', 0.1]] },
+    { min: 60, name: '偏高', odds: '3 成 −40% · 5 成 −20% · 2 成 +10%', roll: [['down40', 0.3], ['down20', 0.5], ['buff10', 0.2]] },
+    { min: 0, name: '正常', odds: '9 成正常发挥 · 1 成小失误 −20%', roll: [[null, 0.9], ['down20', 0.1]] }
+  ];
+  function stressBand(st) { for (var i = 0; i < STRESS_BANDS.length; i++) if (st >= STRESS_BANDS[i].min) return STRESS_BANDS[i]; return STRESS_BANDS[2]; }
+  function rollExamState(st) {
+    var r = Math.random(), roll = stressBand(st).roll;
+    for (var i = 0; i < roll.length; i++) { r -= roll[i][1]; if (r <= 0) return makeState(roll[i][0]); }
+    return null;
+  }
+  function makeState(id) {
+    if (!id) return null;
+    var d = EXAM_STATE[id];
+    return { id: id, label: d.label, mul: d.mul, late: !!d.late, banner: d.banner, good: d.mul > 1, text: d.texts[Math.floor(Math.random() * d.texts.length)] };
+  }
   function examCfg(s, accident, onEnd) {
     function boss(def, name, say, die, k, sub, ring, ringCd, sk) {
       return { def: def, name: name, say: say, die: die, ring: ring, ringCd: ringCd, sk: sk,
@@ -3847,25 +3880,28 @@
   function startExam() {
     audioInit();
     var s = SCHOOLS[save.school];
-    var accident = Math.random() < accidentChance() ? ACCIDENTS[Math.floor(Math.random() * ACCIDENTS.length)] : null;
-    showLoading({ sub: '考研日 · ' + s.name, title: '四门连考', kind: '第一科 Boss', spec: { name: '材料分析巨卷', say: '辨析题：论你上岸的必然性与偶然性！', boss: BOSS_PO, sk: ['spit'] }, done: function () {
-      startBattle(examCfg(s, accident, function (r) { examResult(s, r); }));
-      if (accident) { banner('考场意外！攻击 −30%', 2.6); battleSay(GM.player, '你（内心）', accident + '……', 4); }
+    var accident = rollExamState(save.stress);
+    var first = accident && accident.late
+      ? { name: '材料分析巨卷', say: '同学，还有一分钟收卷。', boss: BOSS_PO, sk: ['spit'] }
+      : { name: '材料分析巨卷', say: '辨析题：论你上岸的必然性与偶然性！', boss: BOSS_PO, sk: ['spit'] };
+    showLoading({ sub: '考研日 · ' + s.name, title: accident && accident.late ? '迟到了！' : '四门连考', kind: '第一科 Boss', spec: first, done: function () {
+      startBattle(examCfg(s, accident, function (r) { examResult(s, r, accident); }));
+      if (accident) { if (!accident.late) banner(accident.banner, 2.6); battleSay(GM.player, '你（内心）', accident.text + (accident.good ? '！' : '……'), 4); }
     } });
-    if (accident) $('loadTip').textContent = '⚠ 考场意外：' + accident + '。今天攻击 −30%。';
+    if (accident) $('loadTip').textContent = (accident.good ? '✦ ' : '⚠ ') + accident.text + '。' + (accident.late ? '赶到考场时政治只剩最后 1 分钟，这科基本保不住了，最好的结果是调剂。' : '今天' + accident.label + '（整体输出）。');
   }
-  function examResult(s, r) {
+  function examResult(s, r, acc) {
     save.runs++; save.totalKills += r.kills;
     var res = r.results || [], passed = res.slice(0, 4).filter(Boolean).length, lower = SCHOOLS[Math.max(0, save.school - 1)];
     var adj = save.school > 0 ? lower.name : '青藤学院（调剂）';
-    var stats = [['初试过关科目', passed + ' / 4'], ['复试', res[4] === true ? '通过' : (passed === 4 ? '没通过' : '没进复试')], ['击杀', r.kills]];
+    var stats = [['考场状态', acc ? acc.label : '正常发挥'], ['初试过关科目', passed + ' / 4'], ['复试', res[4] === true ? '通过' : (passed === 4 ? '没通过' : '没进复试')], ['击杀', r.kills]];
     if (res[4] === true) {
       save.outcome = 'pass'; save.finalSchool = s.name; persist();
       showLetter(s.name, false);
     } else if (passed >= 3 && !r.quit) {
       persist();
       showResult(passed === 4 ? '复试没过…但可以调剂！' : '差一科…可以调剂！',
-        (passed === 4 ? '初试四科都过了，复试被导师问倒了。' : '四科里过了三科。') + '可以调剂到 ' + adj + '，也可以二战再冲 ' + s.name + '（星星、学习力、道具全保留）。',
+        (passed === 4 ? '初试四科都过了，复试被导师问倒了。' : acc && acc.late && !res[0] && passed === 3 ? '睡过头错过了政治，剩下三科全过。' : '四科里过了三科。') + '可以调剂到 ' + adj + '，也可以二战再冲 ' + s.name + '（星星、学习力、道具全保留）。',
         stats, [{ label: '接受调剂：' + adj, primary: true, fn: function () { save.outcome = 'adjust'; save.finalSchool = adj; persist(); showLetter(adj, true); } },
                 { label: '不甘心，二战', fn: secondTry }]);
     } else {
