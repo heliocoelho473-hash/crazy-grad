@@ -8,245 +8,455 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Noto+Sans+SC:wght@400;500;700&display=swap">
 <style>
-  /* 布局：竖屏手机比例。外层是“自习室”主界面（日历、精力、学习力、压力），战斗时整屏切到画布 */
+  /* 视觉语言：像素描边（缺角方框）+ 纸张 + 木纹。竖屏手机比例。 */
   :root {
-    --bg: #111814;
-    --stage: #1c2823;
-    --panel: #22302a;
-    --panel-2: #1a241f;
-    --chalk: #e9efe6;
-    --dim: #a3b4a8;
-    --hi: #f4d35e;
+    --ink: #1d1626;
+    --night: #1b1830;
+    --paper: #f6eedb;
+    --paper-2: #ebdfc2;
+    --paper-line: #d3dceb;
+    --wood: #8a5432;
+    --wood-2: #6f4127;
+    --red: #d9503f;
+    --gold: #f4c542;
+    --blue: #3d7bd9;
+    --green: #5aa469;
+    --purple: #8f6ad1;
+    --text: #2b2230;
+    --dim: #6f6170;
+    --chalk: #f3efe6;
     --hp: #e5484d;
     --xp: #7bd88f;
-    --stress: #ff8a5c;
-    --rule: rgba(233, 239, 230, 0.14);
+    --stress: #e8743b;
     --display: "ZCOOL QingKe HuangYou", "PingFang SC", "Microsoft YaHei", sans-serif;
     --body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    color-scheme: dark;
+    --px: 0 -3px 0 0 var(--ink), 0 3px 0 0 var(--ink), -3px 0 0 0 var(--ink), 3px 0 0 0 var(--ink);
+    color-scheme: light;
   }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
   html, body { height: 100%; }
   body {
-    background: var(--bg); color: var(--chalk);
+    margin: 0; background: #0e0c18; color: var(--text);
     font-family: var(--body); font-size: 15px; line-height: 1.5;
-    overflow: hidden; -webkit-user-select: none; user-select: none;
+    overflow: hidden; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
   }
-  #game { position: relative; height: 100%; max-width: 520px; margin: 0 auto; background: var(--stage); overflow: hidden; }
-  button { font: inherit; }
-  button:focus-visible { outline: 2px solid var(--hi); outline-offset: 2px; }
+  #game { position: relative; height: 100%; max-width: 520px; margin: 0 auto; background: var(--night); overflow: hidden; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  canvas.pix { image-rendering: pixelated; image-rendering: crisp-edges; }
 
   /* ---------- 通用 ---------- */
   .view {
     position: absolute; inset: 0; overflow-y: auto;
-    padding: 20px max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px));
+    padding: 20px max(18px, env(safe-area-inset-right, 0px)) 28px max(18px, env(safe-area-inset-left, 0px));
     display: grid; align-content: start; gap: 16px;
   }
-  .eyebrow { font-size: 12px; letter-spacing: 0.1em; color: var(--dim); }
+  .eyebrow { font-size: 12px; letter-spacing: 0.08em; color: var(--dim); }
   h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; line-height: 1.15; text-wrap: balance; }
-  h1 { font-size: 34px; }
-  h2 { font-size: 26px; }
+  h1 { font-size: 36px; }
+  h2 { font-size: 27px; }
   h3 { font-size: 20px; }
   p { margin: 0; }
   .muted { color: var(--dim); font-size: 14px; }
   .btn {
-    font-size: 16px; font-weight: 700; color: #1b1a12; background: var(--hi);
-    border: 0; border-radius: 8px; padding: 12px 16px; cursor: pointer; width: 100%;
+    position: relative; font-size: 17px; font-weight: 700; color: var(--ink); background: var(--gold);
+    border: 0; border-radius: 0; padding: 12px 16px; cursor: pointer; width: 100%;
+    box-shadow: var(--px), inset 0 -4px 0 0 rgba(0,0,0,0.22), inset 0 3px 0 0 rgba(255,255,255,0.4);
+    margin: 3px 0;
   }
-  .btn.ghost { background: transparent; color: var(--chalk); border: 1px solid var(--rule); font-weight: 500; }
+  .btn:active:not(:disabled) { transform: translateY(2px); box-shadow: var(--px), inset 0 -1px 0 0 rgba(0,0,0,0.22); }
+  .btn.ghost { background: var(--paper); font-weight: 500; }
+  .btn.red { background: var(--red); color: #fff; }
+  .btn.big { font-family: var(--display); font-weight: 400; font-size: 26px; padding: 14px; }
   .btn:disabled { opacity: 0.45; cursor: default; }
-  .card {
-    display: grid; gap: 4px; text-align: left; color: var(--chalk);
-    background: var(--panel-2); border: 1px solid var(--rule); border-radius: 10px;
-    padding: 12px 14px; cursor: pointer; width: 100%;
-  }
-  .card:hover:not(:disabled) { border-color: var(--hi); }
-  .card:disabled { opacity: 0.45; cursor: default; }
-  .card .t { font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
-  .card .t small { font-weight: 500; font-size: 12px; color: var(--hi); }
-  .card .d { font-size: 13px; color: var(--dim); }
-  .stack { display: grid; gap: 10px; }
+  .stack { display: grid; gap: 12px; }
 
-  /* ---------- 开场 ---------- */
-  .story { min-height: 100%; align-content: center; }
-  .story-line { font-family: var(--display); font-size: 28px; line-height: 1.3; }
+  /* 纸张面板 */
+  .sheetbox { background: var(--paper); box-shadow: var(--px), 6px 8px 0 0 rgba(0,0,0,0.25); padding: 18px 16px; display: grid; gap: 14px; margin: 3px; }
 
-  /* ---------- 自习室 ---------- */
-  .top { display: grid; gap: 4px; }
-  .dayline { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-  .daybig { font-family: var(--display); font-size: 40px; line-height: 1; }
-  .daybig small { font-size: 20px; color: var(--dim); }
-  .countdown { font-size: 14px; color: var(--hi); font-weight: 700; text-align: right; }
-  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-  .days span {
-    height: 30px; border-radius: 5px; display: grid; place-items: center;
-    font-size: 12px; background: var(--panel-2); color: var(--dim); border: 1px solid var(--rule);
+  /* ---------- 开场动画 ---------- */
+  .cs { position: absolute; inset: 0; background: #000; overflow: hidden; cursor: pointer; }
+  .cs-cv { position: absolute; image-rendering: pixelated; }
+  .cs-layer { position: absolute; pointer-events: none; font-family: var(--body); color: #fff; }
+  .cs-layer > * { position: absolute; }
+  .cs-narr { left: 0; right: 0; top: calc(var(--u) * 14); text-align: center; }
+  .cs-narr span {
+    display: inline-block; font-family: var(--display); font-size: calc(var(--u) * 11); line-height: 1.2;
+    padding: calc(var(--u) * 3) calc(var(--u) * 8); background: rgba(0,0,0,0.6); color: #fff; letter-spacing: 0.08em;
   }
-  .days span.past { background: #2b3d33; color: var(--chalk); }
-  .days span.today { background: var(--hi); color: #1b1a12; font-weight: 700; border-color: var(--hi); }
-  .days span.exam { border-color: #ff8a8a; }
-  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .stat { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; }
-  .stat .k { font-size: 12px; color: var(--dim); }
-  .stat .v { font-family: var(--display); font-size: 26px; line-height: 1; font-variant-numeric: tabular-nums; }
-  .stat.wide { grid-column: 1 / -1; }
-  .pips { display: flex; gap: 4px; }
-  .pips i { width: 18px; height: 18px; border-radius: 4px; background: var(--panel-2); border: 1px solid var(--rule); }
-  .pips i.on { background: var(--xp); border-color: var(--xp); }
-  .bar { height: 10px; border-radius: 4px; background: var(--panel-2); overflow: hidden; border: 1px solid var(--rule); }
+  .cs-dlg {
+    left: calc(var(--u) * 6); right: calc(var(--u) * 6); bottom: calc(var(--u) * 8); min-height: calc(var(--u) * 50);
+    background: #1f1a33; box-shadow: 0 0 0 calc(var(--u) * 1) #fff, 0 0 0 calc(var(--u) * 2) var(--ink), 0 calc(var(--u) * 3) 0 calc(var(--u) * 2) rgba(0,0,0,0.5);
+    padding: calc(var(--u) * 10) calc(var(--u) * 8) calc(var(--u) * 7);
+  }
+  .cs-name {
+    position: absolute; left: calc(var(--u) * 6); top: calc(var(--u) * -8);
+    font-family: var(--display); font-size: calc(var(--u) * 9); line-height: 1; color: var(--ink);
+    padding: calc(var(--u) * 3) calc(var(--u) * 6); box-shadow: 0 0 0 calc(var(--u) * 1) var(--ink);
+  }
+  .cs-text { font-size: calc(var(--u) * 8.4); line-height: 1.55; font-weight: 500; min-height: 3em; }
+  .cs-more { position: absolute; right: calc(var(--u) * 6); bottom: calc(var(--u) * 3); font-size: calc(var(--u) * 6); color: var(--gold); animation: blink 0.8s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .cs-card { left: calc(var(--u) * 84); right: calc(var(--u) * 4); top: calc(var(--u) * 116); color: var(--ink); animation: cardIn 0.32s cubic-bezier(.2,1.4,.4,1) both; }
+  .cs-card .title { font-size: calc(var(--u) * 7); font-weight: 700; background: var(--ink); color: var(--band); display: inline-block; padding: 0 calc(var(--u) * 3); }
+  .cs-card .who { font-family: var(--display); font-size: calc(var(--u) * 26); line-height: 1.05; margin: calc(var(--u) * 2) 0 calc(var(--u) * 4); text-shadow: calc(var(--u) * 1.5) calc(var(--u) * 1.5) 0 #fff; }
+  .cs-card .line { font-size: calc(var(--u) * 6.4); font-weight: 700; line-height: 1.5; }
+  @keyframes cardIn { from { transform: translateX(60%); opacity: 0; } to { transform: none; opacity: 1; } }
+  .cs-toasts { inset: 0; }
+  .cs-toast {
+    position: absolute; transform: rotate(var(--r)); white-space: nowrap;
+    font-size: calc(var(--u) * 7.5); font-weight: 700; color: var(--ink); background: #fff;
+    padding: calc(var(--u) * 2) calc(var(--u) * 5); box-shadow: 0 0 0 calc(var(--u) * 1) var(--ink), calc(var(--u) * 2) calc(var(--u) * 2) 0 calc(var(--u) * 1) rgba(0,0,0,0.35);
+    animation: pop 0.25s cubic-bezier(.2,1.6,.4,1) both;
+  }
+  .cs-toast.red { background: var(--red); color: #fff; }
+  .cs-toast.call { background: var(--green); color: #fff; animation: pop 0.25s both, wiggle 0.15s 0.25s infinite; }
+  @keyframes pop { from { transform: rotate(var(--r)) scale(0); } to { transform: rotate(var(--r)) scale(1); } }
+  @keyframes wiggle { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+  .cs-counter {
+    left: 0; right: 0; top: calc(var(--u) * 14); text-align: center;
+    font-family: var(--display); font-size: calc(var(--u) * 11); color: var(--gold); text-shadow: 0 calc(var(--u) * 1) 0 var(--ink);
+  }
+  .cs-poster { left: calc(var(--u) * 28); top: calc(var(--u) * 58); width: calc(var(--u) * 124); color: var(--ink); }
+  .cs-poster .ph { height: calc(var(--u) * 22); display: grid; place-items: center; font-family: var(--display); font-size: calc(var(--u) * 14); color: #fff; letter-spacing: 0.3em; }
+  .cs-poster p { font-size: calc(var(--u) * 8); font-weight: 700; padding: calc(var(--u) * 2) calc(var(--u) * 8) 0; }
+  .cs-poster .edurow { display: flex; gap: calc(var(--u) * 2); padding: calc(var(--u) * 2) calc(var(--u) * 8) 0; font-size: calc(var(--u) * 8); font-weight: 700; }
+  .cs-poster .edu { display: grid; justify-items: start; gap: calc(var(--u) * 4); }
+  .cs-poster .w { position: relative; }
+  .cs-poster .w.hand { font-family: var(--display); color: var(--red); font-size: calc(var(--u) * 11); line-height: 1.1; transform: rotate(-4deg); animation: stamp 0.25s cubic-bezier(.2,1.6,.4,1) both; }
+  .cs-poster .w.struck::after {
+    content: ""; position: absolute; left: -8%; top: 45%; height: calc(var(--u) * 2.2); background: var(--red);
+    animation: strike 0.25s ease-out both; transform: rotate(-6deg);
+  }
+  @keyframes strike { from { width: 0; } to { width: 116%; } }
+  @keyframes stamp { from { transform: rotate(-4deg) scale(2.4); opacity: 0; } to { transform: rotate(-4deg) scale(1); opacity: 1; } }
+  .cs-notif {
+    left: calc(var(--u) * 10); right: calc(var(--u) * 10); top: calc(var(--u) * 12);
+    background: #f4f6fb; color: var(--ink); padding: calc(var(--u) * 5) calc(var(--u) * 7);
+    box-shadow: 0 0 0 calc(var(--u) * 1) var(--ink), 0 calc(var(--u) * 3) 0 calc(var(--u) * 1) rgba(0,0,0,0.4);
+    display: grid; gap: calc(var(--u) * 1); animation: slideDown 0.35s cubic-bezier(.2,1.3,.4,1) both;
+  }
+  .cs-notif b { font-size: calc(var(--u) * 6.5); color: var(--red); }
+  .cs-notif span { font-size: calc(var(--u) * 8.5); font-weight: 700; }
+  @keyframes slideDown { from { transform: translateY(-160%); } to { transform: none; } }
+  .cs-logo { left: 0; right: 0; top: calc(var(--u) * 26); text-align: center; animation: logo 0.4s cubic-bezier(.2,1.5,.4,1) both; }
+  .cs-logo .l1, .cs-logo .l2 {
+    font-family: var(--display); line-height: 1; color: #fff;
+    text-shadow: calc(var(--u) * 2) calc(var(--u) * 2) 0 var(--ink), calc(var(--u) * -1) calc(var(--u) * -1) 0 var(--ink), calc(var(--u) * 1) calc(var(--u) * -1) 0 var(--ink), calc(var(--u) * -1) calc(var(--u) * 1) 0 var(--ink);
+  }
+  .cs-logo .l1 { font-size: calc(var(--u) * 18); transform: rotate(-4deg); color: var(--gold); }
+  .cs-logo .l2 { font-size: calc(var(--u) * 34); margin-top: calc(var(--u) * 2); }
+  .cs-logo .l3 { display: inline-block; margin-top: calc(var(--u) * 6); font-size: calc(var(--u) * 7); font-weight: 700; color: #fff; background: var(--ink); padding: calc(var(--u) * 2) calc(var(--u) * 6); }
+  @keyframes logo { from { transform: scale(3); opacity: 0; } to { transform: none; opacity: 1; } }
+  .cs-go { left: calc(var(--u) * 34); right: calc(var(--u) * 34); bottom: calc(var(--u) * 16); pointer-events: auto; width: auto; font-family: var(--display); font-weight: 400; font-size: calc(var(--u) * 12); padding: calc(var(--u) * 5); animation: blink 1.4s steps(2) 0.6s infinite; }
+  .cs-start { inset: 0; display: grid; place-items: center; align-content: center; gap: calc(var(--u) * 6); pointer-events: none; text-align: center; }
+  .cs-start .s1 { font-family: var(--display); font-size: calc(var(--u) * 13); color: #fff; animation: blink 1.2s steps(2) infinite; letter-spacing: 0.2em; }
+  .cs-start .s2 { font-size: calc(var(--u) * 6.5); color: #9a93b0; }
+  .cs-skip {
+    position: absolute; z-index: 2; top: max(10px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px));
+    font-size: 13px; font-weight: 700; color: #fff; background: rgba(0,0,0,0.55); border: 2px solid rgba(255,255,255,0.6); padding: 4px 12px; cursor: pointer;
+  }
+
+  /* ---------- 报名表（选专业、选院校） ---------- */
+  .form-view { background: var(--wood) repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 26px, rgba(255,255,255,0.04) 26px 28px, transparent 28px 61px); align-content: center; }
+  .form-head { display: grid; gap: 4px; text-align: center; border-bottom: 3px double var(--ink); padding-bottom: 10px; }
+  .form-head .eyebrow { color: var(--red); font-weight: 700; }
+  .opt {
+    display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: start; text-align: left; width: 100%;
+    background: transparent; border: 0; border-bottom: 2px dashed rgba(29,22,38,0.25); padding: 10px 2px; cursor: pointer;
+  }
+  .opt:last-child { border-bottom: 0; }
+  .opt .box { width: 20px; height: 20px; margin-top: 3px; background: #fff; box-shadow: 0 0 0 2px var(--ink); display: grid; place-items: center; font-family: var(--display); color: var(--red); font-size: 22px; line-height: 1; }
+  .opt:hover:not(:disabled) .box { background: #fff4c2; }
+  .opt .t { font-weight: 700; font-size: 17px; }
+  .opt .d { font-size: 13px; color: var(--dim); grid-column: 2 / -1; }
+  .opt .tag { font-size: 12px; font-weight: 700; color: #fff; background: var(--ink); padding: 1px 6px; align-self: center; }
+  .opt:disabled { cursor: default; }
+  .opt:disabled .t, .opt:disabled .d { opacity: 0.4; }
+  .opt:disabled .tag { background: #b3a99a; }
+  .stamp {
+    position: absolute; left: 50%; top: 45%; z-index: 9; pointer-events: none;
+    font-family: var(--display); font-size: 54px; color: var(--red); padding: 4px 18px;
+    border: 6px solid var(--red); border-radius: 10px; background: rgba(246,238,219,0.6);
+    transform: translate(-50%, -50%) rotate(-12deg); animation: stampIn 0.3s cubic-bezier(.2,1.6,.4,1) both;
+  }
+  @keyframes stampIn { from { transform: translate(-50%, -50%) rotate(-12deg) scale(3); opacity: 0; } to { transform: translate(-50%, -50%) rotate(-12deg) scale(1); opacity: 0.92; } }
+
+  /* ---------- 书桌主界面 ---------- */
+  .home { padding: 0; gap: 0; background: var(--paper); grid-template-rows: auto 1fr; align-content: stretch; }
+  .desk { position: relative; width: 100%; flex: none; }
+  .desk-cv { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+  .desk-layer { position: absolute; inset: 0; }
+  .desk-layer > * { position: absolute; }
+  .cal { left: calc(var(--u) * 124); top: calc(var(--u) * 14); width: calc(var(--u) * 46); text-align: center; color: var(--ink); line-height: 1; pointer-events: none; }
+  .cal b { display: block; font-family: var(--display); font-weight: 400; font-size: calc(var(--u) * 19); color: var(--red); }
+  .cal span { display: block; font-size: calc(var(--u) * 5); font-weight: 700; margin-top: calc(var(--u) * 1); }
+  .note-y { left: calc(var(--u) * 72); top: calc(var(--u) * 16); width: calc(var(--u) * 22); text-align: center; font-family: var(--display); font-size: calc(var(--u) * 7.5); color: var(--red); transform: rotate(-6deg); pointer-events: none; line-height: 1; }
+  .home-who {
+    left: calc(var(--u) * 4); bottom: calc(var(--u) * 4); font-size: 12px; font-weight: 700; color: #fff;
+    background: rgba(29,22,38,0.75); padding: 2px 8px; pointer-events: none;
+  }
+  .hot { background: transparent; border: 0; padding: 0; cursor: pointer; }
+  .hot::before { content: ""; position: absolute; inset: 0; outline: 2px dashed transparent; outline-offset: 1px; }
+  .hot:hover::before, .hot:focus-visible::before { outline-color: rgba(255,255,255,0.9); }
+  .hot .tag {
+    position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;
+    font-size: 12px; font-weight: 700; line-height: 1; color: var(--ink); background: var(--paper);
+    padding: 4px 6px; box-shadow: 0 0 0 2px var(--ink), 2px 3px 0 1px rgba(0,0,0,0.35);
+    animation: bob 1.6s ease-in-out infinite;
+  }
+  .hot .tag.up { bottom: calc(100% + 6px); }
+  .hot .tag.down { top: calc(100% + 6px); }
+  @keyframes bob { 50% { margin-top: -3px; margin-bottom: 3px; } }
+  .badge { display: inline-block; min-width: 16px; margin-left: 4px; padding: 1px 4px; background: var(--red); color: #fff; font-style: normal; text-align: center; }
+  .stress-tag { font-size: 12px; font-weight: 700; color: #fff; background: rgba(29,22,38,0.7); padding: 2px 6px; pointer-events: none; transform: translate(-50%, 0); white-space: nowrap; }
+  .stress-tag.bad { background: var(--red); }
+
+  .sheet {
+    position: relative; flex: 1; padding: 18px max(18px, env(safe-area-inset-right, 0px)) 32px 44px;
+    background: var(--paper) repeating-linear-gradient(transparent 0 31px, var(--paper-line) 31px 32px);
+    display: grid; align-content: start; gap: 14px;
+    box-shadow: 0 -4px 0 0 var(--ink);
+  }
+  .sheet::before { content: ""; position: absolute; left: 30px; top: 0; bottom: 0; width: 2px; background: rgba(217,80,63,0.55); }
+  .sheet-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; }
+  .sheet-head h2 { font-size: 32px; }
+  .sheet-head h2 small { font-size: 18px; color: var(--dim); }
+  .cd { font-family: var(--display); font-size: 18px; color: var(--red); text-align: right; line-height: 1.1; }
+  .meters { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; align-items: center; font-size: 14px; }
+  .meters .k { color: var(--dim); font-weight: 700; }
+  .meters b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .pips { display: flex; gap: 5px; flex-wrap: wrap; }
+  .pips i { width: 14px; height: 18px; background: #fff; box-shadow: 0 0 0 2px var(--ink); }
+  .pips i.on { background: var(--red); box-shadow: 0 0 0 2px var(--ink), inset 3px 0 0 0 rgba(255,255,255,0.35), inset 0 3px 0 0 #c7ccd4; }
+  .bar { height: 14px; background: #fff; box-shadow: 0 0 0 2px var(--ink); display: flex; align-items: center; gap: 8px; position: relative; }
   .bar span { display: block; height: 100%; background: var(--stress); }
-  .warn { font-size: 13px; color: var(--stress); }
-  .subjects { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .msg {
-    background: var(--panel); border-left: 3px solid var(--hi); border-radius: 6px;
-    padding: 10px 12px; font-size: 14px;
+  .bar em { position: absolute; right: 4px; font-size: 11px; font-style: normal; font-weight: 700; line-height: 1; }
+  .warn { font-size: 13px; font-weight: 700; color: var(--red); }
+  .msg { font-size: 14px; background: #fff7c8; padding: 8px 10px; box-shadow: 2px 3px 0 0 rgba(0,0,0,0.15); transform: rotate(-0.6deg); }
+  .msg b { color: var(--red); }
+  .sec-title { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .sec-title small { font-size: 13px; color: var(--dim); font-family: var(--body); }
+  .books { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; }
+  .book {
+    position: relative; display: grid; grid-template-columns: 48px 1fr; gap: 8px; align-items: center; text-align: left;
+    background: var(--c); color: #fff; border: 0; padding: 10px 10px 10px 14px; cursor: pointer; min-height: 74px;
+    box-shadow: var(--px), inset 6px 0 0 0 rgba(0,0,0,0.25), inset 0 -4px 0 0 rgba(0,0,0,0.2);
+    margin: 3px;
   }
-  .msg b { color: var(--hi); }
-  details.debug { border-top: 1px dashed var(--rule); padding-top: 10px; font-size: 13px; color: var(--dim); }
+  .book:active:not(:disabled) { transform: translateY(2px); }
+  .book:disabled { filter: grayscale(0.8); opacity: 0.6; cursor: default; }
+  .book canvas { width: 48px; height: 48px; background: rgba(255,255,255,0.9); box-shadow: 0 0 0 2px var(--ink); }
+  .book .t, .book .d { display: block; }
+  .book .t { font-family: var(--display); font-size: 22px; line-height: 1.05; text-shadow: 0 2px 0 rgba(0,0,0,0.3); }
+  .book .d { font-size: 11px; line-height: 1.35; opacity: 0.92; margin-top: 2px; }
+  .book .flag { position: absolute; right: -6px; top: -9px; background: var(--gold); color: var(--ink); font-size: 11px; font-weight: 700; padding: 1px 5px; box-shadow: 0 0 0 2px var(--ink); }
+  .tickets { display: grid; gap: 10px; }
+  .ticket {
+    display: grid; grid-template-columns: 38px 1fr auto; gap: 10px; align-items: center; width: 100%; text-align: left;
+    background: #fff; border: 0; padding: 8px 10px; cursor: pointer; box-shadow: 0 0 0 2px var(--ink), 3px 4px 0 1px rgba(0,0,0,0.18);
+  }
+  .ticket:active:not(:disabled) { transform: translateY(2px); }
+  .ticket:disabled { opacity: 0.5; cursor: default; }
+  .ticket .ic { width: 38px; height: 38px; display: grid; place-items: center; font-family: var(--display); font-size: 22px; color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+  .ticket .t { font-weight: 700; font-size: 15px; }
+  .ticket .d { font-size: 12px; color: var(--dim); }
+  .ticket small { font-size: 12px; font-weight: 700; color: var(--red); white-space: nowrap; }
+  details.debug { border-top: 2px dashed rgba(29,22,38,0.25); padding-top: 10px; font-size: 13px; color: var(--dim); }
   details.debug summary { cursor: pointer; }
   details.debug .row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-  details.debug button { background: var(--panel-2); color: var(--chalk); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+  details.debug button { background: #fff; color: var(--ink); border: 2px solid var(--ink); padding: 4px 10px; cursor: pointer; }
+
+  /* 手机消息 */
+  .phone { width: 100%; max-width: 340px; background: #2d3142; padding: 14px 10px 18px; box-shadow: var(--px), 6px 8px 0 0 rgba(0,0,0,0.35); display: grid; gap: 10px; }
+  .phone .bar2 { display: flex; justify-content: space-between; color: #cfd5e6; font-size: 12px; padding: 0 4px; }
+  .phone .screen { background: #eef1f7; padding: 12px 10px; display: grid; gap: 10px; max-height: 60vh; overflow-y: auto; }
+  .chat { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: start; }
+  .chat .av { width: 34px; height: 34px; display: grid; place-items: center; font-family: var(--display); font-size: 18px; color: #fff; box-shadow: 0 0 0 2px var(--ink); }
+  .chat .who { font-size: 11px; color: var(--dim); }
+  .chat .bub { background: #fff; padding: 7px 10px; font-size: 14px; box-shadow: 0 0 0 2px var(--ink); color: var(--text); }
+  .chat .bub b { color: var(--red); }
 
   /* ---------- 战斗 ---------- */
   #battle { position: absolute; inset: 0; }
   #cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
   .hud {
-    position: absolute; top: 0; left: 0; right: 0;
+    position: absolute; top: 0; left: 0; right: 0; color: var(--chalk);
     padding: 10px max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px));
     display: grid; gap: 6px; pointer-events: none; font-variant-numeric: tabular-nums;
   }
-  .xp { height: 6px; border-radius: 3px; background: rgba(0,0,0,0.35); overflow: hidden; }
+  .xp { height: 8px; background: rgba(0,0,0,0.45); box-shadow: 0 0 0 2px var(--ink); overflow: hidden; }
   .xp span { display: block; height: 100%; width: 0; background: var(--xp); transition: width 0.12s; }
-  .hrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; }
+  .hrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 700; text-shadow: 0 2px 0 var(--ink); }
   .hp { display: flex; align-items: center; gap: 6px; }
-  .hpbar { width: 100px; height: 10px; border-radius: 3px; background: rgba(0,0,0,0.4); overflow: hidden; border: 1px solid rgba(0,0,0,0.5); }
+  .hpbar { width: 100px; height: 12px; background: rgba(0,0,0,0.5); box-shadow: 0 0 0 2px var(--ink); overflow: hidden; }
   .hpbar span { display: block; height: 100%; width: 100%; background: var(--hp); transition: width 0.1s; }
-  .timer { font-family: var(--display); font-size: 22px; line-height: 1; }
+  .timer { font-family: var(--display); font-size: 24px; line-height: 1; }
   .hstats { display: flex; gap: 10px; }
-  .hstats b { color: var(--hi); }
-  .subjectTag { justify-self: center; font-size: 12px; color: var(--dim); }
+  .hstats b { color: var(--gold); }
+  .subjectTag { justify-self: center; font-size: 12px; font-weight: 700; background: rgba(29,22,38,0.7); padding: 1px 8px; }
   .bossbar { display: grid; gap: 2px; justify-items: center; }
-  .bossbar .name { font-family: var(--display); font-size: 18px; color: #ff8a8a; }
-  .bossbar .bb { width: 100%; height: 8px; background: rgba(0,0,0,0.4); border-radius: 3px; overflow: hidden; }
+  .bossbar .name { font-family: var(--display); font-size: 18px; color: #ff8a8a; text-shadow: 0 2px 0 var(--ink); }
+  .bossbar .bb { width: 100%; height: 10px; background: rgba(0,0,0,0.5); box-shadow: 0 0 0 2px var(--ink); overflow: hidden; }
   .bossbar .bb span { display: block; height: 100%; width: 100%; background: #ff5c5c; }
-  .tools { position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); bottom: 14px; display: flex; gap: 6px; }
-  .ibtn { font-size: 13px; color: var(--chalk); background: rgba(17,24,20,0.7); border: 1px solid var(--rule); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  .tools { position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); bottom: 14px; display: flex; gap: 8px; }
+  .ibtn { font-size: 13px; font-weight: 700; color: var(--ink); background: var(--paper); border: 0; padding: 4px 10px; cursor: pointer; box-shadow: 0 0 0 2px var(--ink); }
   .banner {
     position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%);
-    font-family: var(--display); font-size: 28px; color: #ff8a8a; text-shadow: 0 3px 0 #000;
+    font-family: var(--display); font-size: 30px; color: #ff8a8a; text-shadow: 3px 3px 0 var(--ink), -1px -1px 0 var(--ink);
     white-space: nowrap; pointer-events: none;
   }
 
-  /* ---------- 弹窗 ---------- */
+  /* ---------- 弹窗（纸张） ---------- */
   .ov {
-    position: absolute; inset: 0; display: grid; place-items: center; background: rgba(10,14,12,0.8);
-    padding: 16px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px));
+    position: absolute; inset: 0; display: grid; place-items: center; background: rgba(14,12,24,0.78);
+    padding: 16px max(18px, env(safe-area-inset-right, 0px)) 16px max(18px, env(safe-area-inset-left, 0px));
     overflow-y: auto; z-index: 5;
   }
   .panel {
-    width: 100%; max-width: 400px; background: var(--panel); border: 1px solid var(--rule);
-    border-radius: 12px; padding: 20px; display: grid; gap: 14px;
+    width: 100%; max-width: 400px; background: var(--paper); color: var(--text);
+    box-shadow: var(--px), 6px 8px 0 0 rgba(0,0,0,0.35);
+    padding: 20px 18px; display: grid; gap: 14px; animation: panelIn 0.22s cubic-bezier(.2,1.4,.4,1) both;
   }
+  @keyframes panelIn { from { transform: scale(0.85); opacity: 0; } to { transform: none; opacity: 1; } }
   .choice {
     display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center; text-align: left;
-    color: var(--chalk); background: var(--panel-2); border: 1px solid var(--rule); border-radius: 8px; padding: 10px; cursor: pointer;
+    color: var(--text); background: #fff; border: 0; padding: 10px; cursor: pointer; box-shadow: 0 0 0 2px var(--ink), 3px 4px 0 1px rgba(0,0,0,0.18);
   }
-  .choice:hover { border-color: var(--hi); }
-  .icon { width: 40px; height: 40px; border-radius: 6px; display: grid; place-items: center; font-family: var(--display); font-size: 22px; color: #1b1a12; }
+  .choice:hover { background: #fff7c8; }
+  .icon { width: 40px; height: 40px; display: grid; place-items: center; font-family: var(--display); font-size: 22px; color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
   .choice .t { font-weight: 700; }
-  .choice .lv { font-size: 12px; color: var(--hi); margin-left: 6px; font-weight: 500; }
+  .choice .lv { font-size: 12px; color: var(--red); margin-left: 6px; font-weight: 700; }
   .choice .d { font-size: 13px; color: var(--dim); }
-  .result { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; font-size: 14px; font-variant-numeric: tabular-nums; margin: 0; }
+  .result { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; font-size: 14px; font-variant-numeric: tabular-nums; margin: 0; border-top: 2px dashed rgba(29,22,38,0.25); padding-top: 10px; }
   .result dt { color: var(--dim); }
   .result dd { margin: 0; text-align: right; font-weight: 700; }
-  .result .big { color: var(--hi); font-size: 18px; }
-  .shop-item { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; background: var(--panel-2); border: 1px solid var(--rule); border-radius: 8px; padding: 10px; }
+  .result .big { color: var(--red); font-size: 20px; font-family: var(--display); font-weight: 400; }
+  .shop-item { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; background: #fff; padding: 10px; box-shadow: 0 0 0 2px var(--ink); }
   .shop-item .t { font-weight: 700; }
   .shop-item .d { font-size: 12px; color: var(--dim); }
-  .buy { font-size: 13px; font-weight: 700; color: #1b1a12; background: var(--hi); border: 0; border-radius: 6px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
+  .buy { font-size: 13px; font-weight: 700; color: var(--ink); background: var(--gold); border: 0; padding: 6px 10px; cursor: pointer; white-space: nowrap; box-shadow: 0 0 0 2px var(--ink), inset 0 -3px 0 0 rgba(0,0,0,0.2); }
   .buy:disabled { opacity: 0.4; cursor: default; }
-  .adbox { font-family: var(--display); font-size: 48px; text-align: center; color: var(--hi); }
-  .photo { border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--panel-2); }
+  .adbox { font-family: var(--display); font-size: 48px; text-align: center; color: var(--red); }
+  .end-view { background: var(--wood) repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 26px, rgba(255,255,255,0.04) 26px 28px, transparent 28px 61px); }
+  .photo { background: #fff; padding: 8px 8px 26px; box-shadow: 0 0 0 2px var(--ink), 4px 6px 0 0 rgba(0,0,0,0.3); transform: rotate(-2deg); }
   .photo canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
 </style>
 
 <div id="game">
 
-  <!-- 开场故事 -->
-  <section class="view story" id="vStory" hidden>
-    <div class="eyebrow">疯狂的研究生</div>
-    <p class="story-line" id="storyLine"></p>
-    <button class="btn" id="storyNext" type="button">继续</button>
+  <!-- 开场动画 -->
+  <section class="cs" id="vIntro" hidden>
+    <canvas class="cs-cv" aria-hidden="true"></canvas>
+    <div class="cs-layer">
+      <div class="cs-narr" hidden><span></span></div>
+      <div class="cs-counter" hidden></div>
+      <div class="cs-poster" hidden>
+        <div class="ph">招 聘</div>
+        <p>岗位：小区保安</p>
+        <p>月薪：3500 元</p>
+        <p>要求：身体健康，能值夜班</p>
+        <div class="edurow"><span>学历：</span><span class="edu"></span></div>
+      </div>
+      <div class="cs-toasts"></div>
+      <div class="cs-notif" hidden><b>研招网 · 刚刚</b><span>考研报名倒计时：仅剩 7 天</span></div>
+      <div class="cs-card" hidden></div>
+      <div class="cs-dlg" hidden><div class="cs-name"></div><div class="cs-text"></div><div class="cs-more">▼</div></div>
+      <div class="cs-logo" hidden><div class="l1">疯狂的</div><div class="l2">研究生</div><div class="l3">7 天备考 · 割草上岸</div></div>
+      <button class="btn cs-go" type="button" hidden>开始备考</button>
+      <div class="cs-start"><div class="s1">点击屏幕开始</div><div class="s2">建议打开声音 · 约 1 分钟 · 可跳过</div></div>
+    </div>
+    <button class="cs-skip" type="button" hidden>跳过 ▶▶</button>
   </section>
 
   <!-- 选专业 -->
-  <section class="view" id="vMajor" hidden>
-    <div class="eyebrow">第 1 步 · 选考研方向</div>
-    <h2>你要考什么专业？</h2>
-    <p class="muted">专业决定你要打的怪。所有专业的技能都一样，不一样的是敌人。</p>
-    <div class="stack" id="majorList"></div>
+  <section class="view form-view" id="vMajor" hidden>
+    <div class="sheetbox">
+      <div class="form-head">
+        <div class="eyebrow">考研报名表 · 第 1 栏</div>
+        <h2>报考专业</h2>
+        <p class="muted">专业决定你要打的怪。技能大家都一样，敌人不一样。</p>
+      </div>
+      <div id="majorList"></div>
+    </div>
   </section>
 
   <!-- 选院校 -->
-  <section class="view" id="vSchool" hidden>
-    <div class="eyebrow">第 2 步 · 选目标院校</div>
-    <h2>目标院校</h2>
-    <p class="muted">院校越好，考场上的怪越厚。没考上可以调剂，也可以二战，学习力和道具全部保留。</p>
-    <div class="stack" id="schoolList"></div>
+  <section class="view form-view" id="vSchool" hidden>
+    <div class="sheetbox">
+      <div class="form-head">
+        <div class="eyebrow">考研报名表 · 第 2 栏</div>
+        <h2>目标院校</h2>
+        <p class="muted">院校越好，考场上的怪越厚。没考上可以调剂，也可以二战，学习力和道具全部保留。</p>
+      </div>
+      <div id="schoolList"></div>
+    </div>
   </section>
 
-  <!-- 自习室（主界面） -->
-  <section class="view" id="vHome" hidden>
-    <div class="top">
-      <div class="eyebrow" id="homeWho"></div>
-      <div class="dayline">
-        <div class="daybig" id="dayBig"></div>
-        <div class="countdown" id="countdown"></div>
+  <!-- 书桌（主界面） -->
+  <section class="view home" id="vHome" hidden>
+    <div class="desk" id="desk">
+      <canvas class="desk-cv" aria-label="你的书桌"></canvas>
+      <div class="desk-layer">
+        <div class="cal"><b id="calNum">7</b><span id="calLbl">天后考研</span></div>
+        <div class="note-y">必胜!</div>
+        <div class="home-who" id="homeWho"></div>
+        <div class="stress-tag" id="stressTag" hidden></div>
+        <button class="hot" id="hotShelf" type="button" aria-label="道具" style="left:calc(var(--u)*120);top:calc(var(--u)*56);width:calc(var(--u)*58);height:calc(var(--u)*24)"><span class="tag down">道具</span></button>
+        <button class="hot" id="hotCup" type="button" aria-label="喝杯咖啡续命" style="left:calc(var(--u)*38);top:calc(var(--u)*80);width:calc(var(--u)*15);height:calc(var(--u)*32)"><span class="tag down">续命</span></button>
+        <button class="hot" id="hotPhone" type="button" aria-label="手机消息" style="left:calc(var(--u)*156);top:calc(var(--u)*106);width:calc(var(--u)*20);height:calc(var(--u)*13)"><span class="tag down">消息<i class="badge" id="msgBadge" hidden>1</i></span></button>
       </div>
     </div>
-    <div class="days" id="days"></div>
-    <div class="msg" id="homeMsg"></div>
-    <div class="stats">
-      <div class="stat"><div class="k">今日精力</div><div class="pips" id="energyPips"></div></div>
-      <div class="stat"><div class="k">学习力</div><div class="v" id="studyVal">0</div></div>
-      <div class="stat wide">
-        <div class="k">压力 <span id="stressNum"></span></div>
-        <div class="bar"><span id="stressBar"></span></div>
-        <div class="warn" id="stressWarn" hidden>压力太大，战斗伤害 −20%。去摸鱼放松一下吧。</div>
+    <div class="sheet">
+      <div class="sheet-head">
+        <h2 id="dayBig">第 1 天</h2>
+        <div class="cd" id="countdown"></div>
       </div>
-    </div>
-
-    <div class="stack" id="examBox" hidden>
-      <button class="btn" id="examBtn" type="button">进入考场</button>
-    </div>
-
-    <div class="stack" id="studyBox">
-      <h3>刷题（每局消耗 1 精力）</h3>
-      <div class="subjects" id="subjects"></div>
-    </div>
-
-    <div class="stack">
-      <h3>其他</h3>
-      <button class="card" id="shopBtn" type="button"><span class="t">道具<small>用学习力升级</small></span><span class="d">错题本、保温杯、降噪耳机……永久提升，二战也保留</span></button>
-      <button class="card" id="relaxBtn" type="button"><span class="t">摸鱼放松<small>1 精力</small></span><span class="d">刷会儿短视频，压力 −35</span></button>
-      <button class="card" id="adBtn" type="button"><span class="t">喝杯咖啡续命<small>看广告</small></span><span class="d">精力 +1，每天 2 次（现在是广告占位）</span></button>
-      <button class="card" type="button" disabled><span class="t">晨读<small>即将开放</small></span><span class="d">英文阅读理解，读一段短文答题，学习力 ×2</span></button>
-    </div>
-
-    <details class="debug">
-      <summary>测试工具</summary>
-      <div class="row">
-        <button type="button" id="dbgNext">跳到明天</button>
-        <button type="button" id="dbgExam">直接到考试日</button>
-        <button type="button" id="dbgRich">学习力 +2000</button>
-        <button type="button" id="dbgReset">重置存档</button>
+      <div class="meters">
+        <span class="k">学习力</span><b id="studyVal">0</b>
+        <span class="k">精力</span><span class="pips" id="energyPips"></span>
+        <span class="k">压力</span><div class="bar"><span id="stressBar"></span><em id="stressNum"></em></div>
       </div>
-    </details>
+      <p class="warn" id="stressWarn" hidden>压力太大，战斗伤害 −20%。去摸鱼放松一下吧。</p>
+      <p class="msg" id="homeMsg"></p>
+
+      <div class="stack" id="examBox" hidden>
+        <button class="btn red big" id="examBtn" type="button">进入考场</button>
+      </div>
+
+      <div class="stack" id="studyBox">
+        <h3 class="sec-title">今天刷哪套题？<small>每套 1 精力</small></h3>
+        <div class="books" id="subjects"></div>
+      </div>
+
+      <div class="stack">
+        <h3 class="sec-title">其他</h3>
+        <div class="tickets">
+          <button class="ticket" id="shopBtn" type="button"><span class="ic" style="background:#ff9f7a">本</span><span><span class="t">道具</span><br><span class="d">用学习力升级，二战也保留</span></span><small>升级</small></button>
+          <button class="ticket" id="relaxBtn" type="button"><span class="ic" style="background:#9bd3b0">鱼</span><span><span class="t">摸鱼放松</span><br><span class="d">刷会儿短视频，压力 −35</span></span><small>1 精力</small></button>
+          <button class="ticket" id="adBtn" type="button"><span class="ic" style="background:#c8a27a">咖</span><span><span class="t">喝杯咖啡续命</span><br><span class="d">精力 +1</span></span><small>看广告</small></button>
+          <button class="ticket" type="button" disabled><span class="ic" style="background:#cfe0ff">读</span><span><span class="t">晨读</span><br><span class="d">英文阅读理解，学习力 ×2</span></span><small>即将开放</small></button>
+        </div>
+      </div>
+
+      <details class="debug">
+        <summary>测试工具</summary>
+        <div class="row">
+          <button type="button" id="dbgNext">跳到明天</button>
+          <button type="button" id="dbgExam">直接到考试日</button>
+          <button type="button" id="dbgRich">学习力 +2000</button>
+          <button type="button" id="dbgStress">压力 +30</button>
+          <button type="button" id="dbgIntro">重看开场</button>
+          <button type="button" id="dbgReset">重置存档</button>
+        </div>
+      </details>
+    </div>
   </section>
 
   <!-- 上岸结局 -->
-  <section class="view" id="vEnd" hidden>
+  <section class="view end-view" id="vEnd" hidden>
+    <div class="sheetbox">
     <div class="eyebrow">备考篇 · 完</div>
     <h1 id="endTitle">上岸！</h1>
     <div class="photo"><canvas id="photo" width="96" height="56"></canvas></div>
@@ -254,6 +464,7 @@
     <dl class="result" id="endStats"></dl>
     <p class="muted">研究生篇（开题、组会、导师、答辩）正在制作中。</p>
     <button class="btn ghost" id="restartBtn" type="button">换个专业重新开始</button>
+    </div>
   </section>
 
   <!-- 战斗 -->
@@ -304,13 +515,20 @@
       <h2>道具</h2>
       <p class="muted">学习力：<b id="shopStudy">0</b>。升级永久生效，二战也保留。</p>
       <div class="stack" id="shopList"></div>
-      <button class="btn ghost" id="shopClose" type="button">回自习室</button>
+      <button class="btn ghost" id="shopClose" type="button">回书桌</button>
     </div>
   </div>
   <div class="ov" id="adOv" hidden>
     <div class="panel">
       <p class="muted">广告占位：上线后这里播放 TapADN 激励视频</p>
       <div class="adbox" id="adCount">3</div>
+    </div>
+  </div>
+  <div class="ov" id="phoneOv" hidden>
+    <div class="phone">
+      <div class="bar2"><span id="phoneTime">22:30</span><span>消息</span></div>
+      <div class="screen" id="phoneList"></div>
+      <button class="btn ghost" id="phoneClose" type="button">放下手机</button>
     </div>
   </div>
   <div class="ov" id="preExamOv" hidden>
@@ -820,6 +1038,899 @@
 
 </script>
 <script>
+/* 疯狂的研究生 · 像素场景
+   1. Intro：开场动画（像素过场：对白框、角色登场卡、夸张表情、震屏、闪白）
+   2. Desk：书桌主界面（台历倒计时、保温杯精力、压力云、道具摆件、窗外跟随真实时间）
+   全部用代码画在低分辨率画布上，再整倍放大；中文字用 DOM 叠在画布上，保证清晰。 */
+(function (root) {
+  'use strict';
+  var INK = '#1d1626', WHITE = '#fbf8f0';
+  var SKIN = '#f6cba3', SKIN2 = '#e2a77f', HAIR = '#2b2233', BLUSH = '#f2a0a0', TEAR = '#7ec8f0', RED = '#d9503f', GOLD = '#f4c542';
+
+  // ======================================================================
+  // 任意尺寸的像素画，自动描边后烘焙成小画布
+  // ======================================================================
+  function Pix(w, h) { this.w = w; this.h = h; this.d = new Array(w * h).fill(null); }
+  Pix.prototype.p = function (x, y, c) {
+    x = Math.floor(x); y = Math.floor(y);
+    if (x >= 0 && y >= 0 && x < this.w && y < this.h) this.d[y * this.w + x] = c;
+  };
+  Pix.prototype.get = function (x, y) { return (x >= 0 && y >= 0 && x < this.w && y < this.h) ? this.d[y * this.w + x] : null; };
+  Pix.prototype.rect = function (x, y, w, h, c) { for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) this.p(x + i, y + j, c); };
+  Pix.prototype.ell = function (cx, cy, rx, ry, c) {
+    for (var y = -ry; y <= ry; y++) for (var x = -rx; x <= rx; x++) {
+      if ((x * x) / (rx * rx + 0.5) + (y * y) / (ry * ry + 0.5) <= 1) this.p(cx + x, cy + y, c);
+    }
+  };
+  Pix.prototype.line = function (x0, y0, x1, y1, c) {
+    var dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1, dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1, err = dx + dy;
+    for (;;) {
+      this.p(x0, y0, c);
+      if (x0 === x1 && y0 === y1) break;
+      var e2 = 2 * err;
+      if (e2 >= dy) { err += dy; x0 += sx; }
+      if (e2 <= dx) { err += dx; y0 += sy; }
+    }
+  };
+
+  var rgbCache = {};
+  function rgb(c) {
+    if (rgbCache[c]) return rgbCache[c];
+    var n = parseInt(c.slice(1), 16);
+    return (rgbCache[c] = [(n >> 16) & 255, (n >> 8) & 255, n & 255]);
+  }
+  var bakeCache = {};
+  function bake(key, w, h, paint, gray) {
+    key += gray ? '|g' : '';
+    if (bakeCache[key]) return bakeCache[key];
+    var g = new Pix(w, h); paint(g);
+    var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    var x = cv.getContext('2d'), img = x.createImageData(w, h), d = img.data;
+    for (var yy = 0; yy < h; yy++) for (var xx = 0; xx < w; xx++) {
+      var c = g.get(xx, yy);
+      if (!c && (g.get(xx - 1, yy) || g.get(xx + 1, yy) || g.get(xx, yy - 1) || g.get(xx, yy + 1))) c = INK;
+      if (!c) continue;
+      var v = rgb(c), i = (yy * w + xx) * 4;
+      if (gray) { var l = Math.round(70 + (v[0] * 0.3 + v[1] * 0.59 + v[2] * 0.11) * 0.55); v = [l, l, l + 8]; }
+      d[i] = v[0]; d[i + 1] = v[1]; d[i + 2] = v[2]; d[i + 3] = 255;
+    }
+    x.putImageData(img, 0, 0);
+    return (bakeCache[key] = cv);
+  }
+
+  // ======================================================================
+  // 角色：主角（正面 28×40、背影 28×30）、HR
+  // ======================================================================
+  function blush(g) { g.rect(7, 17, 2, 1, BLUSH); g.rect(19, 17, 2, 1, BLUSH); }
+  function face(g, f) {
+    switch (f) {
+      case 'blink':
+        g.rect(9, 15, 3, 1, INK); g.rect(16, 15, 3, 1, INK); g.rect(13, 18, 2, 1, INK); break;
+      case 'happy':
+        g.p(9, 15, INK); g.p(10, 14, INK); g.p(11, 15, INK); g.p(16, 15, INK); g.p(17, 14, INK); g.p(18, 15, INK);
+        g.rect(12, 17, 4, 2, '#a8323e'); g.rect(13, 18, 2, 1, '#e86b7a'); blush(g); break;
+      case 'sparkle':
+        g.rect(9, 13, 3, 3, INK); g.p(9, 13, WHITE); g.p(11, 15, '#9fd3ff');
+        g.rect(16, 13, 3, 3, INK); g.p(16, 13, WHITE); g.p(18, 15, '#9fd3ff');
+        g.p(12, 17, INK); g.rect(13, 18, 2, 1, INK); g.p(15, 17, INK); blush(g); break;
+      case 'shock':
+        g.rect(9, 12, 3, 4, WHITE); g.p(10, 14, INK); g.rect(16, 12, 3, 4, WHITE); g.p(17, 14, INK);
+        g.rect(13, 17, 2, 4, INK); g.rect(22, 9, 2, 3, TEAR); g.p(22, 8, TEAR); break;
+      case 'cry':
+        g.p(9, 13, INK); g.p(10, 14, INK); g.p(9, 15, INK); g.p(18, 13, INK); g.p(17, 14, INK); g.p(18, 15, INK);
+        g.rect(9, 16, 2, 5, TEAR); g.rect(17, 16, 2, 5, TEAR);
+        g.p(12, 19, INK); g.p(13, 18, INK); g.p(14, 19, INK); g.p(15, 18, INK); break;
+      case 'grit':
+        g.line(8, 11, 11, 12, INK); g.line(19, 11, 16, 12, INK);
+        g.rect(10, 14, 2, 2, INK); g.rect(16, 14, 2, 2, INK);
+        g.rect(11, 17, 6, 3, WHITE); g.rect(11, 18, 6, 1, '#d8d2c4'); g.p(14, 17, INK); g.p(14, 19, INK); break;
+      case 'tired':
+        g.rect(9, 15, 3, 1, INK); g.rect(16, 15, 3, 1, INK);
+        g.rect(9, 16, 3, 1, '#a58fc4'); g.rect(16, 16, 3, 1, '#a58fc4'); g.rect(13, 19, 2, 1, INK); break;
+      case 'sweat':
+        g.rect(10, 14, 1, 2, INK); g.rect(17, 14, 1, 2, INK);
+        g.p(12, 19, INK); g.p(13, 18, INK); g.p(14, 19, INK); g.p(15, 18, INK);
+        g.rect(21, 10, 2, 3, TEAR); g.p(21, 9, TEAR); g.rect(5, 12, 1, 2, TEAR); break;
+      default: // smile
+        g.rect(10, 14, 1, 2, INK); g.rect(17, 14, 1, 2, INK);
+        g.p(12, 17, INK); g.rect(13, 18, 2, 1, INK); g.p(15, 17, INK); blush(g);
+    }
+  }
+  function guy(o) {
+    o = o || {};
+    var key = ['guy', o.outfit, o.face, o.arms, o.cap ? 1 : 0, o.band ? 1 : 0, o.hair || ''].join('|');
+    return bake(key, 28, 40, function (g) {
+      var hair = o.hair || HAIR, sleeve;
+      // 身体
+      if (o.outfit === 'gown') {
+        var gw = '#29253a';
+        g.rect(9, 37, 4, 3, '#3a3046'); g.rect(15, 37, 4, 3, '#3a3046');
+        g.rect(7, 22, 14, 10, gw); g.rect(6, 32, 16, 5, gw); g.rect(6, 35, 16, 2, '#1f1b2d');
+        g.line(9, 22, 14, 27, '#c0392b'); g.line(19, 22, 14, 27, '#c0392b'); g.line(10, 22, 14, 26, '#e0574a'); g.line(18, 22, 14, 26, '#e0574a');
+        sleeve = gw;
+      } else if (o.outfit === 'hoodie') {
+        var hd = '#6b7a8f', hs = '#56637a';
+        g.rect(9, 33, 10, 2, '#2f3542'); g.rect(9, 35, 4, 3, '#2f3542'); g.rect(15, 35, 4, 3, '#2f3542');
+        g.rect(8, 38, 5, 2, '#e9e4d8'); g.rect(15, 38, 5, 2, '#e9e4d8');
+        g.rect(7, 22, 14, 11, hd); g.rect(7, 31, 14, 2, hs); g.rect(10, 28, 8, 3, hs);
+        g.rect(12, 23, 1, 3, WHITE); g.rect(16, 23, 1, 3, WHITE);
+        sleeve = hd;
+      } else {
+        var tp = '#f4f1ea';
+        g.rect(9, 32, 10, 3, '#3b5b8c'); g.rect(9, 35, 4, 3, '#3b5b8c'); g.rect(15, 35, 4, 3, '#3b5b8c');
+        g.rect(8, 38, 5, 2, '#e9e4d8'); g.rect(15, 38, 5, 2, '#e9e4d8');
+        g.rect(8, 22, 12, 10, tp); g.rect(8, 30, 12, 2, '#d6cfbf'); g.rect(12, 25, 4, 3, '#e8574a');
+        sleeve = tp;
+      }
+      // 头
+      g.ell(14, 10, 10, 9, hair);
+      g.ell(14, 14, 8, 7, SKIN);
+      g.rect(6, 6, 17, 4, hair);
+      [8, 11, 12, 16, 19, 20].forEach(function (x) { g.p(x, 10, hair); });
+      g.rect(4, 9, 3, 7, hair); g.rect(22, 9, 3, 7, hair);
+      g.line(9, 4, 12, 3, '#4a3d57');
+      if (!o.cap) { g.p(15, 0, hair); g.p(16, 0, hair); g.p(17, 0, hair); g.p(18, 1, hair); }
+      g.rect(12, 21, 4, 1, SKIN2);
+      face(g, o.face);
+      if (o.cap) {
+        g.rect(7, 4, 14, 3, '#29253a'); g.rect(3, 2, 22, 2, '#1f1b2d');
+        g.p(14, 1, GOLD); g.line(14, 2, 23, 3, GOLD); g.rect(23, 4, 1, 5, GOLD); g.rect(22, 9, 3, 1, GOLD);
+      }
+      if (o.band) {
+        g.rect(5, 6, 19, 2, WHITE); g.rect(12, 6, 4, 2, RED);
+        g.p(24, 7, WHITE); g.p(25, 8, WHITE); g.p(26, 9, WHITE); g.p(24, 9, WHITE); g.p(25, 10, WHITE);
+      }
+      // 手
+      if (o.arms === 'up') {
+        g.rect(6, 21, 2, 3, sleeve); g.rect(20, 21, 2, 3, sleeve);
+        g.rect(4, 15, 3, 7, sleeve); g.rect(21, 15, 3, 7, sleeve);
+        g.rect(4, 12, 3, 3, SKIN); g.rect(21, 12, 3, 3, SKIN);
+      } else if (o.arms === 'fist') {
+        g.rect(5, 23, 3, 7, sleeve); g.rect(5, 30, 3, 2, SKIN);
+        g.rect(20, 22, 3, 3, sleeve); g.rect(21, 17, 3, 6, sleeve);
+        g.rect(20, 12, 5, 5, SKIN); g.rect(20, 13, 1, 3, SKIN2); g.rect(22, 12, 1, 4, SKIN2);
+      } else if (o.arms === 'phone') {
+        g.rect(5, 23, 3, 7, sleeve); g.rect(5, 30, 3, 2, SKIN);
+        g.rect(20, 18, 3, 6, sleeve); g.rect(19, 15, 3, 3, SKIN);
+        g.rect(20, 10, 3, 7, '#2d3142'); g.p(21, 11, '#9fe0ff');
+      } else {
+        g.rect(5, 23, 3, 7, sleeve); g.rect(20, 23, 3, 7, sleeve);
+        g.rect(5, 30, 3, 2, SKIN); g.rect(20, 30, 3, 2, SKIN);
+      }
+    }, o.gray);
+  }
+  function guyBack(o) {
+    o = o || {};
+    var key = ['back', o.band ? 1 : 0, o.lean || 0].join('|');
+    return bake(key, 30, 32, function (g) {
+      var hd = '#6b7a8f', hs = '#56637a', l = o.lean || 0;
+      g.ell(15, 30, 13, 10, hd);
+      g.rect(2, 26, 26, 6, hd);
+      g.rect(9 + l, 19, 12, 5, hs); g.rect(11 + l, 21, 8, 2, '#4a566b');
+      g.ell(15 + l, 10, 9, 9, HAIR);
+      g.rect(5 + l, 10, 1, 4, SKIN); g.rect(25 + l, 10, 1, 4, SKIN);
+      g.line(9 + l, 4, 13 + l, 2, '#4a3d57'); g.line(10 + l, 7, 12 + l, 6, '#4a3d57');
+      g.p(16 + l, 0, HAIR); g.p(17 + l, 0, HAIR); g.p(18 + l, 0, HAIR); g.p(19 + l, 1, HAIR);
+      g.rect(14 + l, 17, 3, 2, SKIN2);
+      if (o.band) {
+        g.rect(6 + l, 6, 19, 2, WHITE);
+        g.rect(14 + l, 8, 2, 4, WHITE); g.rect(16 + l, 9, 2, 4, WHITE); g.p(13 + l, 11, WHITE);
+      }
+    });
+  }
+  function hr(o) {
+    o = o || {};
+    var key = ['hr', o.face, o.glint ? 1 : 0].join('|');
+    return bake(key, 28, 40, function (g) {
+      var suit = '#2d3a4f', ss = '#233044', h2 = '#3a2a24';
+      g.rect(9, 35, 4, 3, ss); g.rect(15, 35, 4, 3, ss); g.rect(8, 38, 5, 2, '#1a1420'); g.rect(15, 38, 5, 2, '#1a1420');
+      g.rect(7, 22, 14, 13, suit); g.rect(12, 22, 4, 5, WHITE); g.rect(13, 23, 2, 7, '#c0392b');
+      g.line(11, 22, 13, 28, ss); g.line(16, 22, 14, 28, ss);
+      g.ell(14, 10, 9, 8, h2); g.ell(14, 14, 8, 7, SKIN);
+      g.rect(6, 4, 17, 5, h2); g.line(10, 4, 8, 8, '#5a463c'); g.rect(5, 8, 2, 6, h2); g.rect(21, 8, 2, 6, h2);
+      g.rect(12, 21, 4, 1, SKIN2);
+      [8, 15].forEach(function (x) {
+        g.rect(x, 13, 5, 4, INK);
+        if (o.glint) { g.rect(x + 1, 14, 3, 2, WHITE); g.p(x + 1, 15, '#bfe3ff'); }
+        else { g.rect(x + 1, 14, 3, 2, '#dcefff'); g.p(x + 2, 15, INK); }
+      });
+      g.rect(13, 14, 2, 1, INK);
+      if (o.face === 'cold') g.rect(12, 19, 4, 1, INK);
+      else if (o.face === 'talk') g.rect(13, 18, 2, 2, '#7a2e2e');
+      else { g.p(11, 18, INK); g.rect(12, 19, 4, 1, INK); g.p(16, 18, INK); }
+      g.rect(5, 23, 3, 8, suit); g.rect(5, 31, 3, 2, SKIN);
+      g.rect(20, 23, 3, 5, suit);
+      g.rect(18, 26, 8, 10, '#b98b5a'); g.rect(19, 27, 6, 8, WHITE);
+      g.rect(20, 29, 4, 1, '#9aa3b5'); g.rect(20, 31, 4, 1, '#9aa3b5'); g.rect(20, 33, 3, 1, '#9aa3b5');
+      g.rect(20, 25, 4, 2, '#9aa3b5'); g.rect(18, 28, 2, 2, SKIN);
+    }, o.gray);
+  }
+  function envelope() {
+    return bake('env', 9, 7, function (g) { g.rect(0, 0, 9, 7, WHITE); g.line(0, 0, 4, 3, '#9aa3b5'); g.line(8, 0, 4, 3, '#9aa3b5'); });
+  }
+
+  // ======================================================================
+  // 低分辨率画布的小工具
+  // ======================================================================
+  function Painter(w, h) {
+    var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    var b = cv.getContext('2d');
+    b.imageSmoothingEnabled = false;
+    var P = { cv: cv, b: b, W: w, H: h };
+    P.R = function (x, y, ww, hh, c) { b.fillStyle = c; b.fillRect(Math.round(x), Math.round(y), Math.round(ww), Math.round(hh)); };
+    P.disc = function (cx, cy, r, c) {
+      b.fillStyle = c;
+      for (var y = -r; y <= r; y++) { var ww = Math.round(Math.sqrt(r * r - y * y)); b.fillRect(Math.round(cx - ww), Math.round(cy + y), ww * 2 + 1, 1); }
+    };
+    P.put = function (img, cx, by, sc) {
+      sc = sc || 1;
+      var ww = img.width * sc, hh = img.height * sc;
+      b.drawImage(img, Math.round(cx - ww / 2), Math.round(by - hh), ww, hh);
+    };
+    P.bands = function (y0, cols, each) { for (var i = 0; i < cols.length; i++) P.R(0, y0 + i * each, w, each, cols[i]); };
+    P.cloud = function (x, y, c) { P.R(x, y + 3, 24, 5, c); P.R(x + 4, y, 10, 4, c); P.R(x + 12, y + 1, 8, 3, c); };
+    P.blit = function (dst, dw, dh) {
+      var x = dst.getContext('2d');
+      x.imageSmoothingEnabled = false;
+      x.clearRect(0, 0, dst.width, dst.height);
+      x.drawImage(cv, 0, 0, dw, dh);
+    };
+    return P;
+  }
+  function ease(u) { return u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  // ======================================================================
+  // 开场动画
+  // ======================================================================
+  function Intro(host, opt) {
+    var W = 180, H = 320;
+    var P = Painter(W, H), b = P.b, R = P.R;
+    var cv = host.querySelector('.cs-cv'), layer = host.querySelector('.cs-layer');
+    function q(c) { return host.querySelector('.' + c); }
+    var E = {
+      narr: q('cs-narr'), dlg: q('cs-dlg'), name: q('cs-name'), text: q('cs-text'), more: q('cs-more'),
+      card: q('cs-card'), toasts: q('cs-toasts'), poster: q('cs-poster'), notif: q('cs-notif'),
+      logo: q('cs-logo'), go: q('cs-go'), start: q('cs-start'), skip: q('cs-skip'), counter: q('cs-counter')
+    };
+    var sfx = opt.sfx || function () {};
+    var T = 0, running = false, aborted = false, tapped = false, ABORT = { abort: true };
+    var waiters = [], tweens = [], parts = [];
+    var paint = function () {};
+    var fx = { shake: 0, flash: 0, fade: 1, card: null };
+    var C = { you: GOLD, hr: '#7fb2ff', sys: '#9be39b' };
+
+    // ---------- 调度 ----------
+    function chk() { if (aborted) throw ABORT; }
+    function until(pred) { return new Promise(function (res) { waiters.push({ pred: pred, res: res }); }).then(chk); }
+    function wait(sec) { var end = T + sec; return until(function () { return T >= end; }); }
+    function tween(o, k, to, dur) {
+      var tw = { o: o, k: k, from: o[k], to: to, t0: T, dur: dur };
+      tweens.push(tw);
+      return until(function () { return T >= tw.t0 + dur; });
+    }
+    function take() { if (tapped) { tapped = false; return true; } return false; }
+    function fadeTo(v, d) { return tween(fx, 'fade', v, d); }
+    function shake(n) { fx.shake = Math.max(fx.shake, n); }
+    function flash() { fx.flash = 1; }
+    function at(el, x, y) {
+      el.style.left = 'calc(var(--u) * ' + x + ')';
+      el.style.top = 'calc(var(--u) * ' + y + ')';
+    }
+
+    // ---------- 文字 ----------
+    function typeInto(el, text, cps, blip) {
+      var t0 = T, n = text.length, shown = -1, done = false, doneAt = 0;
+      el.textContent = '';
+      return {
+        tick: function () {
+          if (done) return true;
+          var k = Math.min(n, Math.floor((T - t0) * cps));
+          if (take()) k = n;
+          if (k !== shown) {
+            if (blip && k > 0 && Math.floor(k / 2) !== Math.floor(Math.max(0, shown) / 2)) sfx('blip');
+            shown = k; el.textContent = text.slice(0, k);
+          }
+          if (k >= n) { done = true; doneAt = T; }
+          return done;
+        },
+        since: function () { return T - doneAt; }
+      };
+    }
+    function say(name, text, color) {
+      E.dlg.hidden = false; E.more.hidden = true;
+      E.name.textContent = name || ''; E.name.hidden = !name;
+      E.name.style.background = color || GOLD;
+      var ty = typeInto(E.text, text, 26, true);
+      return until(function () {
+        if (!ty.tick()) return false;
+        E.more.hidden = false;
+        return take() || ty.since() > 1.5 + text.length * 0.05;
+      }).then(function () { E.more.hidden = true; });
+    }
+    function quiet() { E.dlg.hidden = true; }
+    function narr(text, hold) {
+      E.narr.hidden = false;
+      var ty = typeInto(E.narr.firstElementChild, text, 14, true);
+      return until(function () { return ty.tick() && (take() || ty.since() > (hold || 1.3)); })
+        .then(function () { E.narr.hidden = true; });
+    }
+    function card(o) {
+      fx.card = { t0: T, color: o.color, img: o.img };
+      E.card.innerHTML = '';
+      var who = document.createElement('div'); who.className = 'who'; who.textContent = o.who;
+      var tt = document.createElement('div'); tt.className = 'title'; tt.textContent = o.title;
+      E.card.appendChild(tt); E.card.appendChild(who);
+      o.lines.forEach(function (l) { var p = document.createElement('div'); p.className = 'line'; p.textContent = l; E.card.appendChild(p); });
+      E.card.style.setProperty('--band', o.color);
+      E.card.hidden = false;
+      sfx('whoosh'); shake(2);
+      var t0 = T;
+      return until(function () { return (T - t0 > 0.6 && take()) || T - t0 > 3.2; })
+        .then(function () { fx.card = null; E.card.hidden = true; });
+    }
+    function toast(text, x, y, rot, cls) {
+      var el = document.createElement('div');
+      el.className = 'cs-toast ' + (cls || '');
+      el.textContent = text; at(el, x, y);
+      el.style.setProperty('--r', (rot || 0) + 'deg');
+      E.toasts.appendChild(el);
+      sfx('pop');
+      return el;
+    }
+    function burst(x, y, n, cols, power, grav) {
+      for (var i = 0; i < n; i++) {
+        var a = Math.random() * Math.PI * 2, v = (0.4 + Math.random()) * (power || 60);
+        parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - (power || 60) * 0.6, g: grav == null ? 120 : grav,
+          life: 1 + Math.random() * 1.2, c: cols[i % cols.length], s: Math.random() < 0.3 ? 2 : 1 });
+      }
+    }
+    function bang(x, y) { return { x: x, y: y, t0: T }; }
+    function drawBang(o) {
+      if (!o) return;
+      var k = T - o.t0, y = o.y - Math.max(0, 10 - k * 60) + Math.sin(k * 10) * Math.max(0, 1.5 - k);
+      R(o.x - 4, y - 1, 8, 16, INK); R(o.x - 3, y, 6, 14, RED); R(o.x - 2, y + 1, 2, 6, '#ff8e7d');
+      R(o.x - 4, y + 17, 8, 7, INK); R(o.x - 3, y + 18, 6, 5, RED);
+    }
+
+    // ---------- 镜头 1：毕业典礼 ----------
+    function campus(st, dt) {
+      P.bands(0, ['#6cb8ea', '#7cc0ec', '#8dc9ef', '#9fd2f2', '#b1dbf5', '#c4e4f7'], 24);
+      R(0, 144, W, 90, '#cfe9f8');
+      P.disc(150, 40, 12, '#ffe27a'); P.disc(150, 40, 9, '#fff3b8');
+      for (var i = 0; i < 4; i++) P.cloud(((i * 70 + T * 6) % 250) - 40, 22 + i * 21, '#fbfdff');
+      // 教学楼
+      R(76, 70, 28, 54, '#e3d3b0'); R(76, 70, 28, 3, '#c9b48c');
+      R(72, 62, 36, 8, '#9b3b2f'); R(80, 54, 20, 8, '#9b3b2f'); R(86, 47, 8, 7, '#9b3b2f');
+      R(89, 34, 1, 13, INK); R(90, 34, 8, 5, RED);
+      P.disc(90, 88, 8, INK); P.disc(90, 88, 7, WHITE); R(90, 83, 1, 6, INK); R(90, 88, 4, 1, INK);
+      R(18, 122, 144, 6, '#9b3b2f'); R(22, 128, 136, 104, '#e3d3b0'); R(22, 128, 136, 3, '#c9b48c');
+      for (var r = 0; r < 3; r++) for (var c = 0; c < 10; c++) {
+        var wx = 28 + c * 13, wy = 138 + r * 30;
+        if (r === 2 && c >= 4 && c <= 5) continue;
+        R(wx, wy, 7, 12, '#5e7fa6'); R(wx, wy, 2, 12, '#8fb0d6');
+      }
+      R(36, 155, 108, 9, '#c0392b'); for (var k = 0; k < 9; k++) R(41 + k * 12, 157, 6, 5, GOLD);
+      R(80, 196, 20, 36, '#7a4f33'); R(89, 196, 2, 36, '#5c3a26');
+      [[10, 236], [170, 236]].forEach(function (t) {
+        R(t[0] - 2, t[1] - 26, 5, 26, '#7a4f33');
+        P.disc(t[0], t[1] - 38, 15, '#4f9a52'); P.disc(t[0] - 5, t[1] - 33, 9, '#5fae5c'); P.disc(t[0] + 5, t[1] - 44, 6, '#72c06c');
+      });
+      R(0, 232, W, 88, '#7cc06a'); R(0, 232, W, 2, '#5fa04f');
+      for (var y = 232; y < H; y++) { var w2 = 26 + (y - 232) * 0.9; R(90 - w2 / 2, y, w2, 1, '#d8c49c'); }
+      // 同学们
+      var mates = [[30, '#5a3d2b'], [56, '#8c5a3c'], [124, '#3d3550'], [150, '#6b3b2b']];
+      mates.forEach(function (m, i) {
+        var bob = Math.abs(Math.sin(T * 7 + i * 1.3)) * (st.cheer ? 7 : 1.2);
+        P.put(guy({ outfit: 'gown', face: st.cheer ? 'happy' : 'smile', arms: st.cheer ? 'up' : 'down', cap: !st.thrown, hair: m[1] }), m[0], 230 - bob, 1);
+      });
+      var hb = st.cheer ? Math.abs(Math.sin(T * 6)) * 6 : 0;
+      P.put(guy({ outfit: 'gown', face: st.face, arms: st.arms, cap: !st.thrown }), 90, 240 - hb, 2);
+      // 飞起来的学士帽
+      st.caps.forEach(function (cp, i) {
+        cp.vy += 150 * dt; cp.x += cp.vx * dt; cp.y += cp.vy * dt;
+        if (cp.y > 150 && cp.vy > 0) { cp.vy *= -0.2; cp.y = 150; }
+        var w3 = [12, 8, 2, 8][Math.floor(T * 12 + i) % 4];
+        R(cp.x - w3 / 2 - 1, cp.y - 1, w3 + 2, 4, INK); R(cp.x - w3 / 2, cp.y, w3, 2, '#1f1b2d'); R(cp.x + w3 / 2 - 1, cp.y + 2, 1, 4, GOLD);
+      });
+    }
+
+    // ---------- 镜头 2：出租屋海投简历 ----------
+    function roomBg(dark) {
+      R(0, 0, W, H, dark ? '#2f3858' : '#3f4b6e');
+      for (var x = 4; x < W; x += 12) R(x, 0, 1, 210, dark ? '#2a3250' : '#394466');
+    }
+    function room(st, dt) {
+      roomBg(false);
+      R(108, 40, 60, 66, '#7a4f33');
+      b.save(); b.beginPath(); b.rect(111, 43, 54, 60); b.clip();
+      P.bands(43, ['#f08a5d', '#f4a06a', '#f7b97f', '#f9d29a'], 15);
+      P.disc(150, 80, 8, '#ffd27a');
+      R(111, 84, 14, 19, '#5b4a6b'); R(126, 78, 12, 25, '#4f3f60'); R(140, 88, 25, 15, '#5b4a6b');
+      b.restore();
+      R(108, 40, 60, 3, '#7a4f33'); R(108, 72, 60, 2, '#7a4f33'); R(137, 40, 2, 66, '#7a4f33'); R(105, 105, 66, 4, '#8f6040');
+      R(16, 40, 40, 50, '#f4ecd8'); P.disc(36, 58, 9, '#e8574a'); P.disc(36, 58, 4, '#f4ecd8'); R(22, 74, 28, 3, '#9aa3b5'); R(22, 80, 20, 3, '#9aa3b5');
+      R(34, 37, 4, 4, '#c7ccd4');
+      P.put(guy({ outfit: 'tee', face: st.face, arms: 'down', gray: st.gray }), 112, 228 + (st.slump || 0), 2);
+      R(0, 212, W, 6, '#b97a48'); R(0, 212, W, 1, '#d69a63'); R(0, 218, W, 102, '#8a5432');
+      R(16, 228, 60, 18, '#7a4a2a'); R(44, 236, 6, 2, '#c99a5a'); R(104, 228, 60, 18, '#7a4a2a'); R(132, 236, 6, 2, '#c99a5a');
+      // 笔记本电脑（背面）
+      R(14, 180, 60, 32, '#c3cad6'); R(14, 180, 60, 2, '#e1e6ee'); P.disc(44, 195, 5, '#e9eef5'); R(10, 210, 68, 3, '#9aa3b5');
+      var o = st.ring ? (Math.sin(T * 60) > 0 ? 1 : -1) : 0;
+      R(146 + o, 206, 18, 6, '#2d3142'); if (st.ring) R(148 + o, 207, 14, 2, '#9fe0ff');
+      R(160, 196, 10, 16, '#f4f1ea'); R(160, 196, 10, 3, '#6b3f2a'); R(170, 200, 2, 6, '#f4f1ea');
+      st.envs.forEach(function (e) {
+        e.t += dt; var u = e.t / 0.7;
+        if (u > 1) return;
+        P.put(envelope(), 44 + (e.tx - 44) * u, 190 - 170 * u - Math.sin(u * Math.PI) * 20, 1);
+      });
+    }
+    function call(st) {
+      // 左：HR 办公室
+      R(0, 0, W, H, '#c9dbea');
+      R(8, 36, 76, 80, '#e9eef5'); R(11, 39, 70, 74, '#8fb7d9');
+      R(14, 80, 12, 33, '#6f93b8'); R(28, 66, 14, 47, '#5d82a8'); R(44, 74, 12, 39, '#6f93b8'); R(58, 60, 18, 53, '#5d82a8');
+      for (var i = 0; i < 6; i++) for (var j = 0; j < 4; j++) R(31 + (i % 2) * 6, 70 + i * 6, 3, 3, '#cfe6ff');
+      R(8, 76, 76, 2, '#e9eef5'); R(45, 36, 2, 80, '#e9eef5');
+      P.put(hr({ face: st.hrFace, glint: st.glint }), 46, 252, 3);
+      R(0, 226, 104, 6, '#5d6b80'); R(0, 232, 104, 88, '#4a5668');
+      if (st.glint) { var k = Math.floor(T * 8) % 2; R(22 + k, 166, 3, 3, WHITE); R(43 + k, 166, 3, 3, WHITE); R(23 + k, 165, 1, 5, WHITE); R(44 + k, 165, 1, 5, WHITE); }
+      // 右：你的房间
+      b.save(); b.beginPath(); b.moveTo(100, 0); b.lineTo(W, 0); b.lineTo(W, H); b.lineTo(84, H); b.closePath(); b.clip();
+      roomBg(false);
+      R(110, 40, 50, 40, '#f4ecd8'); P.disc(135, 58, 8, '#e8574a'); P.disc(135, 58, 4, '#f4ecd8');
+      if (!st.crumbled) P.put(guy({ outfit: 'tee', face: st.face, arms: 'phone', gray: st.gray }), 136, 252, 3);
+      else { R(108, 218, 56, 8, '#8d8d96'); R(116, 212, 40, 6, '#9a9aa3'); R(126, 207, 20, 5, '#a6a6ae'); }
+      R(84, 226, 96, 6, '#b97a48'); R(84, 232, 96, 88, '#8a5432');
+      b.restore();
+      for (var y = 0; y < H; y++) { var x = 100 - y * 16 / 320; R(x - 3, y, 1, 1, INK); R(x - 2, y, 4, 1, WHITE); R(x + 2, y, 1, 1, INK); }
+    }
+
+    // ---------- 镜头 3：街头招聘海报 ----------
+    function street(st) {
+      R(0, 0, W, 40, '#c7d3df');
+      R(0, 40, W, 202, '#a4583f');
+      for (var y = 40, row = 0; y < 242; y += 7, row++) {
+        R(0, y, W, 1, '#8a4632');
+        for (var x = (row % 2) * 8; x < W; x += 16) R(x, y + 1, 1, 6, '#8a4632');
+      }
+      R(30, 60, 124, 150, 'rgba(0,0,0,0.25)');
+      R(28, 58, 124, 150, '#f4ecd8'); R(28, 58, 124, 22, RED);
+      R(24, 55, 12, 5, '#e9dcbd'); R(144, 55, 12, 5, '#e9dcbd');
+      R(166, 30, 3, 212, '#3d4c63'); R(160, 26, 14, 6, '#3d4c63'); R(162, 32, 10, 3, '#ffe9a8');
+      R(0, 242, W, 78, '#9aa0aa'); R(0, 242, W, 3, '#7d838d');
+      for (var x2 = 0; x2 < W; x2 += 30) R(x2, 245, 1, 75, '#878d97');
+      P.put(guy({ outfit: 'tee', face: st.face, arms: 'down', gray: st.gray }), 132, 270, 2);
+    }
+
+    // ---------- 镜头 4：深夜出租屋 ----------
+    function night(st, dt) {
+      R(0, 0, W, H, '#161b36');
+      for (var x = 4; x < W; x += 12) R(x, 0, 1, 214, '#1a2040');
+      R(14, 30, 66, 74, '#2a2235');
+      b.save(); b.beginPath(); b.rect(17, 33, 60, 68); b.clip();
+      R(17, 33, 60, 68, '#1d2550');
+      P.disc(58, 50, 7, '#f6f0c8'); P.disc(55, 48, 6, '#1d2550');
+      for (var i = 0; i < 9; i++) { if ((Math.floor(T * 2) + i) % 4) R(20 + (i * 23) % 56, 36 + (i * 17) % 30, 1, 1, '#c9d2ff'); }
+      R(17, 86, 16, 15, '#0f1430'); R(34, 80, 12, 21, '#121838'); R(48, 88, 29, 13, '#0f1430');
+      R(37, 84, 2, 2, '#ffd27a'); R(52, 92, 2, 2, '#ffd27a');
+      for (var k = 0; k < 26; k++) { var rx = 17 + (k * 37) % 60, ry = 33 + ((T * 140 + k * 29) % 68); R(rx, ry, 1, 3, '#5d6fa8'); }
+      b.restore();
+      R(14, 66, 66, 2, '#2a2235'); R(46, 30, 2, 74, '#2a2235');
+      R(110, 52, 60, 3, '#3a2c22');
+      [8, 6, 9, 7, 5, 8, 6, 7].forEach(function (h, i) { R(112 + i * 7, 52 - h * 2, 6, h * 2, ['#4a3b5c', '#3d5a8a', '#6b3b3b', '#3f6b4f'][i % 4]); });
+      P.put(guy({ outfit: 'hoodie', face: st.face, arms: 'down', band: st.band }), 96, 234 + (st.slump || 0), 2);
+      R(0, 214, W, 6, '#6b4428'); R(0, 220, W, 100, '#4e311d');
+      R(14, 208, 18, 6, '#3d4c63'); R(21, 182, 3, 26, '#3d4c63'); R(20, 172, 22, 8, '#3d4c63'); R(24, 179, 14, 2, '#ffe9a8');
+      b.save(); b.globalCompositeOperation = 'lighter'; b.globalAlpha = 0.2;
+      for (var y = 181; y < 214; y++) { var hw = 6 + (y - 181) * 0.9; R(31 - hw, y, hw * 2, 1, '#ffcf70'); }
+      b.globalAlpha = 0.12; R(0, 214, 80, 6, '#ffcf70');
+      b.restore();
+      R(128, 196, 16, 18, '#f4f1ea'); R(128, 200, 16, 4, RED); R(127, 196, 18, 2, '#d8d2c4');
+      for (var s2 = 0; s2 < 3; s2++) R(132 + s2 * 4 + Math.round(Math.sin(T * 3 + s2) * 1.5), 186 - ((T * 10 + s2 * 4) % 10), 1, 3, 'rgba(255,255,255,0.5)');
+      var bx = st.buzz ? (Math.sin(T * 70) > 0 ? 1 : -1) : 0;
+      R(150 + bx, 209, 18, 5, '#2d3142');
+      if (st.buzz) { R(152 + bx, 210, 14, 2, '#9fe0ff'); b.save(); b.globalCompositeOperation = 'lighter'; b.globalAlpha = 0.18 + 0.1 * Math.sin(T * 10); P.disc(159, 208, 7, '#5fb8ff'); b.restore(); }
+      if (st.face === 'tired') {
+        for (var z = 0; z < 3; z++) {
+          var zt = (T * 0.6 + z / 3) % 1, zx = 116 + zt * 16, zy = 170 - zt * 34;
+          b.save(); b.globalAlpha = 1 - zt;
+          R(zx, zy, 4, 1, '#c9d2ff'); R(zx + 2, zy + 1, 1, 1, '#c9d2ff'); R(zx + 1, zy + 2, 1, 1, '#c9d2ff'); R(zx, zy + 3, 4, 1, '#c9d2ff');
+          b.restore();
+        }
+      }
+      drawBang(st.bang);
+    }
+
+    // ---------- 镜头 5：燃起来 ----------
+    function burn(st) {
+      R(0, 0, W, H, '#f2994a');
+      var cx = 90, cy = 180, n = 18, rot = T * 0.4;
+      b.fillStyle = GOLD;
+      for (var i = 0; i < n; i += 2) {
+        var a0 = rot + i * Math.PI * 2 / n, a1 = rot + (i + 1) * Math.PI * 2 / n;
+        b.beginPath(); b.moveTo(cx, cy); b.lineTo(cx + Math.cos(a0) * 400, cy + Math.sin(a0) * 400); b.lineTo(cx + Math.cos(a1) * 400, cy + Math.sin(a1) * 400); b.closePath(); b.fill();
+      }
+      for (var k = 0; k < 24; k++) {
+        var edge = Math.abs(k - 11.5) / 11.5, h = (70 - edge * 30) + 26 * Math.abs(Math.sin(T * 7 + k * 1.7)), fx2 = 30 + k * 5;
+        R(fx2, 250 - h - 30, 5, h, k % 2 ? '#ffd34d' : '#ff6a3d');
+        R(fx2 + 1, 250 - h - 30 + h * 0.4, 3, h * 0.6, '#fff1a8');
+      }
+      b.save(); b.globalAlpha = 0.35; R(54, 248, 72, 6, INK); b.restore();
+      P.put(guy({ outfit: 'hoodie', face: 'grit', arms: 'fist', band: true }), 90, 252, 3);
+    }
+
+    // ---------- 角色登场卡 ----------
+    function drawCard() {
+      var c = fx.card; if (!c) return;
+      var k = ease(clamp((T - c.t0) / 0.28, 0, 1));
+      b.save(); b.globalAlpha = 0.55 * k; R(0, 0, W, H, '#0b0814'); b.restore();
+      var xs = (k - 1) * W * 1.2;
+      for (var y = 92; y < 240; y++) {
+        var off = (240 - y) * 0.3;
+        R(xs + off - 30, y, W + 60, 1, c.color);
+      }
+      for (var y2 = 90; y2 < 92; y2++) R(xs + (240 - y2) * 0.3 - 30, y2, W + 60, 1, INK);
+      for (var y3 = 240; y3 < 243; y3++) R(xs - 30, y3, W + 60, 1, INK);
+      for (var s = 0; s < 6; s++) {
+        var sx = ((T * 260 + s * 53) % (W + 40)) - 20, sy = 104 + s * 22;
+        R(W - sx, sy, 16, 1, 'rgba(255,255,255,0.55)');
+      }
+      P.put(c.img, -40 + 86 * k, 242, 3);
+    }
+
+    // ---------- 主循环 ----------
+    var s = 1;
+    function resize() {
+      var r = host.getBoundingClientRect();
+      if (!r.width) return;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      s = Math.min(r.width / W, r.height / H);
+      var w = W * s, h = H * s, ox = (r.width - w) / 2, oy = (r.height - h) / 2;
+      cv.style.left = ox + 'px'; cv.style.top = oy + 'px'; cv.style.width = w + 'px'; cv.style.height = h + 'px';
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      layer.style.left = ox + 'px'; layer.style.top = oy + 'px'; layer.style.width = w + 'px'; layer.style.height = h + 'px';
+      host.style.setProperty('--u', s + 'px');
+    }
+    function step(dt) {
+      if (!running) return;
+      T += dt;
+      tweens = tweens.filter(function (tw) {
+        var u = Math.min(1, (T - tw.t0) / tw.dur);
+        tw.o[tw.k] = tw.from + (tw.to - tw.from) * ease(u);
+        return u < 1;
+      });
+      var ws = waiters; waiters = [];
+      ws.forEach(function (w) { if (aborted || w.pred()) w.res(); else waiters.push(w); });
+      tapped = false;
+      fx.shake = Math.max(0, fx.shake - dt * 14);
+      fx.flash = Math.max(0, fx.flash - dt * 3);
+      b.save();
+      if (fx.shake > 0.3) b.translate(Math.round((Math.random() * 2 - 1) * fx.shake), Math.round((Math.random() * 2 - 1) * fx.shake));
+      paint(dt);
+      parts = parts.filter(function (p) {
+        p.vy += p.g * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
+        R(p.x, p.y, p.s + 1, p.s, p.c);
+        return p.life > 0 && p.y < H + 10;
+      });
+      b.restore();
+      drawCard();
+      if (fx.flash > 0) { b.save(); b.globalAlpha = fx.flash; R(0, 0, W, H, WHITE); b.restore(); }
+      if (fx.fade > 0) { b.save(); b.globalAlpha = fx.fade; R(0, 0, W, H, '#000'); b.restore(); }
+      P.blit(cv, cv.width, cv.height);
+    }
+
+    // ---------- 剧本 ----------
+    async function script() {
+      // 1 毕业
+      var st = { face: 'smile', arms: 'down', caps: [], cheer: false, thrown: false };
+      paint = function (dt) { campus(st, dt); };
+      await fadeTo(0, 0.8);
+      await narr('2031 年，夏。');
+      await say('你', '终于……毕业了！！', C.you);
+      quiet();
+      st.face = 'happy'; st.arms = 'up'; st.cheer = true; st.thrown = true;
+      [30, 56, 90, 124, 150].forEach(function (x) { st.caps.push({ x: x, y: x === 90 ? 166 : 196, vx: (Math.random() - 0.5) * 50, vy: -150 - Math.random() * 40 }); });
+      sfx('whoosh'); burst(90, 120, 60, [RED, GOLD, '#7fb2ff', '#7cc06a', WHITE], 70, 60);
+      await wait(1.3);
+      await card({ who: '你', title: '应届本科毕业生', lines: ['特长：熬夜、踩点上早八', '存款：¥1,280'], color: GOLD,
+        img: guy({ outfit: 'gown', face: 'happy', arms: 'up', cap: true }) });
+      await say('你', '大厂、高薪、走上人生巅峰——我来了！', C.you);
+      quiet();
+      await fadeTo(1, 0.5);
+
+      // 2 海投简历
+      st = { face: 'smile', envs: [], ring: false, slump: 0 };
+      paint = function (dt) { room(st, dt); };
+      await fadeTo(0, 0.5);
+      await narr('毕业第一个月。');
+      await say('你', '先海投一百份简历，稳了。', C.you);
+      quiet();
+      E.counter.hidden = false;
+      for (var n = 1; n <= 128; n += Math.ceil(n / 9)) {
+        E.counter.textContent = '已投递简历：' + n + ' 份';
+        st.envs.push({ t: 0, tx: 60 + Math.random() * 120 });
+        if (n % 3 === 0) sfx('tick');
+        await wait(0.07);
+      }
+      E.counter.textContent = '已投递简历：128 份';
+      await wait(0.6);
+      var replies = [['已读', 22, 60, -6], ['已读不回', 104, 74, 5], ['简历已被查看', 14, 100, 3], ['已读不回', 96, 118, -4],
+        ['岗位已招满', 30, 140, 6], ['已读不回', 112, 150, -7], ['感谢投递，您不太合适哦', 12, 172, -2]];
+      for (var i = 0; i < replies.length; i++) {
+        var r0 = replies[i];
+        toast(r0[0], r0[1], r0[2], r0[3], r0[0] === '已读不回' ? 'red' : '');
+        if (i === 2) st.face = 'sweat';
+        if (i === 5) { st.face = 'tired'; st.slump = 2; }
+        await wait(0.42);
+      }
+      await wait(0.6);
+      E.toasts.innerHTML = ''; E.counter.hidden = true;
+      st.ring = true; st.face = 'shock'; st.slump = 0; sfx('ring'); shake(2);
+      var ringEl = toast('来电：某大厂 HR', 70, 176, 0, 'call');
+      await say('你', '来、来电话了！！', C.you);
+      ringEl.remove(); quiet();
+      await card({ who: '张经理', title: '大厂 HR', lines: ['阅简历无数', '口头禅：回去等通知'], color: '#7fb2ff', img: hr({ face: 'smile' }) });
+
+      // 2b 通话分屏
+      st = { face: 'smile', hrFace: 'smile', glint: false, gray: false, crumbled: false };
+      paint = function () { call(st); };
+      flash();
+      await say('张经理', '同学你好，你的简历我看过了。', C.hr);
+      st.hrFace = 'talk';
+      await say('张经理', '非常优秀。', C.hr);
+      st.face = 'sparkle'; burst(136, 160, 16, [GOLD, WHITE], 40, 0); sfx('pop');
+      await say('你', '真、真的吗！！', C.you);
+      st.hrFace = 'cold'; st.glint = true; sfx('glint');
+      await say('张经理', '但是——', C.hr);
+      shake(5); sfx('thud');
+      await say('张经理', '我们只要研究生。', C.hr);
+      quiet();
+      st.face = 'shock'; st.gray = true; sfx('glint');
+      await wait(0.9);
+      st.crumbled = true; sfx('crumble'); shake(3);
+      burst(136, 180, 60, ['#8d8d96', '#a6a6ae', '#6f6f78'], 50, 260);
+      await wait(1.2);
+      await fadeTo(1, 0.5);
+
+      // 3 街头海报
+      st = { face: 'tired', gray: false };
+      paint = function () { street(st); };
+      var edu = E.poster.querySelector('.edu');
+      edu.innerHTML = '<span class="w">本科</span>';
+      E.poster.hidden = false;
+      await fadeTo(0, 0.5);
+      await narr('又过了半年。');
+      await say('你', '算了……先找份工作糊口吧。', C.you);
+      quiet();
+      await wait(0.5);
+      var words = ['硕士', '博士', '博士后优先！'];
+      for (var w = 0; w < words.length; w++) {
+        var spans = edu.querySelectorAll('.w');
+        spans[spans.length - 1].classList.add('struck');
+        sfx('tick');
+        await wait(0.35);
+        var nw = document.createElement('span'); nw.className = 'w hand'; nw.textContent = words[w];
+        edu.appendChild(nw);
+        sfx('thud'); shake(3 + w * 2);
+        st.face = w === 0 ? 'shock' : (w === 1 ? 'sweat' : 'shock');
+        if (w === 2) st.gray = true;
+        await wait(0.8);
+      }
+      await say('你', '保安……也要博士？？', C.you);
+      quiet();
+      await narr('学历，正在贬值。', 1.6);
+      await fadeTo(1, 0.6);
+      E.poster.hidden = true;
+
+      // 4 深夜
+      st = { face: 'tired', buzz: false, bang: null, band: false, slump: 3 };
+      paint = function (dt) { night(st, dt); };
+      await fadeTo(0, 0.7);
+      await narr('某个深夜。');
+      await wait(1.2);
+      st.buzz = true; sfx('buzz'); shake(1);
+      E.notif.hidden = false;
+      await wait(1.4);
+      st.face = 'shock'; st.slump = 0; st.bang = bang(122, 140); sfx('pop');
+      await wait(0.9);
+      st.bang = null; st.buzz = false;
+      st.face = 'blink';
+      await say('你', '考研……', C.you);
+      st.face = 'smile';
+      await say('你', '对啊。本科不够，那就读研！', C.you);
+      quiet(); E.notif.hidden = true;
+
+      // 5 燃
+      flash(); shake(6); sfx('big');
+      paint = function () { burn(st); };
+      await say('你', '7 天！我要上岸！！', RED);
+      quiet();
+      await wait(0.3);
+      E.logo.hidden = false; sfx('stamp'); shake(7); flash();
+      await wait(1.2);
+      E.go.hidden = false;
+      await until(function () { return E.go.dataset.pressed === '1'; });
+    }
+
+    function reset() {
+      T = 0; aborted = false; tapped = false; waiters = []; tweens = []; parts = [];
+      fx = { shake: 0, flash: 0, fade: 1, card: null };
+      paint = function () { R(0, 0, W, H, '#000'); };
+      ['dlg', 'narr', 'card', 'poster', 'notif', 'logo', 'go', 'counter'].forEach(function (k) { E[k].hidden = true; });
+      E.toasts.innerHTML = ''; E.go.dataset.pressed = '';
+    }
+    function finish() {
+      if (!running) return;
+      running = false; aborted = true;
+      E.skip.hidden = true;
+      opt.onDone && opt.onDone();
+    }
+    function begin() {
+      E.start.hidden = true; E.skip.hidden = false;
+      opt.onStart && opt.onStart();
+      script().then(finish, function (e) { if (e !== ABORT) console.error(e); finish(); });
+    }
+
+    host.addEventListener('click', function (e) {
+      if (!running) return;
+      if (e.target.closest('.cs-skip') || e.target.closest('.cs-go')) return;
+      if (!E.start.hidden) { begin(); return; }
+      tapped = true;
+    });
+    E.skip.addEventListener('click', function () { aborted = true; finish(); });
+    E.go.addEventListener('click', function () { E.go.dataset.pressed = '1'; });
+    window.addEventListener('resize', resize);
+
+    return {
+      play: function () { reset(); running = true; E.start.hidden = false; E.skip.hidden = true; resize(); step(0); },
+      begin: begin,
+      step: step,
+      resize: resize,
+      running: function () { return running; },
+      time: function () { return T; }
+    };
+  }
+
+  // ======================================================================
+  // 书桌主界面
+  // ======================================================================
+  var BOOKS = ['#d9503f', '#3d7bd9', '#5aa469', '#8f6ad1', '#e0a43a', '#3aa6a0', '#c4577a', '#6b7a8f'];
+  var TOD = {
+    day: { wall: '#efe0bf', stripe: '#e6d4ae', sky: ['#7cc4ef', '#93cff2', '#abdaf5', '#c4e5f8'], city: '#9fb4cc', dark: 0, lamp: false },
+    dusk: { wall: '#ecc9a2', stripe: '#e0ba92', sky: ['#ee7f58', '#f39a66', '#f7b67d', '#f9d29a'], city: '#7d5a7a', dark: 0.15, lamp: true },
+    night: { wall: '#d9c39c', stripe: '#cdb68f', sky: ['#141a40', '#1a2150', '#212a60', '#2a3470'], city: '#0f1430', dark: 0.52, lamp: true }
+  };
+  function todOf(h) { return h >= 6 && h < 17 ? 'day' : (h >= 17 && h < 19 ? 'dusk' : 'night'); }
+
+  function Desk(host) {
+    var W = 180, H = 150;
+    var P = Painter(W, H), b = P.b, R = P.R;
+    var cv = host.querySelector('.desk-cv');
+    var st = { daysLeft: 7, day: 1, energy: 5, max: 5, stress: 0, study: 0, items: {}, msgNew: false, hour: new Date().getHours(), exam: false };
+    var T = 0, s = 1;
+
+    function resize() {
+      var r = host.getBoundingClientRect();
+      if (!r.width) return;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      s = r.width / W;
+      host.style.height = Math.round(H * s) + 'px';
+      host.style.setProperty('--u', s + 'px');
+      cv.width = Math.round(r.width * dpr); cv.height = Math.round(H * s * dpr);
+    }
+    window.addEventListener('resize', resize);
+
+    function paint() {
+      var pal = TOD[todOf(st.hour)], night = pal.dark > 0.3;
+      // 墙
+      R(0, 0, W, 94, pal.wall);
+      for (var x = 6; x < W; x += 10) R(x, 0, 1, 94, pal.stripe);
+      // 窗
+      R(4, 6, 8, 62, '#c9604b'); R(60, 6, 8, 62, '#c9604b'); R(6, 6, 2, 62, '#b04f3c'); R(63, 6, 2, 62, '#b04f3c');
+      R(10, 10, 52, 56, '#7a4f33');
+      b.save(); b.beginPath(); b.rect(13, 13, 46, 50); b.clip();
+      for (var i = 0; i < 4; i++) R(13, 13 + i * 13, 46, 13, pal.sky[i]);
+      if (night) {
+        P.disc(46, 24, 5, '#f6f0c8'); P.disc(44, 22, 4, pal.sky[0]);
+        for (var k = 0; k < 8; k++) if ((Math.floor(T * 1.5) + k) % 5) R(15 + (k * 19) % 42, 15 + (k * 11) % 24, 1, 1, '#d6dcff');
+      } else if (todOf(st.hour) === 'day') {
+        P.cloud(((T * 4) % 80) - 20, 20, '#fbfdff'); P.cloud(((T * 4 + 40) % 80) - 20, 34, '#f2f8fd');
+      } else { P.disc(40, 50, 7, '#ffd27a'); }
+      R(13, 50, 12, 13, pal.city); R(26, 44, 10, 19, pal.city); R(37, 52, 22, 11, pal.city);
+      if (night) { R(29, 48, 2, 2, '#ffd27a'); R(32, 54, 2, 2, '#ffd27a'); R(42, 56, 2, 2, '#ffd27a'); R(16, 54, 2, 2, '#ffd27a'); }
+      b.restore();
+      R(35, 10, 2, 56, '#7a4f33'); R(10, 37, 52, 2, '#7a4f33'); R(8, 65, 56, 4, '#8f6040');
+      // 便利贴
+      R(73, 13, 22, 20, 'rgba(0,0,0,0.12)'); R(72, 12, 22, 20, '#f7dc6f'); R(72, 12, 22, 3, '#eccb50');
+      R(98, 19, 20, 22, 'rgba(0,0,0,0.12)'); R(97, 18, 20, 22, '#f5a3b5'); R(105, 17, 3, 3, RED);
+      for (var l = 0; l < 4; l++) { R(100, 24 + l * 4, 3, 2, '#b85a72'); R(104, 24 + l * 4, 10 - (l % 2) * 3, 1, '#b85a72'); }
+      R(100, 24, 3, 2, '#5aa469'); R(100, 28, 3, 2, '#5aa469');
+      // 台历
+      R(125, 7, 46, 44, 'rgba(0,0,0,0.12)'); R(124, 6, 46, 44, '#f8f4ea'); R(124, 6, 46, 9, RED);
+      R(131, 4, 2, 5, '#9aa3b5'); R(161, 4, 2, 5, '#9aa3b5');
+      for (var d = 0; d < 7; d++) {
+        var cx = 127 + d * 6, cy = 42;
+        var c = d + 1 < st.day ? '#d6cfbf' : (d + 1 === st.day ? GOLD : '#efe8d8');
+        R(cx, cy, 5, 5, c);
+        if (d === 6) { R(cx - 1, cy - 1, 7, 1, RED); R(cx - 1, cy + 5, 7, 1, RED); R(cx - 1, cy, 1, 5, RED); R(cx + 5, cy, 1, 5, RED); }
+        if (d + 1 < st.day) { R(cx + 1, cy + 1, 1, 1, RED); R(cx + 3, cy + 1, 1, 1, RED); R(cx + 2, cy + 2, 1, 1, RED); R(cx + 1, cy + 3, 1, 1, RED); R(cx + 3, cy + 3, 1, 1, RED); }
+      }
+      // 书架：学习力越多书越多
+      R(120, 76, 58, 3, '#8f6040'); R(124, 79, 2, 4, '#7a4f33'); R(172, 79, 2, 4, '#7a4f33');
+      var nb = Math.min(13, 3 + Math.floor(st.study / 250)), bx = 122;
+      for (var q = 0; q < nb; q++) {
+        var bw = 3 + (q * 7) % 3, bh = 12 + (q * 5) % 7;
+        R(bx, 76 - bh, bw, bh, BOOKS[q % BOOKS.length]); R(bx, 76 - bh + 2, bw, 1, 'rgba(255,255,255,0.35)');
+        bx += bw + 1;
+      }
+      // 桌面与地板
+      R(0, 94, W, 2, '#d69a63'); R(0, 96, W, 24, '#b97a48');
+      for (var g2 = 0; g2 < 4; g2++) R(0, 100 + g2 * 6, W, 1, '#ad6f40');
+      R(0, 120, W, 4, '#8a5432'); R(0, 124, W, 26, '#5e4b3c');
+      for (var f = 0; f < W; f += 22) R(f, 124, 1, 26, '#54423a');
+      // 台灯
+      R(8, 104, 20, 5, '#3d4c63'); R(16, 80, 3, 24, '#3d4c63'); R(15, 74, 22, 7, '#3d4c63'); R(18, 80, 16, 2, pal.lamp ? '#ffe9a8' : '#cfd5de');
+      // 保温杯：精力
+      R(40, 86, 11, 24, '#c74a3a'); R(40, 86, 11, 2, '#e0705e'); R(41, 82, 9, 4, '#c7ccd4'); R(42, 80, 7, 2, '#aab1bb');
+      R(42, 90, 2, 16, 'rgba(255,255,255,0.3)');
+      if (st.energy > 0) for (var sm = 0; sm < 3; sm++) {
+        var tt = (T * 0.7 + sm / 3) % 1;
+        b.save(); b.globalAlpha = 0.6 * (1 - tt);
+        R(44 + sm * 2 + Math.round(Math.sin(T * 4 + sm * 2) * 1.5), 78 - tt * 14, 1, 3, WHITE);
+        b.restore();
+      }
+      // 咖啡杯
+      if (st.items.coffee > 0) { R(54, 102, 9, 10, '#f4f1ea'); R(54, 102, 9, 2, '#6b3f2a'); R(63, 104, 2, 5, '#f4f1ea'); }
+      // 错题本一摞
+      var nn = 1 + (st.items.notebook || 0);
+      for (var e = 0; e < nn; e++) { R(126 + (e % 2), 108 - e * 3, 22, 3, e % 2 ? '#e0a43a' : RED); R(126 + (e % 2), 108 - e * 3, 22, 1, 'rgba(255,255,255,0.3)'); }
+      // 耳机
+      if (st.items.phones > 0) { R(151, 96, 12, 2, '#8f6ad1'); R(150, 97, 2, 6, '#8f6ad1'); R(162, 97, 2, 6, '#8f6ad1'); R(148, 101, 5, 5, '#6b4fb0'); R(161, 101, 5, 5, '#6b4fb0'); }
+      // 手机
+      var buzz = st.msgNew && Math.floor(T * 2) % 3 === 0 ? (Math.sin(T * 70) > 0 ? 1 : -1) : 0;
+      R(158 + buzz, 110, 16, 6, '#2d3142'); R(159 + buzz, 111, 14, 3, st.msgNew ? '#9fe0ff' : '#4b5470');
+      // 背包
+      if (st.items.bag > 0) { R(150, 128, 22, 20, '#4f9a52'); R(150, 128, 22, 4, '#3f7f43'); R(155, 136, 12, 7, '#5fae5c'); R(160, 126, 2, 3, '#3f7f43'); }
+      // 你（背影）
+      var lean = st.stress >= 70 ? 1 : 0;
+      var bob = Math.floor(T * 2.5) % 2;
+      P.put(guyBack({ band: st.exam || st.daysLeft <= 1, lean: lean }), 92, 152 + bob, 2);
+      R(66, 128, 52, 22, '#5b4a72'); R(66, 128, 52, 3, '#76629a'); R(70, 133, 44, 1, '#4a3b5e');
+      if (st.items.bag > 0) {}
+      // 压力云
+      if (st.stress >= 20) {
+        var big = st.stress >= 70, r = 4 + Math.round(st.stress / 14), cy2 = 66 + Math.sin(T * 1.6) * 1.5;
+        var col = big ? '#4b4f63' : '#a3aabb';
+        P.disc(92, cy2, r, col); P.disc(92 - r, cy2 + 2, r - 2, col); P.disc(92 + r, cy2 + 2, r - 2, col);
+        R(92 - r * 2 + 2, cy2 + 2, r * 4 - 4, r - 1, col);
+        if (big) {
+          if (Math.floor(T * 1.3) % 3 === 0 && (T * 1.3) % 1 < 0.25) { R(91, cy2 + r, 2, 4, GOLD); R(89, cy2 + r + 4, 3, 2, GOLD); R(88, cy2 + r + 6, 2, 3, GOLD); }
+          for (var rd = 0; rd < 6; rd++) R(84 + rd * 3, cy2 + r + ((T * 40 + rd * 7) % 12), 1, 2, '#7ec8f0');
+        }
+      }
+      // 夜晚：整体压暗，台灯一束暖光
+      if (pal.dark) {
+        b.save(); b.globalAlpha = pal.dark; R(0, 0, W, H, '#0c0e28'); b.restore();
+        b.save(); b.globalCompositeOperation = 'lighter'; b.globalAlpha = 0.22;
+        for (var y = 82; y < 124; y++) { var hw = 8 + (y - 82) * 1.1; R(26 - hw, y, hw * 2, 1, '#ffd98a'); }
+        b.globalAlpha = 0.12; P.disc(26, 108, 30, '#ffd98a');
+        b.restore();
+      }
+    }
+
+    return {
+      set: function (o) { for (var k in o) st[k] = o[k]; },
+      step: function (dt) { T += dt; paint(); P.blit(cv, cv.width, cv.height); },
+      resize: resize
+    };
+  }
+
+  root.GradScenes = { Intro: Intro, Desk: Desk, guy: guy, todOf: todOf };
+})(window);
+
+</script>
+<script>
 (function () {
   'use strict';
   var GM = window.GradMonsters;
@@ -899,57 +2010,77 @@
   // ======================================================================
   // 界面切换
   // ======================================================================
-  var VIEWS = ['vStory', 'vMajor', 'vSchool', 'vHome', 'vEnd', 'battle'];
-  function show(id) { VIEWS.forEach(function (v) { $(v).hidden = v !== id; }); }
+  var VIEWS = ['vIntro', 'vMajor', 'vSchool', 'vHome', 'vEnd', 'battle'];
+  function show(id) {
+    VIEWS.forEach(function (v) { $(v).hidden = v !== id; });
+    if (id === 'vHome' && window.GradScenes) { desk.resize(); desk.step(0); }
+    if (id === 'vIntro' && window.GradScenes) intro.resize();
+  }
   function overlay(id, on) { $(id).hidden = !on; }
 
-  // 开场
-  var STORY = [
-    '2031 年，全球学历贬值。',
-    '本科文凭，只够在简历上占一行。',
-    '想要出路，只有一条：考研。',
-    '离考研还有 7 天。'
-  ];
-  var storyIdx = 0;
-  function startStory() {
-    storyIdx = 0; $('storyLine').textContent = STORY[0]; show('vStory');
-  }
-  $('storyNext').addEventListener('click', function () {
-    storyIdx++;
-    if (storyIdx < STORY.length) { $('storyLine').textContent = STORY[storyIdx]; return; }
-    save.storySeen = true; persist();
-    renderMajors(); show('vMajor');
+  // 开场动画
+  var GS = window.GradScenes;
+  var intro = GS.Intro($('vIntro'), {
+    sfx: function (n) { sfx(n); },
+    onStart: function () { audioInit(); },
+    onDone: function () { save.storySeen = true; persist(); renderMajors(); show('vMajor'); }
   });
+  function startIntro() { show('vIntro'); intro.play(); }
 
+  // 报名表
+  function optRow(id, title, tag, desc, disabled) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'opt'; b.id = id; b.disabled = !!disabled;
+    b.innerHTML = '<span class="box"></span><span class="t"></span><span class="tag"></span><span class="d"></span>';
+    b.querySelector('.t').textContent = title;
+    b.querySelector('.tag').textContent = tag;
+    b.querySelector('.d').textContent = desc;
+    return b;
+  }
+  function tick(b) { b.querySelector('.box').textContent = '✓'; sfx('pop'); }
+  function stampThen(text, fn) {
+    var el = document.createElement('div'); el.className = 'stamp'; el.textContent = text;
+    $('game').appendChild(el); sfx('stamp');
+    setTimeout(function () { el.remove(); fn(); }, 900);
+  }
   function renderMajors() {
     var box = $('majorList'); box.innerHTML = '';
     MAJORS.forEach(function (m) {
-      var b = document.createElement('button');
-      b.type = 'button'; b.className = 'card'; b.disabled = !m.open; b.id = 'major-' + m.id;
-      b.innerHTML = '<span class="t"><span></span><small></small></span><span class="d"></span>';
-      b.querySelector('.t span').textContent = m.name;
-      b.querySelector('.t small').textContent = m.open ? (m.code || '') : '后续开放';
-      b.querySelector('.d').textContent = m.d;
-      b.addEventListener('click', function () { save.major = m.id; persist(); renderSchools(); show('vSchool'); });
+      var b = optRow('major-' + m.id, m.name, m.open ? (m.code || '') : '后续开放', m.d, !m.open);
+      b.addEventListener('click', function () {
+        audioInit(); tick(b); save.major = m.id; persist();
+        setTimeout(function () { renderSchools(); show('vSchool'); }, 260);
+      });
       box.appendChild(b);
     });
   }
   function renderSchools() {
     var box = $('schoolList'); box.innerHTML = '';
     SCHOOLS.forEach(function (s, i) {
-      var b = document.createElement('button');
-      b.type = 'button'; b.className = 'card'; b.id = 'school-' + i;
-      b.innerHTML = '<span class="t"><span></span><small></small></span><span class="d"></span>';
-      b.querySelector('.t span').textContent = s.name;
-      b.querySelector('.t small').textContent = s.tier;
-      b.querySelector('.d').textContent = s.d + ' · 考场怪物血量 ×' + s.hp;
+      var b = optRow('school-' + i, s.name, s.tier, s.d + ' · 考场怪物血量 ×' + s.hp);
       b.addEventListener('click', function () {
+        tick(b);
         save.school = i; save.start = today(); save.energyDay = null; persist();
-        refreshDay(); renderHome(); show('vHome');
+        refreshDay();
+        stampThen('已报名', function () { renderHome(); show('vHome'); });
       });
       box.appendChild(b);
     });
   }
+
+  // 书桌
+  var desk = GS.Desk($('desk'));
+  var SUB_LOOK = {
+    po: { c: '#d9503f', mon: 'danxuan', d: '单选题小兵、蒙题骰子' }, en: { c: '#3d7bd9', mon: 'abandon', d: 'Abandon 幽灵成群' },
+    ma: { c: '#4f9a52', mon: 'wuqiong', d: '无穷小量、常数 C' }, cs: { c: '#8f6ad1', mon: 'jiangshi', d: '僵尸进程，有精英怪' }
+  };
+  function monIcon(id) {
+    var def = GM.list.filter(function (x) { return x.id === id; })[0];
+    var c = document.createElement('canvas'); c.width = c.height = GM.N; c.className = 'pix';
+    if (def) c.getContext('2d').drawImage(GM.frame(def, 0), 0, 0);
+    return c;
+  }
+  function dayKey() { return save.week + '-' + dayNum(); }
 
   // 自习室
   function homeMessage(d) {
@@ -965,48 +2096,82 @@
     ];
     return tips[Math.min(d - 1, tips.length - 1)];
   }
+  function phoneChats(d) {
+    var left = Math.max(0, 7 - d), list = [];
+    list.push({ who: '研友 老王', av: '王', c: '#3d7bd9', text: homeMessage(d).replace(/^研友说：/, '') });
+    list.push({ who: '考研倒计时', av: '倒', c: '#d9503f', text: d >= 7 ? '<b>今天考研。</b>带好准考证和 2B 铅笔。' : '距离考研还有 <b>' + left + ' 天</b>。' });
+    var fam = ['吃饭了没？别老吃泡面。', '你二姨问你考上没。', '少熬夜！头发要紧。', '家里给你寄了一箱牛奶。', '隔壁小张考公上岸了哦。', '考完回家吃饭。', '妈妈相信你。'];
+    list.push({ who: '妈妈', av: '妈', c: '#e0a43a', text: fam[Math.min(d, 7) - 1] });
+    if (save.week > 1) list.push({ who: '研友 老王', av: '王', c: '#3d7bd9', text: '二战的人最可怕，我看好你。' });
+    return list;
+  }
+  function openPhone() {
+    var box = $('phoneList'); box.innerHTML = '';
+    phoneChats(dayNum()).forEach(function (m) {
+      var row = document.createElement('div'); row.className = 'chat';
+      row.innerHTML = '<span class="av"></span><span><span class="who"></span><div class="bub"></div></span>';
+      row.querySelector('.av').textContent = m.av; row.querySelector('.av').style.background = m.c;
+      row.querySelector('.who').textContent = m.who;
+      row.querySelector('.bub').innerHTML = m.text;
+      box.appendChild(row);
+    });
+    var n = new Date(); $('phoneTime').textContent = pad(n.getHours()) + ':' + pad(n.getMinutes());
+    save.msgSeen = dayKey(); persist(); renderHome();
+    overlay('phoneOv', true); sfx('pop');
+  }
+  $('hotPhone').addEventListener('click', openPhone);
+  $('phoneClose').addEventListener('click', function () { overlay('phoneOv', false); });
+  $('hotShelf').addEventListener('click', function () { $('shopBtn').click(); });
+  $('hotCup').addEventListener('click', function () { $('adBtn').click(); });
+
   function renderHome() {
     refreshDay();
-    var d = dayNum(), exam = d >= 7;
+    var d = dayNum(), exam = d >= 7, dd = Math.min(d, 7);
     var m = MAJORS.filter(function (x) { return x.id === save.major; })[0];
     var s = SCHOOLS[save.school];
-    $('homeWho').textContent = (save.week > 1 ? '二战 · ' : '') + m.name + ' · 目标 ' + s.name + '（' + s.tier + '）';
-    $('dayBig').innerHTML = '第 ' + Math.min(d, 7) + ' 天 <small>/ 7</small>';
-    $('countdown').textContent = exam ? '今天考研' : '距考研还有 ' + (7 - d) + ' 天';
-    var days = $('days'); days.innerHTML = '';
-    for (var i = 1; i <= 7; i++) {
-      var sp = document.createElement('span');
-      sp.textContent = i === 7 ? '考' : i;
-      if (i < Math.min(d, 7)) sp.className = 'past';
-      if (i === Math.min(d, 7)) sp.className = 'today';
-      if (i === 7) sp.className += ' exam';
-      days.appendChild(sp);
-    }
+    $('homeWho').textContent = (save.week > 1 ? '二战 · ' : '') + m.name + ' → ' + s.name;
+    $('dayBig').innerHTML = '第 ' + dd + ' 天 <small>/ 7</small>';
+    $('countdown').textContent = exam ? '今天考研！' : '距考研 ' + (7 - d) + ' 天';
+    $('calNum').textContent = exam ? '考' : (7 - d);
+    $('calLbl').textContent = exam ? '就是今天' : '天后考研';
     $('homeMsg').innerHTML = homeMessage(d);
     var pips = $('energyPips'); pips.innerHTML = '';
-    for (var k = 0; k < MAX_ENERGY + 2; k++) {
-      if (k >= MAX_ENERGY && k >= save.energy) break;
+    for (var k = 0; k < Math.max(MAX_ENERGY, save.energy); k++) {
       var p = document.createElement('i'); if (k < save.energy) p.className = 'on'; pips.appendChild(p);
     }
     $('studyVal').textContent = save.study;
-    $('stressNum').textContent = Math.round(save.stress) + ' / 100';
+    $('stressNum').textContent = Math.round(save.stress);
     $('stressBar').style.width = save.stress + '%';
     $('stressWarn').hidden = save.stress < STRESS_LIMIT;
+    var tag = $('stressTag');
+    tag.hidden = save.stress < 20;
+    tag.textContent = save.stress >= STRESS_LIMIT ? '压力爆表 ' + Math.round(save.stress) : '压力 ' + Math.round(save.stress);
+    tag.className = 'stress-tag' + (save.stress >= STRESS_LIMIT ? ' bad' : '');
+    tag.style.left = 'calc(var(--u) * 92)';
+    tag.style.top = 'calc(var(--u) * ' + (66 - 4 - Math.round(save.stress / 14) - 12) + ')';
+    var msgNew = save.msgSeen !== dayKey();
+    $('msgBadge').hidden = !msgNew;
     $('examBox').hidden = !exam;
     $('studyBox').hidden = exam;
     var subs = $('subjects'); subs.innerHTML = '';
     SUBJECTS.forEach(function (sub) {
+      var look = SUB_LOOK[sub.id];
       var b = document.createElement('button');
-      b.type = 'button'; b.className = 'card'; b.id = 'sub-' + sub.id; b.disabled = save.energy <= 0;
-      b.innerHTML = '<span class="t"><span></span></span><span class="d"></span>';
-      b.querySelector('.t span').textContent = sub.name;
-      b.querySelector('.d').textContent = sub.d;
+      b.type = 'button'; b.className = 'book'; b.id = 'sub-' + sub.id; b.disabled = save.energy <= 0;
+      b.style.setProperty('--c', look.c);
+      b.innerHTML = '<span class="ic"></span><span><span class="t"></span><span class="d"></span></span>';
+      b.querySelector('.ic').appendChild(monIcon(look.mon));
+      b.querySelector('.t').textContent = sub.name;
+      b.querySelector('.d').textContent = look.d;
+      if (sub.id === 'cs') { var f = document.createElement('span'); f.className = 'flag'; f.textContent = '学习力 ×1.2'; b.appendChild(f); }
       b.addEventListener('click', function () { startDaily(sub); });
       subs.appendChild(b);
     });
     $('relaxBtn').disabled = save.energy <= 0 || save.stress <= 0;
     $('adBtn').disabled = save.ads >= ADS_PER_DAY;
-    $('adBtn').querySelector('.d').textContent = '精力 +1，今天还能喝 ' + (ADS_PER_DAY - save.ads) + ' 杯（现在是广告占位）';
+    $('adBtn').querySelector('.d').textContent = '精力 +1，今天还能喝 ' + (ADS_PER_DAY - save.ads) + ' 杯';
+    desk.set({ day: dd, daysLeft: Math.max(0, 7 - d), exam: exam, energy: save.energy, max: MAX_ENERGY, stress: save.stress,
+      study: save.study, items: save.up, msgNew: msgNew, hour: new Date().getHours() });
   }
 
   $('relaxBtn').addEventListener('click', function () {
@@ -1050,6 +2215,8 @@
   $('dbgNext').addEventListener('click', function () { save.dayOffset = (save.dayOffset || 0) + 1; persist(); renderHome(); });
   $('dbgExam').addEventListener('click', function () { save.dayOffset = (save.dayOffset || 0) + Math.max(0, 7 - dayNum()); persist(); renderHome(); });
   $('dbgRich').addEventListener('click', function () { save.study += 2000; persist(); renderHome(); });
+  $('dbgStress').addEventListener('click', function () { save.stress = Math.min(100, save.stress + 30); persist(); renderHome(); });
+  $('dbgIntro').addEventListener('click', function () { startIntro(); });
   $('dbgReset').addEventListener('click', function () { save = blank(); persist(); boot(); });
 
   // 考试
@@ -1196,6 +2363,17 @@
     else if (name === 'level') { tone(523, 0.1, 'square', 0.045); tone(659, 0.1, 'square', 0.045, 0, 0.09); tone(784, 0.18, 'square', 0.045, 0, 0.18); }
     else if (name === 'boss') { tone(70, 0.7, 'sawtooth', 0.09, 0.7); tone(105, 0.7, 'square', 0.04, 0.7); }
     else if (name === 'big') { tone(60, 0.35, 'sine', 0.12, 0.5); tone(240, 0.2, 'square', 0.05, 0.3); }
+    // 开场动画与界面
+    else if (name === 'blip') tone(520 + Math.random() * 80, 0.03, 'square', 0.018);
+    else if (name === 'pop') { tone(660, 0.06, 'square', 0.04, 1.6); }
+    else if (name === 'tick') tone(1200, 0.025, 'square', 0.02);
+    else if (name === 'thud') { tone(90, 0.25, 'sine', 0.14, 0.4); tone(160, 0.08, 'square', 0.05, 0.5); }
+    else if (name === 'whoosh') { tone(300, 0.25, 'sawtooth', 0.03, 3); }
+    else if (name === 'glint') { tone(1800, 0.12, 'sine', 0.04, 1.4); tone(2400, 0.1, 'sine', 0.03, 1.2, 0.06); }
+    else if (name === 'ring') { for (var r = 0; r < 4; r++) { tone(880, 0.06, 'square', 0.035, 1, r * 0.12); tone(1100, 0.06, 'square', 0.03, 1, r * 0.12 + 0.06); } }
+    else if (name === 'buzz') { for (var z = 0; z < 3; z++) tone(70, 0.18, 'square', 0.05, 1, z * 0.28); }
+    else if (name === 'crumble') { for (var c = 0; c < 6; c++) tone(120 + Math.random() * 120, 0.08, 'square', 0.04, 0.5, c * 0.05); }
+    else if (name === 'stamp') { tone(70, 0.3, 'sine', 0.16, 0.5); tone(200, 0.06, 'square', 0.06, 0.4); }
   }
 
   // ======================================================================
@@ -1720,7 +2898,7 @@
         showResult(r.completed ? '这套题刷完了！' : (r.quit ? '先放一放' : '被题海淹没了…'),
           r.completed ? '学习力已经存进你的账户。' : '没刷完也能拿到 60% 的学习力。',
           [['坚持时间', fmt(r.t)], ['击杀', r.kills], ['等级', r.lv], ['压力', '+' + RUN_STRESS], ['获得学习力', '+' + gain, true]],
-          [{ label: '回自习室', primary: true, fn: backHome }]);
+          [{ label: '回书桌', primary: true, fn: backHome }]);
       }
     });
   }
@@ -1785,9 +2963,9 @@
   // ======================================================================
   function boot() {
     mode = 'idle';
-    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv'].forEach(function (o) { overlay(o, false); });
+    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv'].forEach(function (o) { overlay(o, false); });
     if (save.outcome) { renderEnd(); show('vEnd'); return; }
-    if (!save.storySeen) { startStory(); return; }
+    if (!save.storySeen) { startIntro(); return; }
     if (!save.major) { renderMajors(); show('vMajor'); return; }
     if (save.school == null || !save.start) { renderSchools(); show('vSchool'); return; }
     renderHome(); show('vHome');
@@ -1798,6 +2976,13 @@
   window.__grad = {
     state: function () { return S; }, save: function () { return save; }, mode: function () { return mode; },
     jump: function (sec) { if (S) S.t = sec; },
+    // 剧本靠 Promise 推进，每步之后让出几次微任务
+    intro: async function (sec) {
+      for (var i = 0; i < Math.round(sec * 30); i++) { intro.step(1 / 30); for (var k = 0; k < 10; k++) await null; }
+      return intro.time();
+    },
+    introBegin: function () { intro.begin(); },
+    desk: function () { return desk; },
     // 不依赖画面刷新，直接按 1/30 秒步进模拟；升级时自动选第一个
     sim: function (sec) {
       for (var i = 0; i < Math.round(sec * 30); i++) {
@@ -1813,6 +2998,8 @@
   function loop(ts) {
     var dt = last ? Math.min(0.05, (ts - last) / 1000) : 0;
     last = ts;
+    if (!$('vIntro').hidden) intro.step(dt);
+    if (!$('vHome').hidden) desk.step(dt);
     if (S && !$('battle').hidden) {
       if (mode === 'play' && dt > 0) { if (S.hitstop > 0) S.hitstop -= dt; else update(dt); }
       draw(); hud();
