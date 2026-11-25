@@ -3508,7 +3508,7 @@
       if (!bgmGain) { bgmGain = AC.createGain(); bgmGain.connect(AC.destination); applyVolume(); }
     } catch (e) { AC = null; }
   }
-  function applyVolume() { if (bgmGain) bgmGain.gain.value = soundOn ? SET.bgm * 0.5 : 0; }
+  function applyVolume() { if (bgmGain) bgmGain.gain.value = soundOn ? SET.bgm * 0.2 : 0; }
   function tone(freq, dur, type, vol, slide, delay) {
     if (!AC || !soundOn || SET.sfx <= 0) return;
     vol *= SET.sfx * 1.25;
@@ -3519,39 +3519,232 @@
     o.connect(g); g.connect(AC.destination); o.start(now); o.stop(now + dur + 0.02);
   }
 
-  // ---------- 背景音乐：程序生成的 8-bit 小循环 ----------
-  // 书桌是慢板（C - Am - F - G），战斗是快板（Am - F - C - G），一小节 8 个八分音符
-  var NOTE = function (n) { return 440 * Math.pow(2, (n - 69) / 12); };
-  var TRACKS = {
-    home: { bpm: 92, chords: [[48, 52, 55], [45, 48, 52], [41, 45, 48], [43, 47, 50]],
-      mel: [72, -1, 76, -1, 79, -1, 76, 74, 72, -1, 69, -1, 72, -1, -1, -1, 69, -1, 72, -1, 77, -1, 76, 72, 74, -1, 71, -1, 67, -1, -1, -1] },
-    battle: { bpm: 150, chords: [[45, 48, 52], [41, 45, 48], [48, 52, 55], [43, 47, 50]],
-      mel: [69, 72, 76, 72, 81, 79, 76, 72, 69, 72, 77, 72, 81, 77, 76, 72, 72, 76, 79, 76, 84, 79, 76, 79, 71, 74, 79, 74, 83, 79, 74, 71] }
+  // ---------- 背景音乐：原创的两首小曲，开局时离线合成成循环音频 ----------
+  // 《图书馆的清晨》：书桌，88 拍，D 大调，电钢琴 + 长笛 + 暖垫 + 轻鼓，16 小节
+  // 《最后冲刺》：战斗，128 拍，G 大调（vi–IV–I–V），弦乐断奏 + 钢琴 + 铜管合成 + 鼓组，16 小节
+  var SONGS = {
+    home: {
+      bpm: 88, swing: 0.16, bars: 16,
+      chords: [[50, 54, 57, 61], [47, 50, 54, 57], [50, 54, 55, 59], [49, 52, 54, 57], [50, 54, 57, 61], [52, 54, 57, 61], [50, 54, 55, 59], [50, 52, 57, 59]],
+      bass: [38, 35, 31, 33, 38, 30, 31, 33],
+      mel: [
+        [[0, 74, 3], [3, 76, 1], [4, 78, 4]],
+        [[0, 76, 2], [2, 74, 2], [4, 73, 2], [6, 71, 2]],
+        [[0, 71, 3], [3, 74, 1], [4, 78, 2], [6, 76, 2]],
+        [[0, 76, 6], [6, 73, 2]],
+        [[0, 74, 3], [3, 76, 1], [4, 78, 3], [7, 81, 1]],
+        [[0, 81, 2], [2, 78, 2], [4, 76, 2], [6, 73, 2]],
+        [[0, 74, 2], [2, 76, 2], [4, 78, 2], [6, 83, 2]],
+        [[0, 81, 6]]
+      ]
+    },
+    battle: {
+      bpm: 128, swing: 0, bars: 16,
+      chords: [[52, 55, 59, 64], [52, 55, 60, 64], [50, 55, 59, 62], [50, 54, 57, 62], [52, 55, 59, 64], [52, 55, 60, 64], [50, 55, 59, 62], [50, 54, 57, 62]],
+      bass: [40, 36, 43, 38, 40, 36, 43, 42],
+      mel: [
+        [[0, 71, 2], [2, 74, 2], [4, 76, 3], [7, 79, 1]],
+        [[0, 79, 2], [2, 76, 2], [4, 72, 2], [6, 74, 2]],
+        [[0, 74, 2], [2, 71, 2], [4, 74, 2], [6, 79, 2]],
+        [[0, 78, 4], [4, 76, 2], [6, 74, 2]],
+        [[0, 76, 2], [2, 79, 2], [4, 83, 3], [7, 81, 1]],
+        [[0, 79, 2], [2, 76, 2], [4, 79, 2], [6, 84, 2]],
+        [[0, 83, 3], [3, 81, 1], [4, 79, 2], [6, 78, 2]],
+        [[0, 78, 4], [4, 81, 4]]
+      ]
+    }
   };
-  var bgm = { track: null, step: 0, next: 0 };
-  function bgmVoice(freq, t, dur, type, vol) {
-    var o = AC.createOscillator(), g = AC.createGain();
-    o.type = type; o.frequency.setValueAtTime(freq, t);
-    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(bgmGain); o.start(t); o.stop(t + dur + 0.02);
+  function mtof(n) { return 440 * Math.pow(2, (n - 69) / 12); }
+  function renderSong(name) {
+    var OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    if (!OAC) return Promise.reject(new Error('no offline audio'));
+    var T = SONGS[name], sr = 32000, e8 = 60 / T.bpm / 2, barD = e8 * 8, len = barD * T.bars, tail = 3;
+    var c = new OAC(2, Math.ceil((len + tail) * sr), sr);
+    var comp = c.createDynamicsCompressor();
+    comp.threshold.value = -16; comp.ratio.value = 3; comp.attack.value = 0.01; comp.release.value = 0.25;
+    comp.connect(c.destination);
+    var dry = c.createGain(); dry.connect(comp);
+    var rev = c.createConvolver(), irLen = Math.round(sr * 2.6), ir = c.createBuffer(2, irLen, sr);
+    for (var ch = 0; ch < 2; ch++) { var d = ir.getChannelData(ch); for (var i = 0; i < irLen; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / irLen, 3.4) * (i < sr * 0.012 ? i / (sr * 0.012) : 1); }
+    rev.buffer = ir; var wet = c.createGain(); wet.gain.value = 0.9; rev.connect(wet); wet.connect(comp);
+    var noise = c.createBuffer(1, sr, sr), nd = noise.getChannelData(0);
+    for (var k = 0; k < sr; k++) nd[k] = Math.random() * 2 - 1;
+
+    function out(node, pan, send) {
+      var p = c.createStereoPanner ? c.createStereoPanner() : c.createGain();
+      if (p.pan) p.pan.value = pan || 0;
+      node.connect(p); p.connect(dry);
+      if (send) { var sg = c.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(rev); }
+    }
+    function env(g, t, a, peak, dec, sus, rel, end) {
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a);
+      g.gain.exponentialRampToValueAtTime(Math.max(0.0001, peak * sus), t + a + dec);
+      g.gain.setValueAtTime(Math.max(0.0001, peak * sus), end); g.gain.exponentialRampToValueAtTime(0.0001, end + rel);
+    }
+    // 电钢琴：FM 合成，敲下去亮，随后变暖
+    function epiano(t, n, dur, vel, pan, bright) {
+      var f = mtof(n), car = c.createOscillator(), mod = c.createOscillator(), mg = c.createGain(), g = c.createGain();
+      car.frequency.value = f; mod.frequency.value = f; mod.connect(mg); mg.connect(car.frequency);
+      mg.gain.setValueAtTime(f * (bright || 1.6) * vel, t); mg.gain.exponentialRampToValueAtTime(f * 0.12, t + 0.5);
+      var tine = c.createOscillator(), tg = c.createGain(); tine.frequency.value = f * 4.02; tine.connect(tg); tg.connect(g);
+      tg.gain.setValueAtTime(0.12 * vel, t); tg.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
+      car.connect(g); env(g, t, 0.004, 0.1 * vel, 0.5, 0.45, 0.6, t + dur);
+      out(g, pan, 0.28);
+      [car, mod, tine].forEach(function (o) { o.start(t); o.stop(t + dur + 0.7); });
+    }
+    // 长笛：正弦 + 一点二次谐波 + 颤音 + 气声
+    function flute(t, n, dur, vel) {
+      var f = mtof(n), o = c.createOscillator(), o2 = c.createOscillator(), g2 = c.createGain(), g = c.createGain();
+      var lfo = c.createOscillator(), lg = c.createGain(); lfo.frequency.value = 5.2; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(f * 0.006, t + 0.35);
+      lfo.connect(lg); lg.connect(o.frequency); lg.connect(o2.frequency);
+      o.frequency.value = f; o2.frequency.value = f * 2; o2.type = 'triangle'; g2.gain.value = 0.18;
+      o.connect(g); o2.connect(g2); g2.connect(g);
+      env(g, t, 0.07, 0.15 * vel, 0.2, 0.8, 0.18, t + dur);
+      var ns = c.createBufferSource(), bp = c.createBiquadFilter(), ng = c.createGain();
+      ns.buffer = noise; bp.type = 'bandpass'; bp.frequency.value = f * 2; bp.Q.value = 3; ns.connect(bp); bp.connect(ng);
+      ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.03 * vel, t + 0.04); ng.gain.exponentialRampToValueAtTime(0.004, t + 0.25); ng.gain.setValueAtTime(0.004, t + dur); ng.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.15);
+      ng.connect(g);
+      out(g, 0.12, 0.35);
+      [o, o2, lfo, ns].forEach(function (x) { x.start(t); x.stop(t + dur + 0.3); });
+    }
+    // 钟琴：高八度点缀
+    function bell(t, n, vel) {
+      var f = mtof(n), o = c.createOscillator(), o2 = c.createOscillator(), g = c.createGain(), g2 = c.createGain();
+      o.frequency.value = f; o2.frequency.value = f * 3.98; o2.connect(g2); g2.connect(g); g2.gain.value = 0.3;
+      o.connect(g); env(g, t, 0.002, 0.05 * vel, 1.2, 0.01, 0.3, t + 1.2);
+      out(g, -0.25, 0.5); [o, o2].forEach(function (x) { x.start(t); x.stop(t + 1.8); });
+    }
+    // 暖垫：两层轻微失谐的锯齿波 + 低通
+    function pad(t, notes, dur, vel) {
+      var lp = c.createBiquadFilter(), g = c.createGain(); lp.type = 'lowpass'; lp.frequency.value = 1100; lp.Q.value = 0.5; lp.connect(g);
+      notes.forEach(function (n) { [-7, 7].forEach(function (dt) { var o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = mtof(n); o.detune.value = dt; o.connect(lp); o.start(t); o.stop(t + dur + 1); }); });
+      env(g, t, 0.5, 0.018 * vel, 0.3, 0.9, 0.7, t + dur);
+      out(g, 0, 0.45);
+    }
+    // 弦乐断奏
+    function strings(t, notes, dur, vel) {
+      var lp = c.createBiquadFilter(), g = c.createGain(); lp.type = 'lowpass'; lp.frequency.value = 2400; lp.connect(g);
+      notes.forEach(function (n, j) { [-9, 9].forEach(function (dt) { var o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = mtof(n + 12); o.detune.value = dt + j; o.connect(lp); o.start(t); o.stop(t + dur + 0.3); }); });
+      env(g, t, 0.012, 0.02 * vel, 0.12, 0.35, 0.12, t + dur);
+      out(g, -0.2, 0.3);
+    }
+    // 铜管合成：锯齿 + 打开的滤波
+    function brass(t, n, dur, vel) {
+      var lp = c.createBiquadFilter(), g = c.createGain(); lp.type = 'lowpass'; lp.Q.value = 1.2;
+      lp.frequency.setValueAtTime(700, t); lp.frequency.exponentialRampToValueAtTime(3200, t + 0.08); lp.frequency.exponentialRampToValueAtTime(1600, t + 0.4);
+      [-6, 6].forEach(function (dt) { var o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = mtof(n); o.detune.value = dt; o.connect(lp); o.start(t); o.stop(t + dur + 0.3); });
+      lp.connect(g); env(g, t, 0.03, 0.07 * vel, 0.2, 0.75, 0.15, t + dur);
+      out(g, 0.18, 0.3);
+    }
+    function bass(t, n, dur, vel) {
+      var f = mtof(n), o = c.createOscillator(), o2 = c.createOscillator(), g = c.createGain(), g2 = c.createGain(), lp = c.createBiquadFilter();
+      o.frequency.value = f; o2.type = 'triangle'; o2.frequency.value = f * 2; g2.gain.value = 0.25; lp.type = 'lowpass'; lp.frequency.value = 900;
+      o.connect(g); o2.connect(g2); g2.connect(g); g.connect(lp);
+      env(g, t, 0.008, 0.3 * vel, 0.25, 0.6, 0.08, t + dur);
+      out(lp, 0, 0); o.start(t); o2.start(t); o.stop(t + dur + 0.2); o2.stop(t + dur + 0.2);
+    }
+    function kick(t, vel) {
+      var o = c.createOscillator(), g = c.createGain();
+      o.frequency.setValueAtTime(130, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.13);
+      g.gain.setValueAtTime(0.5 * vel, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.38);
+      o.connect(g); out(g, 0, 0.03); o.start(t); o.stop(t + 0.4);
+    }
+    function hit(t, vel, hp, dec, gain, pan, send, bandF) {
+      var s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+      s.buffer = noise; f.type = bandF ? 'bandpass' : 'highpass'; f.frequency.value = bandF || hp; if (bandF) f.Q.value = 1.2;
+      g.gain.setValueAtTime(gain * vel, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dec);
+      s.connect(f); f.connect(g); out(g, pan, send); s.start(t, Math.random() * 0.5); s.stop(t + dec + 0.02);
+    }
+    function snare(t, vel) { hit(t, vel, 1500, 0.2, 0.2, 0.05, 0.25); var o = c.createOscillator(), g = c.createGain(); o.type = 'triangle'; o.frequency.value = 185; g.gain.setValueAtTime(0.12 * vel, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09); o.connect(g); out(g, 0, 0.1); o.start(t); o.stop(t + 0.1); }
+    function rim(t, vel) { hit(t, vel, 0, 0.07, 0.12, 0.1, 0.3, 1800); }
+    function hat(t, vel, open) { hit(t, vel, 7500, open ? 0.22 : 0.045, 0.07, 0.25, 0.05); }
+    function shaker(t, vel) { hit(t, vel, 0, 0.07, 0.05, -0.3, 0.1, 6000); }
+
+    function at(bar, s) { return bar * barD + s * e8 + (s % 2 ? T.swing * e8 : 0); }
+    for (var b = 0; b < T.bars; b++) {
+      var ci = b % 8, chord = T.chords[ci], root = T.bass[ci], second = b >= 8, last = ci === 7;
+      if (name === 'home') {
+        // 电钢琴：1 拍、2 拍半、4 拍轻轻弹
+        epiano(at(b, 0), chord[0], e8 * 3, 0.9, -0.15); chord.slice(1).forEach(function (n, j) { epiano(at(b, 0) + j * 0.012, n, e8 * 3, 0.75, -0.1 + j * 0.1); });
+        chord.slice(1).forEach(function (n) { epiano(at(b, 3), n, e8 * 2, 0.45, 0.1); });
+        chord.slice(2).forEach(function (n) { epiano(at(b, 6), n, e8 * 2, 0.38, 0.15); });
+        bass(at(b, 0), root, e8 * 2.6, 1); bass(at(b, 3), root, e8 * 0.9, 0.6); bass(at(b, 6), root + 7, e8 * 1.6, 0.75);
+        kick(at(b, 0), 0.8); kick(at(b, 5), 0.5); rim(at(b, 2), 0.7); rim(at(b, 6), 0.7);
+        for (var s = 0; s < 8; s++) shaker(at(b, s), s % 2 ? 0.55 : 0.9);
+        if (second) {
+          pad(at(b, 0), chord.map(function (n) { return n + 12; }), barD, 1);
+          T.mel[ci].forEach(function (m) { flute(at(b, m[0]), m[1], m[2] * e8 * 0.95, 1); if (m[2] >= 2) bell(at(b, m[0]), m[1] + 12, 0.8); });
+        } else if (b >= 4) {
+          // 前半段后四小节：钟琴先轻轻提一下旋律
+          T.mel[ci].forEach(function (m, j) { if (j === 0) bell(at(b, m[0]), m[1] + 12, 0.7); });
+        }
+      } else {
+        // 战斗：钢琴重音 + 弦乐八分断奏 + 八分贝斯 + 四拍底鼓
+        epiano(at(b, 0), chord[0] + 12, e8 * 1.5, 0.9, 0, 2.6); chord.slice(1).forEach(function (n) { epiano(at(b, 0), n + 12, e8 * 1.5, 0.7, 0.1, 2.6); });
+        chord.slice(1).forEach(function (n) { epiano(at(b, 3), n + 12, e8 * 1.2, 0.55, -0.1, 2.6); });
+        for (var q = 0; q < 8; q++) {
+          strings(at(b, q), chord.slice(1), e8 * 0.45, q % 2 ? 0.7 : 1);
+          bass(at(b, q), q % 2 ? root + 12 : root, e8 * 0.8, q % 2 ? 0.7 : 1);
+          if (q % 2 === 0) kick(at(b, q), 1);
+          if (q === 2 || q === 6) snare(at(b, q), 1);
+          hat(at(b, q), q % 2 ? 1 : 0.5, q % 2 === 1);
+        }
+        if (last) { snare(at(b, 7) + e8 * 0.5, 0.6); snare(at(b, 7) + e8 * 0.25, 0.4); }
+        if (b >= 4 && b < 8) T.mel[ci - 4 >= 0 ? ci - 4 : ci].forEach(function (m) { brass(at(b, m[0]), m[1], m[2] * e8 * 0.9, 0.85); });
+        if (second) {
+          pad(at(b, 0), chord.map(function (n) { return n + 12; }), barD, 1.2);
+          T.mel[ci].forEach(function (m) { brass(at(b, m[0]), m[1], m[2] * e8 * 0.9, 1); bell(at(b, m[0]), m[1] + 12, 0.6); });
+        }
+      }
+    }
+    return c.startRendering().then(function (buf) {
+      // 把混响尾巴折回开头，循环时无缝；再统一音量
+      var L = Math.round(len * sr), tl = buf.length - L, outB = AC.createBuffer(2, L, sr), peak = 0, chs = [];
+      for (var ch = 0; ch < 2; ch++) {
+        var src = buf.getChannelData(ch), dst = new Float32Array(L);
+        for (var i = 0; i < L; i++) { dst[i] = src[i] + (i < tl ? src[L + i] : 0); var a = Math.abs(dst[i]); if (a > peak) peak = a; }
+        chs.push(dst);
+      }
+      var k = peak > 0 ? 0.9 / peak : 1;
+      for (var ch2 = 0; ch2 < 2; ch2++) { var dd = chs[ch2]; for (var j = 0; j < L; j++) dd[j] *= k; outB.copyToChannel ? outB.copyToChannel(dd, ch2) : outB.getChannelData(ch2).set(dd); }
+      return outB;
+    });
+  }
+  var bgm = { buf: {}, busy: {}, cur: null, src: null, g: null };
+  function bgmWant() {
+    if (!soundOn || SET.bgm <= 0) return null;
+    if (!$('battle').hidden) return 'battle';
+    return $('vIntro').hidden ? 'home' : null;
+  }
+  function bgmSwitch(name) {
+    var now = AC.currentTime;
+    if (bgm.src) { var og = bgm.g, os = bgm.src; og.gain.cancelScheduledValues(now); og.gain.setValueAtTime(og.gain.value, now); og.gain.linearRampToValueAtTime(0, now + 0.9); os.stop(now + 1); }
+    bgm.src = null; bgm.g = null; bgm.cur = name;
+    if (!name) return;
+    var s = AC.createBufferSource(), g = AC.createGain();
+    s.buffer = bgm.buf[name]; s.loop = true; s.connect(g); g.connect(bgmGain);
+    g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(1, now + 1.2);
+    s.start(now + 0.05); bgm.src = s; bgm.g = g;
   }
   function bgmTick() {
-    if (!AC || !bgmGain || !soundOn || SET.bgm <= 0 || document.hidden) return;
-    var want = !$('battle').hidden ? 'battle' : ($('vIntro').hidden ? 'home' : null);
-    if (!want) { bgm.track = null; return; }
-    if (want !== bgm.track) { bgm.track = want; bgm.step = 0; bgm.next = AC.currentTime + 0.1; }
-    var T = TRACKS[want], e8 = 60 / T.bpm / 2;
-    if (bgm.next < AC.currentTime - 0.5) bgm.next = AC.currentTime + 0.05;
-    while (bgm.next < AC.currentTime + 0.2) {
-      var st = bgm.step % 32, ch = T.chords[Math.floor(st / 8)], t = bgm.next;
-      if (st % 2 === 0) bgmVoice(NOTE(ch[0] - 12), t, e8 * 1.8, 'triangle', want === 'battle' ? 0.22 : 0.18);
-      else if (want === 'battle') bgmVoice(NOTE(ch[0]), t, e8 * 0.8, 'triangle', 0.12);
-      bgmVoice(NOTE(ch[st % 3] + 12), t, e8 * 0.7, 'square', 0.025);
-      var m = T.mel[st]; if (m > 0) bgmVoice(NOTE(m), t, e8 * (want === 'battle' ? 0.9 : 1.6), 'square', 0.04);
-      bgm.step++; bgm.next += e8;
+    if (!AC || !bgmGain) return;
+    // 书桌那首好了以后，后台把战斗那首也先合成好，进战斗不用等
+    if (bgm.buf.home && !bgm.busy.battle) { bgm.busy.battle = true; renderSong('battle').then(function (b) { bgm.buf.battle = b; }).catch(function () { bgm.busy.battle = 'fail'; }); }
+    var want = bgmWant();
+    if (want === bgm.cur) return;
+    if (!want) { bgmSwitch(null); return; }
+    if (bgm.buf[want]) { bgmSwitch(want); return; }
+    if (!bgm.busy[want]) {
+      bgm.busy[want] = true;
+      renderSong(want).then(function (b) { bgm.buf[want] = b; }).catch(function () { bgm.busy[want] = 'fail'; });
     }
   }
-  setInterval(bgmTick, 60);
+  setInterval(bgmTick, 250);
+  document.addEventListener('visibilitychange', function () {
+    if (!AC) return;
+    try { if (document.hidden) AC.suspend(); else AC.resume(); } catch (e) {}
+  });
+  window.__bgm = bgm;
   function sfx(name) {
     if (!AC || !soundOn) return;
     var t = performance.now(), gap = { hit: 40, kill: 35, gem: 30 }[name] || 0;
