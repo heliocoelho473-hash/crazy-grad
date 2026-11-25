@@ -333,6 +333,7 @@
   .result dt { color: var(--dim); }
   .result dd { margin: 0; text-align: right; font-weight: 700; }
   .result .big { color: var(--red); font-size: 20px; font-family: var(--display); font-weight: 400; }
+  .shop-h { font-size: 18px; margin-top: 4px; }
   .shop-item { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; background: #fff; padding: 10px; box-shadow: 0 0 0 2px var(--ink); }
   .shop-item .t { font-weight: 700; }
   .shop-item .d { font-size: 12px; color: var(--dim); }
@@ -358,6 +359,7 @@
   .goal-num .gap { color: var(--red); font-weight: 700; }
   .regen { font-size: 12px; color: var(--dim); margin-top: -4px; }
   .pips i { width: 12px; height: 16px; }
+  .book.endless { grid-column: 1 / -1; }
   .book .prog { display: block; font-size: 11px; font-weight: 700; margin-top: 3px; letter-spacing: 0.02em; }
   .book .stars { color: var(--gold); text-shadow: 0 1px 0 rgba(0,0,0,0.4); }
   /* 章节列表 */
@@ -399,6 +401,41 @@
   .bsay canvas { width: 56px; height: 56px; background: #3a3358; box-shadow: 0 0 0 2px var(--red); }
   .bsay b { font-family: var(--display); font-weight: 400; font-size: 18px; color: #ff8a8a; }
   .bsay p { font-size: 14px; font-weight: 500; line-height: 1.45; }
+
+  /* 结算星星 */
+  .bigstars { display: flex; justify-content: center; gap: 10px; }
+  .bigstars span { font-size: 54px; line-height: 1; color: #d6cfbf; text-shadow: 3px 3px 0 var(--ink); animation: starIn 0.4s cubic-bezier(.2,1.8,.4,1) both; }
+  .bigstars span.on { color: var(--gold); }
+  .bigstars span.old { color: #e8d9a0; }
+  @keyframes starIn { from { transform: scale(0) rotate(-40deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  /* 香槟假结算 */
+  .cele { background: rgba(14,12,24,0.6); }
+  .cele .panel { position: relative; z-index: 1; }
+  .cele h1 { font-size: 44px; color: var(--red); }
+  .cele-score { font-size: 16px; } .cele-score b { font-family: var(--display); font-weight: 400; font-size: 30px; color: var(--red); }
+  .cele-pop { font-family: var(--display); font-size: 24px; animation: wiggle 0.3s infinite; }
+  .cele-twist { display: grid; gap: 2px; background: #2d3142; color: #fff; padding: 10px 12px; box-shadow: 0 0 0 2px var(--ink); animation: slideDown 0.3s cubic-bezier(.2,1.3,.4,1) both, wiggle 0.12s 0.3s 8; }
+  .cele-twist b { font-size: 12px; color: #ff8a8a; } .cele-twist span { font-size: 15px; font-weight: 700; }
+  .confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    background-image: radial-gradient(circle, var(--red) 3px, transparent 4px), radial-gradient(circle, var(--gold) 3px, transparent 4px), radial-gradient(circle, #7fb2ff 3px, transparent 4px), radial-gradient(circle, #7cc06a 3px, transparent 4px);
+    background-size: 60px 70px, 80px 60px, 70px 90px, 90px 80px; background-position: 0 0, 20px 30px, 40px 10px, 10px 50px;
+    animation: confetti 2.2s linear infinite; }
+  @keyframes confetti { to { background-position: 0 70px, 20px 90px, 40px 100px, 10px 130px; } }
+  /* 录取通知书 */
+  .letter-ov { background: rgba(14,12,24,0.85); }
+  .envelope { position: relative; width: 100%; max-width: 360px; height: 470px; }
+  .env-back { position: absolute; left: 0; right: 0; bottom: 0; height: 200px; background: #b5372c; box-shadow: var(--px); z-index: 1; animation: envIn 0.5s cubic-bezier(.2,1.2,.4,1) both; }
+  .env-flap { position: absolute; left: 0; right: 0; bottom: 100px; height: 100px; background: #9e2e25; clip-path: polygon(0 100%, 50% 0, 100% 100%); z-index: 3; transform-origin: bottom; animation: envIn 0.5s both, flap 0.5s 0.6s both; }
+  .letter { position: absolute; left: 14px; right: 14px; bottom: 30px; z-index: 2; background: #fffaf0; color: var(--text); padding: 18px 16px; box-shadow: var(--px); display: grid; gap: 8px; text-align: center; animation: letterUp 0.8s 1s cubic-bezier(.2,1.1,.4,1) both; }
+  .letter h1 { font-size: 34px; color: #b5372c; letter-spacing: 0.1em; }
+  .lt-school { font-family: var(--display); font-size: 20px; }
+  .lt-to { text-align: left; font-weight: 700; }
+  .letter #letterBody { text-align: left; font-size: 14px; line-height: 1.7; text-indent: 2em; }
+  .lt-seal { justify-self: end; width: 84px; height: 84px; border: 4px solid #d9503f; border-radius: 50%; color: #d9503f; display: grid; place-items: center; font-family: var(--display); font-size: 15px; transform: rotate(-14deg); opacity: 0.85; animation: stampIn2 0.25s 1.5s cubic-bezier(.2,1.6,.4,1) both; }
+  @keyframes envIn { from { transform: translateY(120%); } to { transform: none; } }
+  @keyframes flap { to { transform: scaleY(-1); z-index: 0; } }
+  @keyframes letterUp { from { transform: translateY(70%); } to { transform: translateY(-40px); } }
+  @keyframes stampIn2 { from { transform: rotate(-14deg) scale(3); opacity: 0; } to { transform: rotate(-14deg); opacity: 0.85; } }
 </style>
 
 <div id="game">
@@ -481,7 +518,7 @@
         <span></span><span class="regen" id="regenTxt"></span>
         <span class="k">压力</span><div class="bar"><span id="stressBar"></span><em id="stressNum"></em></div>
       </div>
-      <p class="warn" id="stressWarn" hidden>压力太大，战斗伤害 −20%。去摸鱼放松一下吧。</p>
+      <p class="warn" id="stressWarn" hidden>压力太大了！考试当天出意外（押错题、失眠……攻击 −30%）的几率会变高，去摸鱼放松一下吧。</p>
       <p class="msg" id="homeMsg"></p>
 
       <div class="stack" id="examBox" hidden>
@@ -496,8 +533,8 @@
       <div class="stack">
         <h3 class="sec-title">其他</h3>
         <div class="tickets">
-          <button class="ticket" id="shopBtn" type="button"><span class="ic" style="background:#ff9f7a">本</span><span><span class="t">道具</span><br><span class="d">用学习力升级，二战也保留</span></span><small>升级</small></button>
-          <button class="ticket" id="relaxBtn" type="button"><span class="ic" style="background:#9bd3b0">鱼</span><span><span class="t">摸鱼放松</span><br><span class="d">刷会儿短视频，压力 −35</span></span><small>1 精力</small></button>
+          <button class="ticket" id="shopBtn" type="button"><span class="ic" style="background:#ff9f7a">本</span><span><span class="t">道具与学习素质</span><br><span class="d">用学习力升级，二战也保留</span></span><small>升级</small></button>
+          <button class="ticket" id="relaxBtn" type="button"><span class="ic" style="background:#9bd3b0">鱼</span><span><span class="t">摸鱼放松</span><br><span class="d" id="relaxD">刷会儿短视频，压力 −35</span></span><small>免费 · 1 小时 1 次</small></button>
           <button class="ticket" id="adBtn" type="button"><span class="ic" style="background:#c8a27a">咖</span><span><span class="t">喝杯咖啡续命</span><br><span class="d">精力 +1</span></span><small>看广告</small></button>
           <button class="ticket" type="button" disabled><span class="ic" style="background:#cfe0ff">读</span><span><span class="t">晨读</span><br><span class="d">英文阅读理解，学习力 ×2</span></span><small>即将开放</small></button>
         </div>
@@ -571,6 +608,7 @@
   <div class="ov" id="resultOv" hidden>
     <div class="panel">
       <h2 id="rTitle"></h2>
+      <div class="bigstars" id="rStars" hidden></div>
       <p class="muted" id="rNote"></p>
       <dl class="result" id="rStats"></dl>
       <div class="stack" id="rActions"></div>
@@ -579,7 +617,7 @@
   <div class="ov" id="shopOv" hidden>
     <div class="panel">
       <h2>道具</h2>
-      <p class="muted">学习力：<b id="shopStudy">0</b>。升级永久生效，二战也保留。</p>
+      <p class="muted">学习力：<b id="shopStudy">0</b>。升级永久生效，二战也保留。<br><span id="shopProg"></span></p>
       <div class="stack" id="shopList"></div>
       <button class="btn ghost" id="shopClose" type="button">回书桌</button>
     </div>
@@ -625,6 +663,33 @@
     </div>
     <button class="cs-skip" id="dailySkip" type="button">跳过 ▶▶</button>
   </div>
+  <div class="ov cele" id="celeOv" hidden>
+    <div class="confetti" aria-hidden="true"></div>
+    <div class="panel" id="celeMain">
+      <div class="eyebrow">初试结束</div>
+      <h1>四科全过！</h1>
+      <p class="cele-score">预估初试 <b id="celeScore">0</b> 分</p>
+      <p class="cele-pop">🍾 开香槟！上岸了！</p>
+      <div class="cele-twist" id="celeTwist" hidden>
+        <b>研招办 · 刚刚</b>
+        <span>初试过线。请于明早 8:00 参加复试，导师组面试。</span>
+      </div>
+    </div>
+  </div>
+  <div class="ov letter-ov" id="letterOv" hidden>
+    <div class="envelope">
+      <div class="letter">
+        <div class="lt-school" id="letterSchool"></div>
+        <h1>录取通知书</h1>
+        <p class="lt-to">你 同学：</p>
+        <p id="letterBody"></p>
+        <div class="lt-seal" id="letterSeal"></div>
+        <button class="btn" id="letterGo" type="button">收下通知书</button>
+      </div>
+      <div class="env-back"></div>
+      <div class="env-flap"></div>
+    </div>
+  </div>
   <div class="ov" id="phoneOv" hidden>
     <div class="phone">
       <div class="bar2"><span id="phoneTime">22:30</span><span>消息</span></div>
@@ -636,7 +701,7 @@
     <div class="panel">
       <div class="eyebrow">考研日</div>
       <h2>四门连考</h2>
-      <p class="muted">政治 → 英语 → 数学 → 专业课，最后是专业课魔王。哪一科预估分越高，那一科的怪越弱。打败魔王就上岸；打掉它 30% 以上的血可以调剂；否则二战（星星、学习力、道具全保留）。</p>
+      <p class="muted">四科各 3 分钟：每科开考 15 秒后出 Boss，3 分钟内打倒才算这科过关。四科都过才算考完……吗？三科以上可以调剂，否则二战（星星、学习力、道具全保留）。预估分越高，那一科的 Boss 越弱。</p>
       <dl class="result" id="preExamStats"></dl>
       <button class="btn" id="examGo" type="button">进入考场</button>
       <button class="btn ghost" id="examBack" type="button">再准备一下</button>
@@ -2062,13 +2127,33 @@
     { id: 'cs', name: '专业课 408', d: '僵尸进程、丢包数据包……有精英死锁双子' }
   ];
   var ITEMS = [
-    { id: 'notebook', name: '错题本', icon: '本', color: '#ff9f7a', max: 5, d: function (l) { return '伤害 +' + (l * 10) + '%'; } },
-    { id: 'cup', name: '保温杯', icon: '杯', color: '#ff8a8a', max: 5, d: function (l) { return '生命 +' + (l * 15); } },
-    { id: 'phones', name: '降噪耳机', icon: '耳', color: '#c9a7ff', max: 5, d: function (l) { return '攻击速度 +' + (l * 8) + '%'; } },
-    { id: 'coffee', name: '速溶咖啡', icon: '咖', color: '#c8a27a', max: 3, d: function (l) { return '移动速度 +' + (l * 6) + '%'; } },
-    { id: 'bag', name: '大书包', icon: '包', color: '#9bd3b0', max: 3, d: function (l) { return '拾取范围 +' + (l * 20) + '%'; } }
+    { id: 'notebook', name: '错题本', icon: '本', color: '#ff9f7a', max: 5, base: 120, d: function (l) { return '伤害 +' + (l * 6) + '%'; } },
+    { id: 'cup', name: '保温杯', icon: '杯', color: '#ff8a8a', max: 5, base: 120, d: function (l) { return '生命 +' + (l * 15); } },
+    { id: 'phones', name: '降噪耳机', icon: '耳', color: '#c9a7ff', max: 5, base: 120, d: function (l) { return '攻击速度 +' + (l * 6) + '%'; } },
+    { id: 'coffee', name: '速溶咖啡', icon: '咖', color: '#c8a27a', max: 3, base: 120, d: function (l) { return '移动速度 +' + (l * 5) + '%'; } },
+    { id: 'bag', name: '大书包', icon: '包', color: '#9bd3b0', max: 3, base: 120, d: function (l) { return '拾取范围 +' + (l * 20) + '%'; } }
   ];
-  function itemCost(lv) { return Math.round(100 * Math.pow(1.55, lv)); }
+  // 学习素质：自身属性，和道具一样用学习力升级
+  var ATTRS = [
+    { id: 'focus', name: '专注力', icon: '专', color: '#f4c542', max: 8, base: 150, d: function (l) { return '伤害 +' + (l * 5) + '%'; } },
+    { id: 'stamina', name: '体能', icon: '体', color: '#7cc06a', max: 8, base: 150, d: function (l) { return '生命 +' + (l * 10); } },
+    { id: 'wit', name: '悟性', icon: '悟', color: '#7fb2ff', max: 8, base: 150, d: function (l) { return '经验获取 +' + (l * 6) + '%'; } }
+  ];
+  function upCost(it, lv) { return Math.round(it.base * Math.pow(1.32, lv)); }
+  // 全部升满需要的学习力
+  var TOTAL_COST = ITEMS.concat(ATTRS).reduce(function (a, it) { for (var l = 0; l < it.max; l++) a += upCost(it, l); return a; }, 0);
+  // 平衡参数（集中放这里方便调）
+  var BAL = {
+    chapterShare: 0.7,        // 章节首次拿星合计给到全部升级花费的 70%，剩下靠全科复习
+    replayPerKill: 0.3,       // 已拿满的星再刷：每击杀 0.3 学习力
+    reviewDmg: 0.12, reviewHp: 8,   // 每天登录的“高级复习”：伤害 +12%、生命 +8，可叠加
+    endlessPerSec: 0.6, endlessPerKill: 0.15,
+    accidentBase: 0.10, accidentPerStress: 0.003, accidentMul: 0.7,
+    examBossHp: 21000, retestBossHp: 28000, roundDur: 180, roundBossAt: 15,
+    relaxCdMs: 60 * 60 * 1000, celeTwistAt: 6
+  };
+  // 章节难度按“在本科里的位置”分 6 档（第 1 档到第 6 档），各科最后一章一样难
+  var TIER = { hp: [1, 1.4, 3.6, 4.6, 5.8, 7.2], dmg: [1, 1.15, 2.0, 2.3, 2.6, 3.0], rate: [1, 1.1, 1.4, 1.5, 1.6, 1.75], speed: [1, 1.05, 1.25, 1.28, 1.32, 1.38] };
   // 章节：每科拆成几章，每章 2 分钟，章末精英怪。星越多预估分越高
   function E(sprite, name, say, die) { return { sprite: sprite, name: name, say: say, die: die }; }
   var CHAPTERS = {
@@ -2109,7 +2194,18 @@
     '背书别只看，要讲出来、默写出来。', '三天打鱼两天晒网，也比不打强。', '压力大就出去走走，图书馆不会跑。'
   ];
   var LOAD_MSG = ['正在削铅笔……', '正在占图书馆的座……', '正在泡速溶咖啡……', '正在给 2B 铅笔开光……', '正在翻开真题集……', '正在把手机调成静音……'];
-  var MAX_ENERGY = 10, REGEN_MS = 30 * 60 * 1000, ADS_PER_DAY = 2, RUN_STRESS = 12, STRESS_LIMIT = 70;
+  var MAX_ENERGY = 10, REGEN_MS = 30 * 60 * 1000, ADS_PER_DAY = 2, RUN_STRESS = 10, STRESS_LIMIT = 70;
+  function tierOf(id, ci) { var n = CHAPTERS[id].list.length; return n > 1 ? ci / (n - 1) * 5 : 0; }
+  function tierVal(arr, t) { var i = Math.min(4, Math.floor(t)), f = t - i; return arr[i] + (arr[i + 1] - arr[i]) * f; }
+  // 每颗星的学习力：按章节档位加权，所有星加起来 = 全部升级花费 × 70%
+  var STAR_UNIT = (function () {
+    var w = 0;
+    Object.keys(CHAPTERS).forEach(function (id) { CHAPTERS[id].list.forEach(function (_, ci) { w += 3 * (1 + tierOf(id, ci) * 0.4); }); });
+    return BAL.chapterShare * TOTAL_COST / w;
+  })();
+  // 进度锁：后面的章节要“高级复习”层数够了才开放（每天第一次登录 +1 层），最快第 4 天打通
+  function reqReview(id, ci) { var t = tierOf(id, ci); return t < 1.5 ? 0 : t < 2.5 ? 1 : t < 3.5 ? 2 : 3; }
+  function starReward(id, ci) { return Math.round(STAR_UNIT * (1 + tierOf(id, ci) * 0.4)); }
 
   // ======================================================================
   // 存档（本机浏览器里）
@@ -2119,7 +2215,8 @@
   function blank() {
     return { major: null, school: null, start: null, week: 1, study: 0, up: { notebook: 0, cup: 0, phones: 0, coffee: 0, bag: 0 },
       stress: 0, energy: MAX_ENERGY, energyAt: Date.now(), energyDay: null, ads: 0, dayOffset: 0, outcome: null, finalSchool: null,
-      totalKills: 0, runs: 0, storySeen: false, stars: { po: [], en: [], ma: [], cs: [] }, seenDay: null, dayLog: null, msgSeen: null };
+      totalKills: 0, runs: 0, storySeen: false, stars: { po: [], en: [], ma: [], cs: [] }, seenDay: null, dayLog: null, msgSeen: null,
+      attrs: { focus: 0, stamina: 0, wit: 0 }, review: 0, endlessBest: 0, lastRelax: 0 };
   }
   function load() {
     var b = blank();
@@ -2139,7 +2236,7 @@
   function lineOf() { return SCHOOLS[save.school].line; }
   function mastery(id) { return subScore(id) / CHAPTERS[id].full; }
   function starsOf(id, i) { return (save.stars[id] || [])[i] || 0; }
-  function unlocked(id, i) { return i === 0 || starsOf(id, i - 1) > 0; }
+  function unlocked(id, i) { return (i === 0 || starsOf(id, i - 1) > 0) && (save.review || 0) >= reqReview(id, i); }
   function curChapter(id) {
     var n = CHAPTERS[id].list.length;
     for (var i = 0; i < n; i++) if (!starsOf(id, i)) return i;
@@ -2271,10 +2368,10 @@
     var tips = [
       '<b>第 1 天。</b>先把四门课的第 1 章都打通，预估分涨得最快。',
       '研友说：“专业课 408 的怪最难，但学习力给得最多。”',
-      '压力超过 70，战斗伤害会降低。累了就去摸鱼。',
+      '压力越高，考研那天出意外（押错题、失眠）的几率越大。摸鱼是免费的。',
       '精力每 30 分钟回 1 格，满了就不再回，记得常来刷。',
       '后面的章节越来越难，打不过就去“道具”里升级。',
-      '<b>明天就考研了。</b>今天把精力全用掉。'
+      '<b>明天就考研了。</b>把压力降下来，别在考场上出意外。'
     ];
     return tips[Math.min(d - 1, tips.length - 1)];
   }
@@ -2344,13 +2441,22 @@
       b.innerHTML = '<span class="ic"></span><span><span class="t"></span><span class="d"></span><span class="prog"></span></span>';
       b.querySelector('.ic').appendChild(monIcon(look.mon));
       b.querySelector('.t').textContent = sub.name;
-      b.querySelector('.d').textContent = allDone ? '全部三星！' : '第 ' + (ci + 1) + ' 章 · ' + ch.list[ci];
+      b.querySelector('.d').textContent = allDone ? '全部三星！' : '第 ' + (ci + 1) + ' 章 · ' + ch.list[ci] + (!starsOf(sub.id, ci) && !unlocked(sub.id, ci) && starsOf(sub.id, ci - 1) ? '（明天开放）' : '');
       b.querySelector('.prog').innerHTML = '<span class="stars"></span> ' + subScore(sub.id) + '/' + ch.full + ' 分';
       b.querySelector('.stars').textContent = starStr(starsOf(sub.id, ci));
       if (sub.id === 'cs') { var f = document.createElement('span'); f.className = 'flag'; f.textContent = '学习力 ×1.2'; b.appendChild(f); }
       b.addEventListener('click', function () { openChapters(sub); });
       subs.appendChild(b);
     });
+    var open = allCleared(), eb = document.createElement('button');
+    eb.type = 'button'; eb.className = 'book endless'; eb.id = 'sub-all'; eb.disabled = !open || save.energy <= 0;
+    eb.style.setProperty('--c', '#2d3142');
+    eb.innerHTML = '<span class="ic"></span><span><span class="t">全科复习</span><span class="d"></span><span class="prog"></span></span>';
+    eb.querySelector('.ic').appendChild(monIcon('jiangshi'));
+    eb.querySelector('.d').textContent = open ? '无尽模式 · 四科怪物一起上' : '所有章节拿到 ★ 后开放';
+    eb.querySelector('.prog').textContent = open ? '最佳 ' + fmt(save.endlessBest || 0) + ' · 后期学习力主要来源' : '还差 ' + SUB_IDS.reduce(function (a, id) { return a + CHAPTERS[id].list.filter(function (_, i) { return !starsOf(id, i); }).length; }, 0) + ' 章';
+    eb.addEventListener('click', startEndless);
+    subs.appendChild(eb);
     var sc = totalScore(), line = lineOf();
     $('goalTxt').textContent = '预估总分过 ' + line + ' 分（' + s.name + '）';
     $('scoreNow').textContent = sc;
@@ -2358,7 +2464,8 @@
     $('goalLine').style.left = (line / 500 * 100) + '%';
     $('goalGap').innerHTML = sc >= line ? '<span class="ok">已过线 ✓ 继续刷，考场更轻松</span>' : '<span class="gap">还差 ' + (line - sc) + ' 分</span>';
     updateRegen();
-    $('relaxBtn').disabled = save.energy <= 0 || save.stress <= 0;
+    $('relaxBtn').disabled = relaxLeft() > 0 || save.stress <= 0;
+    $('relaxD').textContent = relaxLeft() > 0 ? '刚摸过鱼，' + fmtMs(relaxLeft()) + ' 后再来' : '刷会儿短视频，压力 −35';
     $('adBtn').disabled = save.ads >= ADS_PER_DAY;
     $('adBtn').querySelector('.d').textContent = '精力 +1，今天还能喝 ' + (ADS_PER_DAY - save.ads) + ' 杯';
     desk.set({ day: dd, daysLeft: Math.max(0, 7 - d), exam: exam, energy: save.energy, max: MAX_ENERGY, stress: save.stress,
@@ -2391,7 +2498,9 @@
       b.querySelector('.t').textContent = '第 ' + (i + 1) + ' 章 · ' + name;
       b.querySelector('.st').textContent = starStr(st);
       var diff = '●●●●●●'.slice(0, i + 1) + '○○○○○○'.slice(0, ch.list.length - i - 1);
-      b.querySelector('.d').textContent = !open ? '先拿到上一章的 ★ 才能解锁'
+      var needRv = reqReview(sub.id, i);
+      b.querySelector('.d').textContent = (save.review || 0) < needRv ? '需要高级复习 第 ' + needRv + ' 层（每天第一次登录 +1 层），还差 ' + (needRv - (save.review || 0)) + ' 天'
+        : !open ? '先拿到上一章的 ★ 才能解锁'
         : '精英：' + el.name + ' · 难度 ' + diff + ' · 本章满分 ' + Math.round(ch.full / ch.list.length);
       b.addEventListener('click', function () { overlay('chapOv', false); startChapter(sub, i); });
       box.appendChild(b);
@@ -2416,7 +2525,7 @@
     $('loadSub').textContent = o.sub; $('loadTitle').textContent = o.title;
     $('loadKind').textContent = o.kind || '本章精英';
     $('loadBoss').textContent = o.spec.name; $('loadBark').textContent = '“' + o.spec.say + '”';
-    drawIcon($('loadCv'), eliteDef(o.spec.sprite || o.spec.twins ? o.spec : null));
+    drawIcon($('loadCv'), o.spec.boss || eliteDef(o.spec.sprite || o.spec.twins ? o.spec : null));
     $('loadTip').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
     $('loadFill').style.width = '0%';
     $('loadOv').hidden = false;
@@ -2432,9 +2541,10 @@
     if (u >= 1) { var fn = loading.done; loading = null; $('loadOv').hidden = true; fn(); }
   }
 
+  function relaxLeft() { return Math.max(0, (save.lastRelax || 0) + BAL.relaxCdMs - Date.now()); }
   $('relaxBtn').addEventListener('click', function () {
-    if (save.energy <= 0) return;
-    spendEnergy(); save.stress = Math.max(0, save.stress - 35); persist(); renderHome();
+    if (relaxLeft() > 0 || save.stress <= 0) return;
+    save.lastRelax = Date.now(); save.stress = Math.max(0, save.stress - 35); persist(); sfx('pop'); renderHome();
   });
   $('adBtn').addEventListener('click', function () {
     if (save.ads >= ADS_PER_DAY) return;
@@ -2449,22 +2559,27 @@
   function renderShop() {
     $('shopStudy').textContent = save.study;
     var box = $('shopList'); box.innerHTML = '';
-    ITEMS.forEach(function (it) {
-      var lv = save.up[it.id], maxed = lv >= it.max, cost = itemCost(lv);
-      var row = document.createElement('div'); row.className = 'shop-item';
-      row.innerHTML = '<span class="icon"></span><span><span class="t"></span><br><span class="d"></span></span><button class="buy" type="button"></button>';
-      row.querySelector('.icon').textContent = it.icon; row.querySelector('.icon').style.background = it.color;
-      row.querySelector('.t').textContent = it.name + ' Lv' + lv + (maxed ? '（满级）' : '');
-      row.querySelector('.d').textContent = maxed ? it.d(lv) : '现在：' + (lv ? it.d(lv) : '无') + ' → 升级后：' + it.d(lv + 1);
-      var b = row.querySelector('.buy'); b.id = 'buy-' + it.id;
-      b.textContent = maxed ? '已满' : cost + ' 学习力';
-      b.disabled = maxed || save.study < cost;
-      b.addEventListener('click', function () {
-        if (save.study < cost || maxed) return;
-        save.study -= cost; save.up[it.id]++; persist(); renderShop(); renderHome();
+    [['道具', ITEMS, save.up], ['学习素质', ATTRS, save.attrs]].forEach(function (grp) {
+      var h = document.createElement('h3'); h.className = 'shop-h'; h.textContent = grp[0]; box.appendChild(h);
+      grp[1].forEach(function (it) {
+        var store = grp[2], lv = store[it.id] || 0, maxed = lv >= it.max, cost = upCost(it, lv);
+        var row = document.createElement('div'); row.className = 'shop-item';
+        row.innerHTML = '<span class="icon"></span><span><span class="t"></span><br><span class="d"></span></span><button class="buy" type="button"></button>';
+        row.querySelector('.icon').textContent = it.icon; row.querySelector('.icon').style.background = it.color;
+        row.querySelector('.t').textContent = it.name + ' Lv' + lv + '/' + it.max;
+        row.querySelector('.d').textContent = maxed ? it.d(lv) + '（满级）' : (lv ? it.d(lv) : '无') + ' → ' + it.d(lv + 1);
+        var b = row.querySelector('.buy'); b.id = 'buy-' + it.id;
+        b.textContent = maxed ? '已满' : cost + ' 学习力';
+        b.disabled = maxed || save.study < cost;
+        b.addEventListener('click', function () {
+          if (save.study < cost || maxed) return;
+          save.study -= cost; store[it.id] = lv + 1; persist(); sfx('level'); renderShop(); renderHome();
+        });
+        box.appendChild(row);
       });
-      box.appendChild(row);
     });
+    var spent = ITEMS.concat(ATTRS).reduce(function (acc, it) { var st = save.up[it.id] != null ? save.up : save.attrs; for (var l = 0; l < (st[it.id] || 0); l++) acc += upCost(it, l); return acc; }, 0);
+    $('shopProg').textContent = '升级进度 ' + Math.round(spent / TOTAL_COST * 100) + '%（全部升满共需 ' + TOTAL_COST + ' 学习力）';
   }
   $('shopBtn').addEventListener('click', function () { renderShop(); overlay('shopOv', true); });
   $('shopClose').addEventListener('click', function () { overlay('shopOv', false); });
@@ -2489,7 +2604,7 @@
     SUBJECTS.forEach(function (sub) {
       addStat($('preExamStats'), sub.name + ' ' + subScore(sub.id) + '/' + CHAPTERS[sub.id].full, '怪物血量 ×' + (examMul(sub.id) * s.hp).toFixed(2));
     });
-    addStat($('preExamStats'), '压力', Math.round(save.stress) + (save.stress >= STRESS_LIMIT ? '（伤害 −20%）' : ''));
+    addStat($('preExamStats'), '压力 ' + Math.round(save.stress), '考场意外几率 ' + Math.round(accidentChance() * 100) + '%');
     overlay('preExamOv', true);
   });
   $('examBack').addEventListener('click', function () { overlay('preExamOv', false); });
@@ -2552,6 +2667,54 @@
       g.rect(7, 8, 3, 3, '#ffffff'); g.p(8, 9, '#d62828'); g.rect(14, 8, 3, 3, '#ffffff'); g.p(15, 9, '#d62828');
       g.rect(7, 15, 10, 3, INK); for (var k = 0; k < 5; k++) g.p(8 + k * 2, 15 + t, '#ffffff');
       g.p(3, 3, '#e9efe6'); g.p(2, 2, '#e9efe6'); g.p(20, 3, '#e9efe6'); g.p(21, 2, '#e9efe6');
+    }
+  };
+
+  // 考研日四科 Boss + 复试导师
+  var BOSS_PO = {
+    id: 'boss_po',
+    draw: function (g, t) {
+      g.rect(3, 3, 18, 3, '#c8a27a'); g.rect(3, 18, 18, 3, '#c8a27a');
+      g.rect(2, 3, 1, 3, '#8a5432'); g.rect(21, 3, 1, 3, '#8a5432'); g.rect(2, 18, 1, 3, '#8a5432'); g.rect(21, 18, 1, 3, '#8a5432');
+      g.rect(4, 6, 16, 12, '#f4ecd8');
+      for (var y = 7; y < 17; y += 2) g.rect(5, y, 8 + (y % 3), 1, '#c9b48c');
+      g.rect(15, 12, 4, 4, '#d9503f'); g.p(16, 13, '#ffb0a0');
+      g.rect(6, 9, 3, 2, '#ffffff'); g.p(7 + t, 10, INK); g.rect(11, 9, 3, 2, '#ffffff'); g.p(12 + t, 10, INK);
+      g.line(5, 8, 8, 9, INK); g.line(14, 8, 11, 9, INK);
+      g.rect(7, 13, 5, 2, INK); g.p(8, 13, '#ffffff'); g.p(10, 13, '#ffffff');
+    }
+  };
+  var BOSS_EN = {
+    id: 'boss_en',
+    draw: function (g, t) {
+      g.rect(1, 4 + t, 11, 16, '#3d7bd9'); g.rect(12, 4 + t, 11, 16, '#2f63b5');
+      g.rect(2, 5 + t, 9, 14, '#f4f1ea'); g.rect(13, 5 + t, 9, 14, '#f4f1ea'); g.rect(11, 4 + t, 2, 16, '#1d3f80');
+      g.text('A', 4, 6 + t, '#3d7bd9'); g.text('Z', 16, 6 + t, '#3d7bd9');
+      g.rect(4, 12 + t, 3, 2, '#d62828'); g.rect(16, 12 + t, 3, 2, '#d62828');
+      g.rect(5, 16 + t, 14, 2, INK); g.p(6, 16 + t, '#ffffff'); g.p(9, 16 + t, '#ffffff'); g.p(14, 16 + t, '#ffffff'); g.p(17, 16 + t, '#ffffff');
+      g.rect(20, 0, 2, 5, '#d9503f'); g.p(20, 5, '#f4c542');
+    }
+  };
+  var BOSS_MA = {
+    id: 'boss_ma',
+    draw: function (g, t) {
+      var c = '#8f6ad1', s2 = '#6b4fb0';
+      g.rect(13, 1, 7, 3, c); g.rect(11, 3, 5, 3, c); g.rect(9, 5, 7, 13, c); g.rect(9, 5, 2, 13, s2);
+      g.rect(7, 17, 5, 3, c); g.rect(3, 19, 7, 3, c);
+      g.rect(10, 8, 2, 3, '#ffffff'); g.p(11, 9 + t, INK); g.rect(13, 8, 2, 3, '#ffffff'); g.p(14, 9 + t, INK);
+      g.rect(10, 13, 5, 1, INK); g.p(11, 14, '#ffffff'); g.p(13, 14, '#ffffff');
+      g.text('3', 18, 9 + t, '#f4c542'); g.text('!', 2, 6 - t, '#f4c542');
+    }
+  };
+  var BOSS_RE = {
+    id: 'boss_re',
+    draw: function (g, t) {
+      g.rect(4, 16, 16, 8, '#2d3a4f'); g.rect(10, 16, 4, 4, '#f4f1ea'); g.rect(11, 17, 2, 5, '#d9503f');
+      g.circ(12, 9, 6, '#f3c9a0');
+      g.rect(6, 3, 12, 2, '#c8ccd2'); g.rect(5, 5, 2, 6, '#c8ccd2'); g.rect(17, 5, 2, 6, '#c8ccd2');
+      g.rect(7, 8, 4, 3, INK); g.rect(8, 9, 2, 1, t ? '#ffffff' : '#bfe3ff'); g.rect(13, 8, 4, 3, INK); g.rect(14, 9, 2, 1, t ? '#ffffff' : '#bfe3ff'); g.rect(11, 9, 2, 1, INK);
+      g.rect(9, 13, 6, 3, '#c8ccd2'); g.rect(10, 13, 4, 1, INK);
+      g.text('?', 19, 0 + t, '#f4c542'); g.text('?', 1, 1 - t + 1, '#f4c542');
     }
   };
 
@@ -2637,6 +2800,7 @@
     else if (name === 'ring') { for (var r = 0; r < 4; r++) { tone(880, 0.06, 'square', 0.035, 1, r * 0.12); tone(1100, 0.06, 'square', 0.03, 1, r * 0.12 + 0.06); } }
     else if (name === 'buzz') { for (var z = 0; z < 3; z++) tone(70, 0.18, 'square', 0.05, 1, z * 0.28); }
     else if (name === 'crumble') { for (var c = 0; c < 6; c++) tone(120 + Math.random() * 120, 0.08, 'square', 0.04, 0.5, c * 0.05); }
+    else if (name === 'bell') { for (var bl = 0; bl < 10; bl++) { tone(1568, 0.07, 'square', 0.03, 1, bl * 0.09); tone(1976, 0.07, 'square', 0.025, 1, bl * 0.09 + 0.045); } }
     else if (name === 'stamp') { tone(70, 0.3, 'sine', 0.16, 0.5); tone(200, 0.06, 'square', 0.06, 0.4); }
   }
 
@@ -2661,15 +2825,17 @@
   var S = null;
 
   function poolOf(group) {
+    if (group === 'all') return SUB_IDS.reduce(function (a, g) { return a.concat(poolOf(g)); }, []);
     var arr = [];
     GM.list.forEach(function (m) { if (m.group === group) for (var i = 0; i < (m.main ? 5 : 1); i++) arr.push(m); });
     return arr;
   }
   function baseStats() {
-    var u = save.up;
+    var u = save.up, a = save.attrs, rv = save.review || 0;
     return {
-      dmg: (1 + u.notebook * 0.1) * (save.stress >= STRESS_LIMIT ? 0.8 : 1),
-      hp: 100 + u.cup * 15, rate: 1 + u.phones * 0.08, speed: 1 + u.coffee * 0.06, pickup: 1 + u.bag * 0.2
+      dmg: (1 + u.notebook * 0.06) * (1 + a.focus * 0.05) * (1 + rv * BAL.reviewDmg),
+      hp: 100 + u.cup * 15 + a.stamina * 10 + rv * BAL.reviewHp,
+      rate: 1 + u.phones * 0.06, speed: 1 + u.coffee * 0.05, pickup: 1 + u.bag * 0.2, xp: 1 + a.wit * 0.06
     };
   }
 
@@ -2683,8 +2849,11 @@
       mobs: [], darts: [], ebullets: [], gems: [], parts: [], nums: [], beams: [], orbs: [],
       spawnAcc: 0, dartCd: 0.3, beamCd: 1.5, orbitAng: 0, hitstop: 0, shake: 0,
       eliteIdx: 0, boss: null, bossSpawned: false, won: false, endTimer: -1, pendingRevive: null, bannerT: 0,
-      phaseIdx: -1, pool: null, completed: false, quit: false, minHp: 1, eliteDown: false, slowT: 0, sayT: 0
+      phaseIdx: -1, pool: null, completed: false, quit: false, minHp: 1, eliteDown: false, slowT: 0, sayT: 0,
+      ending: null, nextElite: 45, ri: 0, rt: 0, rstate: 'fight', breakT: 0, results: [], celeT: 0, ttk: [], bossT0: 0
     };
+    if (cfg.accident) S.b.dmg *= BAL.accidentMul;
+    if (cfg.rounds) startRound();
     $('bossbar').hidden = true; $('banner').hidden = true; $('bsay').hidden = true;
     $('bossName').textContent = '408 缝合怪';
     mode = 'play';
@@ -2707,13 +2876,14 @@
     return { x: S.p.x + Math.cos(a) * d, y: S.p.y + Math.sin(a) * d };
   }
   function addMob(def, x, y, kind) {
-    var hpScale = (1 + S.t / 90) * S.cfg.hpMul;
+    var hpScale = (S.cfg.rounds ? 1 + S.rt / 200 : S.cfg.endless ? 1 + S.t / 40 : 1 + S.t / 90) * S.cfg.hpMul;
     var m = { def: def, x: x, y: y, kx: 0, ky: 0, flash: 0, ph: Math.random() * 2, kind: kind || 'mob', scale: 2, r: 13, mass: 1, dmg: 5,
       sp: (def.speed || 30) * (0.9 + Math.random() * 0.2), orbCd: 0, dead: false };
     var ph = S.cfg.phases[Math.max(0, S.phaseIdx)], pm = (ph && ph.mul) || 1;
     if (m.kind === 'mob') m.max = (def.main ? 16 : 22) * hpScale * pm;
     if (m.kind === 'elite') { m.scale = 3; m.r = 26; m.mass = 5; m.dmg = 14; m.max = (S.cfg.eliteHp || 420) * S.cfg.hpMul * pm; m.sp = 48; }
     if (m.kind === 'boss') { m.scale = 5; m.r = 46; m.mass = 40; m.dmg = 22; m.max = 3600 * S.cfg.hpMul * (S.cfg.bossMul || 1); m.sp = 42; m.state = 'chase'; m.timer = 3; m.ring = 6; }
+    m.dmg *= (S.cfg.mobDmg || 1) * (S.cfg.endless ? 1 + S.t / 80 : 1); if (m.kind === 'mob') m.sp *= S.cfg.mobSpeed || 1;
     m.hp = m.max; S.mobs.push(m); return m;
   }
   function battleSay(def, name, text, dur) {
@@ -2736,6 +2906,63 @@
     var spec = S.eliteSpec || EXAM_ELITE;
     S.eliteDown = true; S.slowT = 1.4;
     battleSay(m.def, spec.name, spec.die, 3.2);
+  }
+  function randomEliteSpec() {
+    var all = [];
+    SUB_IDS.forEach(function (id) { CHAPTERS[id].el.forEach(function (e) { if (!e.twins) all.push(e); }); });
+    return all[Math.floor(Math.random() * all.length)];
+  }
+  // ---------- 考研日回合 ----------
+  function startRound() {
+    var RD = S.cfg.rounds[S.ri];
+    S.rt = 0; S.rstate = 'fight'; S.pool = poolOf(RD.group); S.boss = null; S.bossSpawned = false; S.spawnAcc = 0;
+    $('subjectTag').textContent = RD.tag;
+    banner(RD.tag, 2); sfx('boss');
+  }
+  function spawnRoundBoss(RD) {
+    var a = edgePoint(60), B = RD.boss;
+    S.boss = addMob(B.def, a.x, a.y, 'boss'); S.bossSpawned = true;
+    S.boss.max = S.boss.hp = B.hp; S.bossT0 = S.rt; S.boss.dmg = 16; S.boss.ringN = B.ring || 14; S.boss.ringCd = B.ringCd || 6; S.boss.ring = 3;
+    $('bossName').textContent = B.name;
+    banner('压轴：' + B.name, 2.2); S.shake = 8; sfx('boss');
+    battleSay(B.def, B.name, B.say, 3.2);
+  }
+  function roundOver(ok) {
+    var RD = S.cfg.rounds[S.ri];
+    S.results[S.ri] = ok; S.ttk[S.ri] = ok ? Math.round(S.rt - S.bossT0) : null;
+    S.mobs.forEach(function (m) { if (!m.dead) { burst(m, m.kind === 'mob' ? 5 : 30, 140, 0, 0); m.dead = true; } });
+    S.boss = null; S.ebullets = [];
+    S.gems.forEach(function (g) { g.pull = true; });
+    S.rstate = 'break'; S.breakT = 3.4;
+    S.p.hp = Math.min(S.p.max, S.p.hp + S.p.max * 0.3);   // 交卷休息：回 30% 血
+    sfx('bell');
+    banner(ok ? RD.name + ' 交卷 ✓' : RD.name + ' 时间到，没做完 ✗', 2.8);
+    if (!ok) battleSay(GM.player, '你', RD.group === 'all' ? '导师的问题……我一个都没答上来……' : '最后那道大题……没写完……', 3);
+  }
+  function nextRound() {
+    S.ri++;
+    if (S.ri === 4) {
+      if (S.results.slice(0, 4).every(Boolean)) { celebrate(); return; }
+      S.rstate = 'done'; if (S.endTimer < 0) S.endTimer = 0.01; return;
+    }
+    if (S.ri >= S.cfg.rounds.length) { S.rstate = 'done'; if (S.endTimer < 0) S.endTimer = 0.01; return; }
+    startRound();
+  }
+  // 四科全过：先给一个“上岸了”的假结算，香槟开了，再反转来复试
+  function celebrate() {
+    S.rstate = 'cele'; mode = 'cele'; S.celeT = 0;
+    $('celeScore').textContent = totalScore();
+    $('celeTwist').hidden = true; $('celeMain').hidden = false;
+    overlay('celeOv', true); sfx('level'); sfx('stamp');
+  }
+  function stepCele(dt) {
+    S.celeT += dt;
+    if (S.celeT >= BAL.celeTwistAt && $('celeTwist').hidden) { $('celeTwist').hidden = false; sfx('ring'); }
+    if (S.celeT >= BAL.celeTwistAt + 3.2) {
+      overlay('celeOv', false);
+      S.p.hp = S.p.max; S.p.inv = 1.5; mode = 'play'; S.ri = 4; startRound();
+      banner('复试开始！状态回满', 2.4); S.shake = 10;
+    }
   }
   function spawnBoss() {
     var a = edgePoint(60);
@@ -2779,6 +3006,12 @@
       if (tw && !tw.dead) { S.pendingRevive = { m: m, partner: tw, t: 3 }; banner('3 秒内打掉另一只！', 1.4); }
       else if (S.pendingRevive && S.pendingRevive.partner === m) { S.pendingRevive = null; banner('死锁解除！', 1.4); eliteDown(m); }
       else if (!tw) eliteDown(m);
+    } else if (m.kind === 'boss' && S.cfg.rounds) {
+      burst(m, 70, 320, 0, 0); S.hitstop = 0.25; S.shake = 16; sfx('big');
+      for (var b2 = 0; b2 < 25; b2++) S.gems.push({ x: m.x + (Math.random() - 0.5) * 80, y: m.y + (Math.random() - 0.5) * 80, v: 3 });
+      var RB = S.cfg.rounds[S.ri].boss;
+      S.slowT = 1.6; battleSay(RB.def, RB.name, RB.die, 3.4);
+      roundOver(true);
     } else if (m.kind === 'boss') {
       burst(m, 70, 320, 0, 0); S.hitstop = 0.25; S.shake = 16; sfx('big'); sfx('boss');
       for (var b = 0; b < 25; b++) S.gems.push({ x: m.x + (Math.random() - 0.5) * 80, y: m.y + (Math.random() - 0.5) * 80, v: 3 });
@@ -2817,7 +3050,37 @@
   });
   function endJoy(e) { if (joy && e.pointerId === joy.id) joy = null; }
   cv.addEventListener('pointerup', endJoy); cv.addEventListener('pointercancel', endJoy);
+  // 测试用自动驾驶：躲怪、绕圈、捡知识点（只在平衡测试里打开）
+  function botDir() {
+    // 模拟普通玩家：0.22 秒反应一次，方向有抖动；会主动贴近精英/Boss 输出
+    S.botT = (S.botT || 0) - 1 / 30;
+    if (S.botT > 0 && S.botDir) return S.botDir;
+    S.botT = 0.22;
+    var p = S.p, fx = 0, fy = 0, big = null, bd = 1e9;
+    S.mobs.forEach(function (m) {
+      if (m.dead) return;
+      var dx = p.x - m.x, dy = p.y - m.y, d = Math.hypot(dx, dy) || 1, Rr = m.kind === 'boss' ? 140 : (m.kind === 'elite' ? 100 : 90);
+      if (m.kind !== 'mob' && d < bd) { bd = d; big = m; }
+      if (d < Rr) { var w = (Rr - d) / Rr; w = w * w * (m.kind === 'mob' ? 1 : 3); fx += dx / d * w; fy += dy / d * w; }
+    });
+    S.ebullets.forEach(function (b) { var dx = p.x - b.x, dy = p.y - b.y, d = Math.hypot(dx, dy) || 1; if (d < 80) { var w = (80 - d) / 80 * 1.5; fx += dx / d * w; fy += dy / d * w; } });
+    if (big && big.kind === 'boss' && (big.state === 'tele' || big.state === 'dash')) {
+      // 看到冲锋预警就往侧面闪
+      var px = -(big.dy || 0), py = big.dx || 0, side = (p.x - big.x) * px + (p.y - big.y) * py >= 0 ? 1 : -1;
+      fx += px * side * 3; fy += py * side * 3;
+    } else if (big && bd > 150) { fx += (big.x - p.x) / bd * 0.6; fy += (big.y - p.y) / bd * 0.6; }
+    var l = Math.hypot(fx, fy);
+    if (l < 0.15) {
+      var g = null, gd = 1e9;
+      S.gems.forEach(function (q) { var d = Math.hypot(q.x - p.x, q.y - p.y); if (d < gd) { gd = d; g = q; } });
+      if (g && gd < 400) { fx = g.x - p.x; fy = g.y - p.y; } else { fx = Math.cos(S.t * 0.7); fy = Math.sin(S.t * 0.7); }
+    } else { var tx = -fy, ty = fx; fx += tx * 0.5; fy += ty * 0.5; }
+    var ang = Math.atan2(fy, fx) + (Math.random() - 0.5) * 0.9;
+    S.botDir = { x: Math.cos(ang), y: Math.sin(ang) };
+    return S.botDir;
+  }
   function inputDir() {
+    if (window.__bot && S) return botDir();
     var x = 0, y = 0;
     if (keys.a || keys.arrowleft) x -= 1; if (keys.d || keys.arrowright) x += 1;
     if (keys.w || keys.arrowup) y -= 1; if (keys.s || keys.arrowdown) y += 1;
@@ -2841,21 +3104,48 @@
     if (S.sayT > 0) { S.sayT -= dt; if (S.sayT <= 0) $('bsay').hidden = true; }
     if (S.slowT > 0) { S.slowT -= dt; dt *= 0.3; }
     S.t += dt;
+    var spawning = true;
 
-    // 阶段（考试日按科目切换小怪）
-    var pi = currentPhase();
-    if (pi !== S.phaseIdx) {
-      S.phaseIdx = pi; S.pool = poolOf(cfg.phases[pi].group);
-      $('subjectTag').textContent = cfg.phases[pi].label;
-      if (cfg.phases.length > 1) banner(cfg.phases[pi].label, 1.6);
+    if (cfg.rounds) {
+      // 考研日：一科一回合
+      if (S.rstate === 'fight') {
+        S.rt += dt;
+        var RD = cfg.rounds[S.ri];
+        if (!S.boss && S.rt >= BAL.roundBossAt) spawnRoundBoss(RD);
+        if (S.rt >= BAL.roundDur && S.endTimer < 0) roundOver(false);
+      } else { spawning = false; if (S.rstate === 'break') { S.breakT -= dt; if (S.breakT <= 0) nextRound(); } }
+    } else {
+      // 阶段
+      var pi = currentPhase();
+      if (pi !== S.phaseIdx) {
+        S.phaseIdx = pi; S.pool = poolOf(cfg.phases[pi].group);
+        $('subjectTag').textContent = cfg.phases[pi].label;
+      }
+      if (S.ending) {
+        // 下课铃：怪物一波波散掉，知识点自动飞回来
+        spawning = false; S.ending.t += dt; p.inv = 1;
+        var alive = S.mobs.filter(function (m) { return !m.dead; });
+        alive.sort(function (a, b) { return Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y); });
+        var nk = Math.ceil(alive.length * Math.min(1, dt * 3));
+        alive.slice(0, nk).forEach(function (m) { burst(m, m.kind === 'mob' ? 6 : 24, 160, 0, 0); m.dead = true; if (m.kind === 'mob') S.gems.push({ x: m.x, y: m.y, v: 1 }); });
+        S.gems.forEach(function (g) { g.pull = true; });
+        S.ebullets = [];
+        if (S.ending.t >= 3 && S.endTimer < 0) S.endTimer = 0.01;
+      } else {
+        if (S.eliteIdx < cfg.elites.length && S.t >= cfg.elites[S.eliteIdx]) { S.eliteIdx++; spawnElite(); }
+        if (cfg.endless && S.t >= S.nextElite) { S.nextElite += 50; cfg.eliteSpec = randomEliteSpec(); spawnElite(); }
+        if (cfg.bossAt && !S.bossSpawned && S.t >= cfg.bossAt) spawnBoss();
+        if (cfg.duration && S.t >= cfg.duration && S.endTimer < 0 && p.hp > 0) {
+          S.completed = true; S.ending = { t: 0 };
+          banner('叮铃铃——下课！', 2.8); sfx('bell'); S.shake = 4;
+        }
+      }
     }
-    if (S.eliteIdx < cfg.elites.length && S.t >= cfg.elites[S.eliteIdx]) { S.eliteIdx++; spawnElite(); }
-    if (cfg.bossAt && !S.bossSpawned && S.t >= cfg.bossAt) spawnBoss();
-    if (cfg.duration && S.t >= cfg.duration && S.endTimer < 0) { S.completed = true; S.endTimer = 0.01; banner('这套题刷完了！', 1.5); }
 
     var cap = W < 420 ? 130 : 170;
-    var rate = Math.min(3.2 + S.t * 0.1, 14) * (cfg.rateMul || 1) * (S.bossSpawned ? 0.45 : 1);
-    S.spawnAcc += dt * rate;
+    var tt = cfg.rounds ? S.rt : S.t;
+    var rate = Math.min(3.2 + tt * 0.1, 14) * (cfg.rateMul || 1) * (S.boss && !S.boss.dead ? 0.5 : 1);
+    S.spawnAcc += spawning ? dt * rate : 0;
     while (S.spawnAcc >= 1) {
       S.spawnAcc -= 1;
       if (S.mobs.length < cap) { var e = edgePoint(); addMob(S.pool[Math.floor(Math.random() * S.pool.length)], e.x, e.y, 'mob'); }
@@ -2878,7 +3168,7 @@
       m.kx *= mdamp; m.ky *= mdamp;
       m.flash = Math.max(0, m.flash - dt); m.orbCd = Math.max(0, m.orbCd - dt); m.face = dx < 0;
       if (d > Math.hypot(W, H) * 0.9 && m.kind === 'mob') { var e = edgePoint(); m.x = e.x; m.y = e.y; }
-      if (d < m.r + 12) hurtPlayer(m.dmg, m.x, m.y);
+      if (d < m.r + 12) { if (p.inv <= 0) { if (m.kind === 'mob') S.hitC = (S.hitC || 0) + 1; else S.hitBoss = (S.hitBoss || 0) + 1; } hurtPlayer(m.dmg, m.x, m.y); }
     });
     separate();
 
@@ -2937,7 +3227,7 @@
     }
     S.beams.forEach(function (b) { b.life -= dt; }); S.beams = S.beams.filter(function (b) { return b.life > 0; });
 
-    S.ebullets.forEach(function (b) { b.x += b.vx * dt; b.y += b.vy * dt; b.life -= dt; if (Math.hypot(b.x - p.x, b.y - p.y) < 14) { hurtPlayer(10, b.x, b.y); b.life = 0; } });
+    S.ebullets.forEach(function (b) { b.x += b.vx * dt; b.y += b.vy * dt; b.life -= dt; if (Math.hypot(b.x - p.x, b.y - p.y) < 14) { if (p.inv <= 0) S.hitB = (S.hitB || 0) + 1; hurtPlayer(10, b.x, b.y); b.life = 0; } });
     S.ebullets = S.ebullets.filter(function (b) { return b.life > 0; });
 
     var pr = S.pendingRevive;
@@ -2957,7 +3247,7 @@
     S.gems.forEach(function (g) {
       var gx = p.x - g.x, gy = p.y - g.y, gd = Math.hypot(gx, gy) || 1;
       if (gd < pr2 || g.pull) { g.pull = true; var v = 120 + (g.v2 = (g.v2 || 0) + 900 * dt); g.x += gx / gd * v * dt; g.y += gy / gd * v * dt; }
-      if (gd < 16) { g.got = true; S.xp += g.v; sfx('gem'); }
+      if (gd < 16) { g.got = true; S.xp += g.v * S.b.xp; sfx('gem'); }
     });
     S.gems = S.gems.filter(function (g) { return !g.got; });
     if (S.gems.length > 500) S.gems.splice(0, S.gems.length - 500);
@@ -2979,9 +3269,9 @@
     else if (m.state === 'tele' && m.timer <= 0) { m.state = 'dash'; m.timer = 0.5; S.shake = Math.max(S.shake, 5); sfx('big'); }
     else if (m.state === 'dash') { m.x += m.dx * 560 * dt; m.y += m.dy * 560 * dt; if (m.timer <= 0) { m.state = 'chase'; m.timer = 4 + Math.random() * 1.5; } }
     if (m.ring <= 0 && m.state === 'chase') {
-      m.ring = 6;
-      for (var i = 0; i < 14; i++) { var a = i / 14 * Math.PI * 2; S.ebullets.push({ x: m.x, y: m.y, vx: Math.cos(a) * 150, vy: Math.sin(a) * 150, life: 4 }); }
-      banner('Bug 弹幕！', 0.8);
+      m.ring = m.ringCd || 6;
+      var rn = m.ringN || 14, off = Math.random() * Math.PI;
+      for (var i = 0; i < rn; i++) { var a = off + i / rn * Math.PI * 2; S.ebullets.push({ x: m.x, y: m.y, vx: Math.cos(a) * 150, vy: Math.sin(a) * 150, life: 4 }); }
     }
   }
   function separate() {
@@ -3104,8 +3394,9 @@
     $('xpFill').style.width = Math.min(100, S.xp / need() * 100) + '%';
     $('hpFill').style.width = (p.hp / p.max * 100) + '%';
     $('hpText').textContent = Math.ceil(p.hp) + '/' + p.max;
-    var total = S.cfg.duration || S.cfg.bossAt;
-    $('timer').textContent = S.bossSpawned ? 'BOSS' : fmt(Math.max(0, total - S.t));
+    if (S.cfg.rounds) $('timer').textContent = fmt(Math.max(0, BAL.roundDur - S.rt));
+    else if (S.cfg.endless) $('timer').textContent = fmt(S.t);
+    else { var total = S.cfg.duration || S.cfg.bossAt; $('timer').textContent = S.bossSpawned ? 'BOSS' : fmt(Math.max(0, total - S.t)); }
     $('lvTxt').textContent = S.lv; $('killTxt').textContent = S.kills;
     var b = S.boss && !S.boss.dead ? S.boss : null;
     $('bossbar').hidden = !b;
@@ -3161,26 +3452,29 @@
     mode = 'done';
     overlay('levelOv', false);
     var r = { kills: S.kills, lv: S.lv, t: S.t, won: S.won, completed: S.completed, died: S.p.hp <= 0, quit: S.quit,
-      eliteDown: S.eliteDown, minHp: S.minHp, bossSpawned: S.bossSpawned, bossFrac: S.boss ? Math.max(0, S.boss.hp / S.boss.max) : 1 };
+      eliteDown: S.eliteDown, minHp: S.minHp, results: S.results.slice(), bossSpawned: S.bossSpawned, bossFrac: S.boss ? Math.max(0, S.boss.hp / S.boss.max) : 1 };
     S.cfg.onEnd(r);
   }
 
   // ======================================================================
   // 刷题局与考试
   // ======================================================================
+  // ---------- 章节 ----------
+  function chapterCfg(sub, ci, onEnd) {
+    var ch = CHAPTERS[sub.id], t = tierOf(sub.id, ci);
+    return {
+      kind: 'daily', hpMul: tierVal(TIER.hp, t), rateMul: tierVal(TIER.rate, t), mobDmg: tierVal(TIER.dmg, t), mobSpeed: tierVal(TIER.speed, t),
+      duration: 120, bossAt: 0, elites: [70], eliteSpec: ch.el[ci], eliteHp: 300,
+      phases: [{ group: sub.id, until: 1e9, label: sub.name + ' · ' + ch.list[ci] }], onEnd: onEnd
+    };
+  }
   function startChapter(sub, ci) {
     regen();
     if (save.energy <= 0) return;
-    audioInit();
-    spendEnergy();
-    var ch = CHAPTERS[sub.id], spec = ch.el[ci];
-    showLoading({ sub: sub.name + ' · 第 ' + (ci + 1) + ' 章', title: ch.list[ci], spec: spec, done: function () {
-      startBattle({
-        kind: 'daily', hpMul: 1 + ci * 0.3, rateMul: 1 + ci * 0.08, duration: 120, bossAt: 0,
-        elites: [70], eliteSpec: spec, eliteHp: 300,
-        phases: [{ group: sub.id, until: 1e9, label: sub.name + ' · ' + ch.list[ci] }],
-        onEnd: function (r) { chapterResult(sub, ci, r); }
-      });
+    audioInit(); spendEnergy();
+    var ch = CHAPTERS[sub.id];
+    showLoading({ sub: sub.name + ' · 第 ' + (ci + 1) + ' 章', title: ch.list[ci], spec: ch.el[ci], done: function () {
+      startBattle(chapterCfg(sub, ci, function (r) { chapterResult(sub, ci, r); }));
     } });
   }
   function chapterResult(sub, ci, r) {
@@ -3189,69 +3483,118 @@
     var old = starsOf(sub.id, ci), score0 = totalScore(), sub0 = subScore(sub.id);
     if (!save.stars[sub.id]) save.stars[sub.id] = [];
     if (stars > old) save.stars[sub.id][ci] = stars;
-    var base = r.kills + r.lv * 5 + (r.completed ? 40 : 0) + (r.eliteDown ? 30 : 0);
-    var gain = Math.round(base * (sub.id === 'cs' ? 1.2 : 1) * (1 + ci * 0.15) * (r.completed ? 1 : 0.6));
+    var fresh = Math.max(0, stars - old), starGain = fresh * starReward(sub.id, ci), killGain = Math.round(r.kills * BAL.replayPerKill);
+    var gain = starGain + killGain;
     save.study += gain; save.stress = Math.min(100, save.stress + RUN_STRESS);
     save.runs++; save.totalKills += r.kills;
     if (save.dayLog) { save.dayLog.runs++; save.dayLog.study += gain; }
     persist();
     var sc = totalScore(), line = lineOf(), dSub = subScore(sub.id) - sub0;
-    var title = ['被题海淹没了…', '这章刷完了！', '本章通关！', '完美通关！'][stars];
-    var note = stars === 0 ? '没撑到最后，这章没拿到星。学习力照样拿 60%，升级道具再来。'
-      : stars === 1 ? '撑到了最后，但本章精英“' + ch.el[ci].name + '”还活着。打倒它能拿 ★★。'
+    var title = ['被题海淹没了…', '下课！这章刷完了', '下课！本章通关', '下课！完美通关'][stars];
+    var note = stars === 0 ? '没撑到下课铃，这章没拿到星。去升级道具和学习素质再来。'
+      : stars === 1 ? '撑到了下课，但本章精英“' + ch.el[ci].name + '”还活着。打倒它能拿 ★★。'
       : stars === 2 ? '打倒了精英！全程血量不低于一半就能拿 ★★★。' : '三颗星，这章吃透了。';
-    if (stars > 0 && stars <= old) note += '（最好成绩是 ' + starStr(old) + '，预估分不变）';
+    if (stars > 0 && !fresh) note += '（没有新星，只拿击杀学习力）';
     var acts = [{ label: '回书桌', primary: true, fn: backHome }];
     if (stars > 0 && ci + 1 < ch.list.length && !starsOf(sub.id, ci + 1) && save.energy > 0)
       acts.push({ label: '下一章：' + ch.list[ci + 1], fn: function () { startChapter(sub, ci + 1); } });
     else if (save.energy > 0 && stars < 3) acts.push({ label: '再刷一次', fn: function () { startChapter(sub, ci); } });
     showResult(title, note,
-      [['本章星级', starStr(Math.max(stars, old)) + (stars > old && old ? '（新纪录）' : ''), true],
-       [sub.name + ' 预估分', (dSub > 0 ? '+' + dSub + ' → ' : '') + subScore(sub.id) + '/' + ch.full],
+      [[sub.name + ' 预估分', (dSub > 0 ? '+' + dSub + ' → ' : '') + subScore(sub.id) + '/' + ch.full],
        ['预估总分', score0 === sc ? sc + ' / ' + line : score0 + ' → ' + sc + ' / ' + line, true],
-       ['坚持时间', fmt(r.t)], ['击杀', r.kills], ['压力', '+' + RUN_STRESS], ['获得学习力', '+' + gain]],
-      acts);
+       ['坚持时间', fmt(r.t)], ['击杀', r.kills],
+       ['新星奖励', fresh ? '+' + starGain + '（' + fresh + ' 颗新星）' : '—'], ['击杀学习力', '+' + killGain], ['获得学习力', '+' + gain, true]],
+      acts, { stars: stars, best: Math.max(stars, old) });
   }
 
-  // 某科预估分越高，考场上这一科的怪越弱：0 分 ×1.4，满分 ×0.5
-  function examMul(id) { return 1.4 - 0.9 * mastery(id); }
+  // ---------- 全科复习（无尽） ----------
+  function allCleared() { return SUB_IDS.every(function (id) { return CHAPTERS[id].list.every(function (_, i) { return starsOf(id, i) > 0; }); }); }
+  function endlessCfg(onEnd) {
+    return { kind: 'endless', endless: true, hpMul: TIER.hp[3], rateMul: 1.25, mobDmg: TIER.dmg[3], duration: 0, bossAt: 0, elites: [], eliteHp: 340,
+      phases: [{ group: 'all', until: 1e9, label: '全科复习 · 撑得越久学习力越多' }], onEnd: onEnd };
+  }
+  function startEndless() {
+    regen();
+    if (save.energy <= 0 || !allCleared()) return;
+    audioInit(); spendEnergy();
+    showLoading({ sub: '全科复习 · 无尽模式', title: '四门课的怪一起上', kind: '随机精英', spec: randomEliteSpec(), done: function () {
+      startBattle(endlessCfg(function (r) {
+        var gain = Math.round(r.t * BAL.endlessPerSec + r.kills * BAL.endlessPerKill);
+        var best = r.t > (save.endlessBest || 0);
+        if (best) save.endlessBest = Math.floor(r.t);
+        save.study += gain; save.stress = Math.min(100, save.stress + RUN_STRESS);
+        save.runs++; save.totalKills += r.kills;
+        if (save.dayLog) { save.dayLog.runs++; save.dayLog.study += gain; }
+        persist();
+        showResult(best ? '新纪录！' : '复习结束', '全科复习按坚持时间和击杀给学习力，是后期升满道具和学习素质的主要来源。',
+          [['坚持时间', fmt(r.t) + (best ? '（最佳）' : '')], ['最佳纪录', fmt(save.endlessBest)], ['击杀', r.kills], ['获得学习力', '+' + gain, true]],
+          [{ label: '回书桌', primary: true, fn: backHome }].concat(save.energy > 0 ? [{ label: '再来一轮', fn: startEndless }] : []));
+      }));
+    } });
+  }
+
+  // ---------- 考研日 ----------
+  // 预估分越高考场越轻松，但不会轻松太多：0 分 ×1.25，满分 ×0.9
+  function examMul(id) { return 1.25 - 0.35 * mastery(id); }
+  function accidentChance() { return Math.min(0.5, BAL.accidentBase + save.stress * BAL.accidentPerStress); }
+  var ACCIDENTS = ['押题押错了，背的一道都没考', '昨晚紧张失眠，状态不稳', '忘带 2B 铅笔，心态崩了', '考场空调太冷，手都冻僵了', '早饭吃坏了肚子'];
+  function examCfg(s, accident, onEnd) {
+    function boss(def, name, say, die, k, sub, ring, ringCd) {
+      return { def: def, name: name, say: say, die: die, ring: ring, ringCd: ringCd,
+        hp: Math.round((sub ? BAL.examBossHp : BAL.retestBossHp) * k * s.hp * (sub ? examMul(sub) : 1)) };
+    }
+    return {
+      kind: 'exam', hpMul: s.hp, mobDmg: 1, rateMul: 0.9, duration: 0, bossAt: 0, elites: [], accident: accident, phases: [{ group: 'po', until: 1e9, label: '' }],
+      rounds: [
+        { group: 'po', name: '政治', tag: '第一科 · 政治（3 分钟）', boss: boss(BOSS_PO, '材料分析巨卷', '辨析题：论你上岸的必然性与偶然性！', '答……答到点子上了……', 0.9, 'po', 12, 6) },
+        { group: 'en', name: '英语', tag: '第二科 · 英语（3 分钟）', boss: boss(BOSS_EN, '作文阅卷官', '这个模板，我今天已经看了一万遍。', '……这篇，给你个高分吧。', 1.4, 'en', 14, 5.5) },
+        { group: 'ma', name: '数学', tag: '第三科 · 数学（3 分钟）', boss: boss(BOSS_MA, '压轴大题', '前面都是送分，我才是真正的数学。', '步骤分……被你拿满了……', 1.6, 'ma', 16, 5) },
+        { group: 'cs', name: '专业课', tag: '第四科 · 专业课 408（3 分钟）', boss: boss(BOSS, '408 缝合怪', '四门课，我全都要！', '四门课缝在一起……还是被你一门一门拆开了……', 1.8, 'cs', 18, 5) },
+        { group: 'all', name: '复试', tag: '复试 · 导师组面试（3 分钟）', boss: boss(BOSS_RE, '复试导师', '同学，先用英文介绍一下你自己。', '……嗯，这个学生，我要了。', 2.0, null, 20, 4) }
+      ],
+      onEnd: onEnd
+    };
+  }
   function startExam() {
     audioInit();
     var s = SCHOOLS[save.school];
-    showLoading({ sub: '考研日 · ' + s.name, title: '四门连考', kind: '专业课魔王', spec: EXAM_BOSS, done: function () { examBattle(s); } });
+    var accident = Math.random() < accidentChance() ? ACCIDENTS[Math.floor(Math.random() * ACCIDENTS.length)] : null;
+    showLoading({ sub: '考研日 · ' + s.name, title: '四门连考', kind: '第一科 Boss', spec: { name: '材料分析巨卷', say: '辨析题：论你上岸的必然性与偶然性！', boss: BOSS_PO }, done: function () {
+      startBattle(examCfg(s, accident, function (r) { examResult(s, r); }));
+      if (accident) { banner('考场意外！攻击 −30%', 2.6); battleSay(GM.player, '你（内心）', accident + '……', 4); }
+    } });
+    if (accident) $('loadTip').textContent = '⚠ 考场意外：' + accident + '。今天攻击 −30%。';
   }
-  function examBattle(s) {
-    startBattle({
-      kind: 'exam', hpMul: s.hp, duration: 0, bossAt: 150, elites: [125], eliteSpec: EXAM_ELITE, bossMul: examMul('cs'),
-      phases: [
-        { group: 'po', until: 37, label: '第一科：政治', mul: examMul('po') },
-        { group: 'en', until: 75, label: '第二科：英语', mul: examMul('en') },
-        { group: 'ma', until: 112, label: '第三科：数学', mul: examMul('ma') },
-        { group: 'cs', until: 1e9, label: '第四科：专业课 408', mul: examMul('cs') }
-      ],
-      onEnd: function (r) {
-        save.runs++; save.totalKills += r.kills;
-        var lower = SCHOOLS[Math.max(0, save.school - 1)];
-        if (r.won) {
-          save.outcome = 'pass'; save.finalSchool = s.name; persist();
-          showResult('上岸！', '你考上了 ' + s.name + '。', [['击杀', r.kills], ['等级', r.lv]],
-            [{ label: '看看上岸照', primary: true, fn: function () { renderEnd(); show('vEnd'); } }]);
-        } else if (r.bossSpawned && !r.quit && r.bossFrac <= 0.7) {
-          var adj = save.school > 0 ? lower.name : '青藤学院（调剂）';
-          save.outcome = 'adjust'; save.finalSchool = adj; persist();
-          showResult('差一点…可以调剂！', '专业课 Boss 还剩 ' + Math.round(r.bossFrac * 100) + '% 血。你也可以不调剂，选择二战冲 ' + s.name + '。',
-            [['击杀', r.kills], ['等级', r.lv]],
-            [{ label: '接受调剂：' + adj, primary: true, fn: function () { renderEnd(); show('vEnd'); } },
-             { label: '不甘心，二战', fn: secondTry }]);
-        } else {
-          persist();
-          showResult('没过线…', '学习力和道具都会保留。二战从明天开始，这次准备会更充分。',
-            [['坚持到', fmt(r.t)], ['击杀', r.kills], ['当前学习力', save.study, true]],
-            [{ label: '开始二战', primary: true, fn: secondTry }]);
-        }
-      }
-    });
+  function examResult(s, r) {
+    save.runs++; save.totalKills += r.kills;
+    var res = r.results || [], passed = res.slice(0, 4).filter(Boolean).length, lower = SCHOOLS[Math.max(0, save.school - 1)];
+    var adj = save.school > 0 ? lower.name : '青藤学院（调剂）';
+    var stats = [['初试过关科目', passed + ' / 4'], ['复试', res[4] === true ? '通过' : (passed === 4 ? '没通过' : '没进复试')], ['击杀', r.kills]];
+    if (res[4] === true) {
+      save.outcome = 'pass'; save.finalSchool = s.name; persist();
+      showLetter(s.name, false);
+    } else if (passed >= 3 && !r.quit) {
+      persist();
+      showResult(passed === 4 ? '复试没过…但可以调剂！' : '差一科…可以调剂！',
+        (passed === 4 ? '初试四科都过了，复试被导师问倒了。' : '四科里过了三科。') + '可以调剂到 ' + adj + '，也可以二战再冲 ' + s.name + '（星星、学习力、道具全保留）。',
+        stats, [{ label: '接受调剂：' + adj, primary: true, fn: function () { save.outcome = 'adjust'; save.finalSchool = adj; persist(); showLetter(adj, true); } },
+                { label: '不甘心，二战', fn: secondTry }]);
+    } else {
+      persist();
+      showResult('没过线…', '星星、学习力、道具和学习素质都保留。二战从今天开始，每天的高级复习还会继续叠加。', stats.concat([['当前学习力', save.study, true]]),
+        [{ label: '开始二战', primary: true, fn: secondTry }]);
+    }
   }
+  // 录取通知书
+  function showLetter(school, adjusted) {
+    var m = MAJORS.filter(function (x) { return x.id === save.major; })[0];
+    $('letterSchool').textContent = school;
+    $('letterBody').textContent = '你已被我校' + (m ? m.name : '') + '专业' + (adjusted ? '（调剂）' : '') + '录取为 2032 级硕士研究生。请于 9 月 1 日持本通知书报到。';
+    $('letterSeal').textContent = school.replace(/（.*）/, '');
+    overlay('letterOv', true); sfx('whoosh');
+    setTimeout(function () { sfx('stamp'); }, 1500);
+  }
+  $('letterGo').addEventListener('click', function () { overlay('letterOv', false); renderEnd(); show('vEnd'); });
   function secondTry() {
     save.week++; save.outcome = null; save.finalSchool = null;
     // 二战从今天算第 1 天，今天剩下的精力照常可用
@@ -3259,8 +3602,17 @@
     persist(); backHome();
   }
 
-  function showResult(title, note, stats, actions) {
+  function showResult(title, note, stats, actions, opt) {
     $('rTitle').textContent = title; $('rNote').textContent = note;
+    var bs = $('rStars'); bs.innerHTML = ''; bs.hidden = !(opt && opt.stars != null);
+    if (opt && opt.stars != null) {
+      for (var i = 0; i < 3; i++) {
+        var st = document.createElement('span'); st.textContent = '★';
+        st.className = i < opt.stars ? 'on' : (i < opt.best ? 'old' : '');
+        st.style.animationDelay = (0.35 + i * 0.35) + 's'; bs.appendChild(st);
+        if (i < opt.stars) setTimeout(function () { sfx('level'); }, 350 + i * 350);
+      }
+    }
     var dl = $('rStats'); dl.innerHTML = '';
     stats.forEach(function (s) { addStat(dl, s[0], s[1], s[2]); });
     var box = $('rActions'); box.innerHTML = '';
@@ -3314,11 +3666,13 @@
       addStat(dl, '当前预估', sc + ' 分', true);
       $('dailyGoal').innerHTML = '<b>怎么上岸：</b>四门课各分几章，通关章节涨预估分；分数越高，考场上的怪越弱。学习力拿去升级道具。第 7 天进考场，打败专业课魔王就上岸！';
     } else {
+      save.review = (save.review || 0) + 1;
       $('dailyEyebrow').textContent = '第 ' + Math.min(d, 7) + ' 天 · ' + (log.key === (save.week + '-' + (d - 1)) ? '昨日战报' : '上次战报');
       $('dailyTitle').textContent = log.runs ? '刷了 ' + log.runs + ' 章题' : '一章都没刷……魔王又近了一步';
       addStat(dl, '获得学习力', '+' + log.study);
       addStat(dl, '预估分', log.score0 + ' → ' + sc);
-      addStat(dl, '分数线 ' + line, gapTxt, true);
+      addStat(dl, '分数线 ' + line, gapTxt);
+      addStat(dl, '高级复习 第 ' + save.review + ' 层', '伤害 +' + Math.round(save.review * BAL.reviewDmg * 100) + '% · 生命 +' + save.review * BAL.reviewHp, true);
       if (d >= 7) {
         $('dailyGoal').innerHTML = sc >= line ? '<b>今天考研！</b>预估分已过线，考场上的怪会弱很多。去书桌点“进入考场”。'
           : '<b>今天考研！</b>还差 ' + (line - sc) + ' 分没过线，考场会很难……但也不是没机会。';
@@ -3395,7 +3749,7 @@
   // ======================================================================
   function boot() {
     mode = 'idle';
-    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv'].forEach(function (o) { overlay(o, false); });
+    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv', 'celeOv', 'letterOv'].forEach(function (o) { overlay(o, false); });
     if (save.outcome) { renderEnd(); show('vEnd'); return; }
     if (!save.storySeen) { startIntro(); return; }
     if (!save.major) { renderMajors(); show('vMajor'); return; }
@@ -3417,10 +3771,36 @@
     loadSkip: function () { if (loading) { loading.t = 99; stepLoading(0); } },
     daily: function (sec) { for (var i = 0; i < Math.round(sec * 30); i++) stepDaily(1 / 30); return daily && daily.t; },
     desk: function () { return desk; },
+    // 平衡测试：用自动驾驶跑一局，返回结果（不改存档）
+    botRun: function (kind, opt) {
+      opt = opt || {};
+      var keep = { up: save.up, attrs: save.attrs, review: save.review, stars: save.stars };
+      save.up = opt.up || { notebook: 0, cup: 0, phones: 0, coffee: 0, bag: 0 };
+      save.attrs = opt.attrs || { focus: 0, stamina: 0, wit: 0 };
+      save.review = opt.review || 0; if (opt.stars) save.stars = opt.stars;
+      var out = null, done = function (r) { out = r; }, cfg;
+      if (kind === 'chapter') cfg = chapterCfg(SUBJECTS.filter(function (x) { return x.id === opt.sub; })[0], opt.ci, done);
+      else if (kind === 'endless') cfg = endlessCfg(done);
+      else cfg = examCfg(SCHOOLS[opt.school == null ? 1 : opt.school], opt.accident || null, done);
+      window.__bot = true; startBattle(cfg);
+      for (var i = 0; i < (opt.maxT || 1500) * 30 && !out; i++) {
+        if (mode === 'level') { var cs = document.querySelectorAll('#choices .choice'); cs[Math.floor(Math.random() * cs.length)].click(); }
+        if (mode === 'cele') { stepCele(1 / 30); continue; }
+        if (mode !== 'play') break;
+        if (S.hitstop > 0) S.hitstop -= 1 / 30; else update(1 / 30);
+      }
+      window.__bot = false;
+      var res = { t: Math.round(S.t), kills: S.kills, lv: S.lv, hp: Math.round(S.p.hp), completed: S.completed, elite: S.eliteDown, minHp: +S.minHp.toFixed(2), results: S.results.slice(), ttk: S.ttk.slice(), hits: [S.hitC || 0, S.hitB || 0, S.hitBoss || 0], max: S.p.max };
+      save.up = keep.up; save.attrs = keep.attrs; save.review = keep.review; save.stars = keep.stars;
+      mode = 'idle'; ['levelOv', 'resultOv', 'celeOv', 'letterOv'].forEach(function (o) { overlay(o, false); }); $('bsay').hidden = true;
+      return res;
+    },
+    totalCost: TOTAL_COST, starUnit: STAR_UNIT,
     // 不依赖画面刷新，直接按 1/30 秒步进模拟；升级时自动选第一个
     sim: function (sec) {
       for (var i = 0; i < Math.round(sec * 30); i++) {
         if (mode === 'level') { var c = $('choice-0'); if (c) c.click(); }
+        if (mode === 'cele') { stepCele(1 / 30); continue; }
         if (mode !== 'play') break;
         if (S.hitstop > 0) S.hitstop -= 1 / 30; else update(1 / 30);
       }
@@ -3438,6 +3818,7 @@
     if (!$('dailyOv').hidden) stepDaily(dt);
     if (S && !$('battle').hidden) {
       if (mode === 'play' && dt > 0) { if (S.hitstop > 0) S.hitstop -= dt; else update(dt); }
+      if (mode === 'cele') stepCele(dt);
       draw(); hud();
     }
     requestAnimationFrame(loop);
