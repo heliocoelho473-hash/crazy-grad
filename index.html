@@ -342,6 +342,63 @@
   .end-view { background: var(--wood) repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 26px, rgba(255,255,255,0.04) 26px 28px, transparent 28px 61px); }
   .photo { background: #fff; padding: 8px 8px 26px; box-shadow: 0 0 0 2px var(--ink), 4px 6px 0 0 rgba(0,0,0,0.3); transform: rotate(-2deg); }
   .photo canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+
+  /* 主线目标 */
+  .goal { background: #fff; box-shadow: 0 0 0 2px var(--ink), 3px 4px 0 1px rgba(0,0,0,0.15); padding: 10px 12px; display: grid; gap: 6px; }
+  .goal-top { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .goal-top .k { font-size: 12px; font-weight: 700; color: #fff; background: var(--red); padding: 1px 6px; }
+  .goal-top b { font-size: 15px; }
+  .goalbar { position: relative; height: 16px; background: var(--paper-2); box-shadow: 0 0 0 2px var(--ink); }
+  .goalbar span { display: block; height: 100%; width: 0; background: repeating-linear-gradient(90deg, var(--green) 0 8px, #6dbb7c 8px 10px); transition: width 0.4s; }
+  .goalbar i { position: absolute; top: -6px; bottom: -6px; width: 3px; background: var(--red); }
+  .goalbar i::after { content: "▲线"; position: absolute; top: calc(100% + 1px); left: 50%; transform: translateX(-50%); font-size: 10px; font-style: normal; font-weight: 700; color: var(--red); white-space: nowrap; }
+  .goal-num { display: flex; justify-content: space-between; font-size: 13px; color: var(--dim); margin-top: 6px; }
+  .goal-num b { font-family: var(--display); font-weight: 400; font-size: 20px; color: var(--ink); }
+  .goal-num .ok { color: var(--green); font-weight: 700; }
+  .goal-num .gap { color: var(--red); font-weight: 700; }
+  .regen { font-size: 12px; color: var(--dim); margin-top: -4px; }
+  .pips i { width: 12px; height: 16px; }
+  .book .prog { display: block; font-size: 11px; font-weight: 700; margin-top: 3px; letter-spacing: 0.02em; }
+  .book .stars { color: var(--gold); text-shadow: 0 1px 0 rgba(0,0,0,0.4); }
+  /* 章节列表 */
+  .chap { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; text-align: left; width: 100%; background: #fff; border: 0; padding: 10px 12px; cursor: pointer; box-shadow: 0 0 0 2px var(--ink), 3px 4px 0 1px rgba(0,0,0,0.18); }
+  .chap:hover:not(:disabled) { background: #fff7c8; }
+  .chap:disabled { cursor: default; background: var(--paper-2); color: #a0958a; }
+  .chap .t { font-weight: 700; font-size: 16px; }
+  .chap .st { font-size: 18px; color: #e0a43a; letter-spacing: 2px; text-shadow: 0 1px 0 var(--ink); }
+  .chap .d { grid-column: 1 / -1; font-size: 12px; color: var(--dim); }
+  .chap.next { box-shadow: 0 0 0 3px var(--red), 3px 4px 0 1px rgba(0,0,0,0.18); }
+  /* 加载页 */
+  .load { position: absolute; inset: 0; z-index: 8; background: var(--night) repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 2px, transparent 2px 4px); color: var(--chalk); display: grid; place-items: center; padding: 24px; }
+  .load-in { width: 100%; max-width: 380px; display: grid; gap: 18px; }
+  .load .eyebrow { color: var(--gold); font-weight: 700; }
+  .load h2 { font-size: 38px; color: #fff; text-shadow: 3px 3px 0 #000; }
+  .load-boss { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; }
+  .load-boss canvas { width: 96px; height: 96px; background: #2a2645; box-shadow: 0 0 0 3px var(--red); animation: bob 1.2s ease-in-out infinite; }
+  .load-boss .k { font-size: 12px; font-weight: 700; color: #fff; background: var(--red); padding: 1px 6px; }
+  .load-boss b { display: block; font-family: var(--display); font-weight: 400; font-size: 26px; margin-top: 4px; }
+  .load-boss p { font-size: 13px; color: #c9c2dd; margin-top: 2px; }
+  .tipcard { background: var(--paper); color: var(--text); padding: 12px 14px; box-shadow: var(--px); display: grid; gap: 4px; transform: rotate(-1deg); }
+  .tipcard .k { font-size: 12px; font-weight: 700; color: var(--red); }
+  .tipcard p { font-size: 15px; font-weight: 500; }
+  .loadbar { height: 18px; background: #0e0c18; box-shadow: 0 0 0 3px var(--chalk); padding: 3px; }
+  .loadbar span { display: block; height: 100%; width: 0; background: repeating-linear-gradient(90deg, var(--gold) 0 10px, #e0a43a 10px 12px); }
+  .load-status { font-size: 13px; color: #9a93b0; text-align: center; }
+  /* 每日开场 */
+  .daily { position: absolute; inset: 0; z-index: 7; background: #120a16; overflow: hidden; }
+  .daily canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+  .daily-big { position: absolute; left: 12px; right: 12px; top: 12%; text-align: center; font-family: var(--display); font-size: 38px; line-height: 1.1; color: #fff; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000; animation: logo 0.4s cubic-bezier(.2,1.5,.4,1) both; }
+  .daily-big small { display: block; font-size: 22px; color: #ff8a8a; }
+  .daily-name { position: absolute; left: 0; right: 0; top: 30%; text-align: center; font-size: 14px; font-weight: 700; color: #ffb0a8; letter-spacing: 0.2em; animation: pop 0.3s both; --r: 0deg; }
+  .daily-card { position: absolute; width: auto; max-height: 72%; overflow-y: auto; left: 16px; right: 16px; bottom: max(20px, env(safe-area-inset-bottom, 0px)); margin: 0 auto; animation: slideUp 0.35s cubic-bezier(.2,1.3,.4,1) both; }
+  .daily-card .dgoal { font-size: 14px; background: #fff7c8; padding: 8px 10px; }
+  .daily-card .dgoal b { color: var(--red); }
+  @keyframes slideUp { from { transform: translateY(120%); } to { transform: none; } }
+  /* 战斗对白 */
+  .bsay { position: absolute; left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); bottom: 56px; display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; background: #1f1a33; color: #fff; padding: 10px 12px; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--ink); pointer-events: none; animation: pop 0.2s both; --r: 0deg; }
+  .bsay canvas { width: 56px; height: 56px; background: #3a3358; box-shadow: 0 0 0 2px var(--red); }
+  .bsay b { font-family: var(--display); font-weight: 400; font-size: 18px; color: #ff8a8a; }
+  .bsay p { font-size: 14px; font-weight: 500; line-height: 1.45; }
 </style>
 
 <div id="game">
@@ -413,9 +470,15 @@
         <h2 id="dayBig">第 1 天</h2>
         <div class="cd" id="countdown"></div>
       </div>
+      <div class="goal">
+        <div class="goal-top"><span class="k">主线目标</span><b id="goalTxt"></b></div>
+        <div class="goalbar"><span id="goalFill"></span><i id="goalLine"></i></div>
+        <div class="goal-num"><span>当前预估 <b id="scoreNow">0</b> 分</span><span id="goalGap"></span></div>
+      </div>
       <div class="meters">
         <span class="k">学习力</span><b id="studyVal">0</b>
         <span class="k">精力</span><span class="pips" id="energyPips"></span>
+        <span></span><span class="regen" id="regenTxt"></span>
         <span class="k">压力</span><div class="bar"><span id="stressBar"></span><em id="stressNum"></em></div>
       </div>
       <p class="warn" id="stressWarn" hidden>压力太大，战斗伤害 −20%。去摸鱼放松一下吧。</p>
@@ -426,7 +489,7 @@
       </div>
 
       <div class="stack" id="studyBox">
-        <h3 class="sec-title">今天刷哪套题？<small>每套 1 精力</small></h3>
+        <h3 class="sec-title">刷题闯关<small>每章 1 精力 · 2 分钟</small></h3>
         <div class="books" id="subjects"></div>
       </div>
 
@@ -447,6 +510,8 @@
           <button type="button" id="dbgExam">直接到考试日</button>
           <button type="button" id="dbgRich">学习力 +2000</button>
           <button type="button" id="dbgStress">压力 +30</button>
+          <button type="button" id="dbgEnergy">精力回满</button>
+          <button type="button" id="dbgDaily">重看今日动画</button>
           <button type="button" id="dbgIntro">重看开场</button>
           <button type="button" id="dbgReset">重置存档</button>
         </div>
@@ -484,6 +549,7 @@
       </div>
     </div>
     <div class="banner" id="banner" hidden></div>
+    <div class="bsay" id="bsay" hidden><canvas id="bsayCv" class="pix" width="24" height="24"></canvas><div><b id="bsayName"></b><p id="bsayText"></p></div></div>
     <div class="tools">
       <button class="ibtn" id="soundBtn" type="button">音效：开</button>
       <button class="ibtn" id="pauseBtn" type="button">暂停</button>
@@ -524,6 +590,41 @@
       <div class="adbox" id="adCount">3</div>
     </div>
   </div>
+  <div class="ov" id="chapOv" hidden>
+    <div class="panel">
+      <div class="eyebrow" id="chapEyebrow"></div>
+      <h2 id="chapTitle"></h2>
+      <p class="muted">每章 2 分钟。撑到最后 ★，打倒本章精英 ★★，血量始终不低于一半 ★★★。星越多预估分越高，可以重刷。</p>
+      <div class="stack" id="chapList"></div>
+      <button class="btn ghost" id="chapClose" type="button">回书桌</button>
+    </div>
+  </div>
+  <div class="load" id="loadOv" hidden>
+    <div class="load-in">
+      <div class="eyebrow" id="loadSub"></div>
+      <h2 id="loadTitle"></h2>
+      <div class="load-boss">
+        <canvas id="loadCv" class="pix" width="24" height="24"></canvas>
+        <div><span class="k" id="loadKind">本章精英</span><b id="loadBoss"></b><p id="loadBark"></p></div>
+      </div>
+      <div class="tipcard"><span class="k">考研小 tips</span><p id="loadTip"></p></div>
+      <div class="loadbar"><span id="loadFill"></span></div>
+      <div class="load-status" id="loadStatus"></div>
+    </div>
+  </div>
+  <div class="daily" id="dailyOv" hidden>
+    <canvas id="dailyCv"></canvas>
+    <div class="daily-big" id="dailyBig" hidden></div>
+    <div class="daily-name" id="dailyName" hidden></div>
+    <div class="daily-card panel" id="dailyCard" hidden>
+      <div class="eyebrow" id="dailyEyebrow"></div>
+      <h2 id="dailyTitle"></h2>
+      <dl class="result" id="dailyStats"></dl>
+      <p class="dgoal" id="dailyGoal"></p>
+      <button class="btn" id="dailyGo" type="button">开始今天的复习</button>
+    </div>
+    <button class="cs-skip" id="dailySkip" type="button">跳过 ▶▶</button>
+  </div>
   <div class="ov" id="phoneOv" hidden>
     <div class="phone">
       <div class="bar2"><span id="phoneTime">22:30</span><span>消息</span></div>
@@ -535,7 +636,7 @@
     <div class="panel">
       <div class="eyebrow">考研日</div>
       <h2>四门连考</h2>
-      <p class="muted">政治 → 英语 → 数学 → 专业课，最后是专业课 Boss。打败 Boss 就上岸；把 Boss 打掉 30% 以上的血，可以调剂；否则二战。</p>
+      <p class="muted">政治 → 英语 → 数学 → 专业课，最后是专业课魔王。哪一科预估分越高，那一科的怪越弱。打败魔王就上岸；打掉它 30% 以上的血可以调剂；否则二战（星星、学习力、道具全保留）。</p>
       <dl class="result" id="preExamStats"></dl>
       <button class="btn" id="examGo" type="button">进入考场</button>
       <button class="btn ghost" id="examBack" type="button">再准备一下</button>
@@ -1926,7 +2027,7 @@
     };
   }
 
-  root.GradScenes = { Intro: Intro, Desk: Desk, guy: guy, todOf: todOf };
+  root.GradScenes = { Intro: Intro, Desk: Desk, guy: guy, guyBack: guyBack, todOf: todOf };
 })(window);
 
 </script>
@@ -1950,9 +2051,9 @@
     { id: 'med', name: '临床医学', open: false, d: '306 西医综合，五科合一。' }
   ];
   var SCHOOLS = [
-    { name: '青藤学院', tier: '双非', hp: 0.85, d: '分数线低，稳稳上岸' },
-    { name: '东湖大学', tier: '211', hp: 1.0, d: '正常难度' },
-    { name: '云顶大学', tier: '顶尖名校', hp: 1.2, d: '考场上的怪更厚，要多刷几天' }
+    { name: '青藤学院', tier: '双非', hp: 0.85, line: 300, d: '分数线 300，稳稳上岸' },
+    { name: '东湖大学', tier: '211', hp: 1.0, line: 340, d: '分数线 340，正常难度' },
+    { name: '云顶大学', tier: '顶尖名校', hp: 1.2, line: 380, d: '分数线 380，考场上的怪更厚' }
   ];
   var SUBJECTS = [
     { id: 'po', name: '政治', d: '单选题小兵、答题卡方格、蒙题骰子' },
@@ -1968,7 +2069,47 @@
     { id: 'bag', name: '大书包', icon: '包', color: '#9bd3b0', max: 3, d: function (l) { return '拾取范围 +' + (l * 20) + '%'; } }
   ];
   function itemCost(lv) { return Math.round(100 * Math.pow(1.55, lv)); }
-  var MAX_ENERGY = 5, ADS_PER_DAY = 2, RUN_STRESS = 12, STRESS_LIMIT = 70;
+  // 章节：每科拆成几章，每章 2 分钟，章末精英怪。星越多预估分越高
+  function E(sprite, name, say, die) { return { sprite: sprite, name: name, say: say, die: die }; }
+  var CHAPTERS = {
+    po: { full: 100, list: ['马原', '毛中特', '史纲', '思修法基', '时政'], el: [
+      E('dice', '矛盾骰子', '主要矛盾还是次要矛盾？掷一下就知道了！', '量变……终于引起了质变……'),
+      E('datika', '涂卡巨人', '2B 铅笔涂满，一格都不许出框！', '答题卡……被你涂穿了……'),
+      E('danxuan', '年份记忆兵长', '1921、1949、1978，按顺序报出来！', '我……把年份记混了……'),
+      E('datika', '道德标兵', '同学，你的品德分只有及格。', '好人……终究有好报……'),
+      E('dice', '押题大师', '押中了吗？押中了吗！', '今年……一道都没押中……')] },
+    en: { full: 100, list: ['词汇', '完形填空', '阅读理解', '新题型', '翻译', '作文'], el: [
+      E('abandon', '巨型 Abandon', '你又从 A 开始背了？', '你终于……背到 B 了……'),
+      E('wanxing', '空格大王', '20 个空，你能蒙对几个？', '原来……C 不是万能的……'),
+      E('shuci', '长难句九头蛇', '主语在哪？谓语在哪？你猜！', '被你……拆成主谓宾了……'),
+      E('luanxu', '乱序之王', '七选五，排到明年吧！', '顺序……居然……对了……'),
+      E('shuci', '直译机器人', 'How are you？怎么是你？', '信达雅……我只做到了信……'),
+      E('abandon', '万能模板怪', 'As is vividly depicted in the picture……', '阅卷老师……看了一万遍这句……')] },
+    ma: { full: 150, list: ['极限', '一元微分', '一元积分', '多元函数', '线性代数', '概率论'], el: [
+      E('wuqiong', '无穷大魔', '我趋近于你，但永远碰不到你。', '我……收敛了……'),
+      E('zhengfu', '洛必达骑士', '0 比 0？求导！再求导！', '求到……常数了……'),
+      E('changshu', '常数 C 之王', '不定积分忘了加我？扣分！', '记得……+C……'),
+      E('caogao', '偏导分身', '对 x 求偏导的时候，我是常数哦。', '全微分……被你拼完整了……'),
+      E('changshu', '矩阵方块人', '行列式为零，你就没有逆！', '我……满秩了……'),
+      E('zhengfu', '正态分布君', '你上岸的概率，服从我的分布。', '三西格玛之外……也有奇迹……')] },
+    cs: { full: 150, list: ['数据结构', '组成原理', '操作系统', '计算机网络'], el: [
+      E('taowa', '递归套娃王', '我调用我自己调用我自己调用……', 'Stack……Overflow……'),
+      E('cache', 'Cache 刺客', '你要的数据？不在我这儿。', '命中率……归零……'),
+      { twins: true, name: '死锁双子', say: '你等我释放，我等你释放。', die: '我们……就这样等到了考研结束……' },
+      E('diubao', '三次握手怪', '你好？你好？你好？……超时重传！', '四次挥手……再见了……')] }
+  };
+  var SUB_IDS = ['po', 'en', 'ma', 'cs'];
+  var EXAM_ELITE = { twins: true, name: '死锁双子', say: '考场上，我们也要互相等！', die: '解锁了……你可以交卷了……' };
+  var EXAM_BOSS = { name: '408 缝合怪', say: '四门课，我全都要！', die: '四门课缝在一起……还是被你一门一门拆开了……' };
+  var TIPS = [
+    '数学别跳步。跳步一时爽，阅卷火葬场。', '政治选择题，先圈出“不正确的是”。', '英语阅读先看题干，再回原文定位。',
+    '408 年年考 PV 操作，别再躲了。', '作文模板背一套就够，背十套会串台。', '熬夜不等于努力，睡够 7 小时效率更高。',
+    '真题至少刷两遍：第一遍做题，第二遍做人。', '错题本不是抄题本，要写清楚“为什么错”。', '考前一周别学新东西，把错题过一遍。',
+    '准考证、身份证、2B 铅笔，前一晚就装好。', '大题不会也写公式，过程分也是分。', '英语作文字迹工整，印象分真的存在。',
+    '背书别只看，要讲出来、默写出来。', '三天打鱼两天晒网，也比不打强。', '压力大就出去走走，图书馆不会跑。'
+  ];
+  var LOAD_MSG = ['正在削铅笔……', '正在占图书馆的座……', '正在泡速溶咖啡……', '正在给 2B 铅笔开光……', '正在翻开真题集……', '正在把手机调成静音……'];
+  var MAX_ENERGY = 10, REGEN_MS = 30 * 60 * 1000, ADS_PER_DAY = 2, RUN_STRESS = 12, STRESS_LIMIT = 70;
 
   // ======================================================================
   // 存档（本机浏览器里）
@@ -1977,12 +2118,52 @@
   var save = null;
   function blank() {
     return { major: null, school: null, start: null, week: 1, study: 0, up: { notebook: 0, cup: 0, phones: 0, coffee: 0, bag: 0 },
-      stress: 0, energy: MAX_ENERGY, energyDay: null, ads: 0, dayOffset: 0, outcome: null, finalSchool: null, totalKills: 0, runs: 0, storySeen: false };
+      stress: 0, energy: MAX_ENERGY, energyAt: Date.now(), energyDay: null, ads: 0, dayOffset: 0, outcome: null, finalSchool: null,
+      totalKills: 0, runs: 0, storySeen: false, stars: { po: [], en: [], ma: [], cs: [] }, seenDay: null, dayLog: null, msgSeen: null };
   }
   function load() {
-    try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && s.up) return s; } catch (e) {}
-    return blank();
+    var b = blank();
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY));
+      if (s && s.up) { for (var k in b) if (s[k] === undefined) s[k] = b[k]; return s; }
+    } catch (e) {}
+    return b;
   }
+  // 预估分
+  function subScore(id) {
+    var ch = CHAPTERS[id], st = save.stars[id] || [], per = ch.full / ch.list.length, sc = 0;
+    for (var i = 0; i < ch.list.length; i++) sc += per * (st[i] || 0) / 3;
+    return Math.round(sc);
+  }
+  function totalScore() { return SUB_IDS.reduce(function (a, k) { return a + subScore(k); }, 0); }
+  function lineOf() { return SCHOOLS[save.school].line; }
+  function mastery(id) { return subScore(id) / CHAPTERS[id].full; }
+  function starsOf(id, i) { return (save.stars[id] || [])[i] || 0; }
+  function unlocked(id, i) { return i === 0 || starsOf(id, i - 1) > 0; }
+  function curChapter(id) {
+    var n = CHAPTERS[id].list.length;
+    for (var i = 0; i < n; i++) if (!starsOf(id, i)) return i;
+    for (var j = 0; j < n; j++) if (starsOf(id, j) < 3) return j;
+    return n - 1;
+  }
+  function starStr(n) { return '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n); }
+  // 精力：每 30 分钟回 1 格，最多 10 格
+  function regen() {
+    var now = Date.now();
+    if (!save.energyAt) save.energyAt = now;
+    if (save.energy >= MAX_ENERGY) { save.energyAt = now; return; }
+    var n = Math.floor((now - save.energyAt) / REGEN_MS);
+    if (n > 0) {
+      save.energy = Math.min(MAX_ENERGY, save.energy + n); save.energyAt += n * REGEN_MS;
+      if (save.energy >= MAX_ENERGY) save.energyAt = now;
+    }
+  }
+  function spendEnergy() {
+    regen();
+    if (save.energy >= MAX_ENERGY) save.energyAt = Date.now();
+    save.energy--; persist();
+  }
+  function regenLeft() { return save.energy >= MAX_ENERGY ? 0 : Math.max(0, REGEN_MS - (Date.now() - save.energyAt)); }
   function persist() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
   save = load();
 
@@ -1999,12 +2180,13 @@
   function dayNum() { return save.start ? dayDiff(save.start, today()) + 1 : 1; }
   function refreshDay() {
     var t = today();
+    regen();
     if (save.energyDay !== t) {
       var gap = save.energyDay ? Math.max(1, dayDiff(save.energyDay, t)) : 0;
-      save.energyDay = t; save.energy = MAX_ENERGY; save.ads = 0;
+      save.energyDay = t; save.ads = 0;
       save.stress = Math.max(0, save.stress - 15 * gap);
-      persist();
     }
+    persist();
   }
 
   // ======================================================================
@@ -2062,7 +2244,7 @@
         tick(b);
         save.school = i; save.start = today(); save.energyDay = null; persist();
         refreshDay();
-        stampThen('已报名', function () { renderHome(); show('vHome'); });
+        stampThen('已报名', function () { goHome(); });
       });
       box.appendChild(b);
     });
@@ -2085,13 +2267,13 @@
   // 自习室
   function homeMessage(d) {
     if (d >= 7) return '<b>今天考研！</b>不管准备得怎么样，都得进考场了。';
-    if (save.week > 1 && d === 1) return '<b>二战第 1 天。</b>上次的学习力和道具都还在，这次稳了。';
+    if (save.week > 1 && d === 1) return '<b>二战第 1 天。</b>星星、学习力、道具全都还在，这次稳了。';
     var tips = [
-      '<b>第 1 天。</b>先刷几局题攒学习力，再去“道具”里升级。',
+      '<b>第 1 天。</b>先把四门课的第 1 章都打通，预估分涨得最快。',
       '研友说：“专业课 408 的怪最难，但学习力给得最多。”',
       '压力超过 70，战斗伤害会降低。累了就去摸鱼。',
-      '精力每天回满，用不完就浪费了。',
-      '离考研不远了。错题本和保温杯，至少升一件吧。',
+      '精力每 30 分钟回 1 格，满了就不再回，记得常来刷。',
+      '后面的章节越来越难，打不过就去“道具”里升级。',
       '<b>明天就考研了。</b>今天把精力全用掉。'
     ];
     return tips[Math.min(d - 1, tips.length - 1)];
@@ -2155,18 +2337,27 @@
     $('studyBox').hidden = exam;
     var subs = $('subjects'); subs.innerHTML = '';
     SUBJECTS.forEach(function (sub) {
-      var look = SUB_LOOK[sub.id];
+      var look = SUB_LOOK[sub.id], ch = CHAPTERS[sub.id], ci = curChapter(sub.id), allDone = starsOf(sub.id, ci) >= 3;
       var b = document.createElement('button');
-      b.type = 'button'; b.className = 'book'; b.id = 'sub-' + sub.id; b.disabled = save.energy <= 0;
+      b.type = 'button'; b.className = 'book'; b.id = 'sub-' + sub.id;
       b.style.setProperty('--c', look.c);
-      b.innerHTML = '<span class="ic"></span><span><span class="t"></span><span class="d"></span></span>';
+      b.innerHTML = '<span class="ic"></span><span><span class="t"></span><span class="d"></span><span class="prog"></span></span>';
       b.querySelector('.ic').appendChild(monIcon(look.mon));
       b.querySelector('.t').textContent = sub.name;
-      b.querySelector('.d').textContent = look.d;
+      b.querySelector('.d').textContent = allDone ? '全部三星！' : '第 ' + (ci + 1) + ' 章 · ' + ch.list[ci];
+      b.querySelector('.prog').innerHTML = '<span class="stars"></span> ' + subScore(sub.id) + '/' + ch.full + ' 分';
+      b.querySelector('.stars').textContent = starStr(starsOf(sub.id, ci));
       if (sub.id === 'cs') { var f = document.createElement('span'); f.className = 'flag'; f.textContent = '学习力 ×1.2'; b.appendChild(f); }
-      b.addEventListener('click', function () { startDaily(sub); });
+      b.addEventListener('click', function () { openChapters(sub); });
       subs.appendChild(b);
     });
+    var sc = totalScore(), line = lineOf();
+    $('goalTxt').textContent = '预估总分过 ' + line + ' 分（' + s.name + '）';
+    $('scoreNow').textContent = sc;
+    $('goalFill').style.width = (sc / 500 * 100) + '%';
+    $('goalLine').style.left = (line / 500 * 100) + '%';
+    $('goalGap').innerHTML = sc >= line ? '<span class="ok">已过线 ✓ 继续刷，考场更轻松</span>' : '<span class="gap">还差 ' + (line - sc) + ' 分</span>';
+    updateRegen();
     $('relaxBtn').disabled = save.energy <= 0 || save.stress <= 0;
     $('adBtn').disabled = save.ads >= ADS_PER_DAY;
     $('adBtn').querySelector('.d').textContent = '精力 +1，今天还能喝 ' + (ADS_PER_DAY - save.ads) + ' 杯';
@@ -2174,16 +2365,83 @@
       study: save.study, items: save.up, msgNew: msgNew, hour: new Date().getHours() });
   }
 
+
+  function fmtMs(ms) { var t = Math.ceil(ms / 1000); return pad(Math.floor(t / 60)) + ':' + pad(t % 60); }
+  function updateRegen() {
+    if (!save.school && save.school !== 0) return;
+    var before = save.energy; regen();
+    if (save.energy !== before) { persist(); renderHome(); return; }
+    $('regenTxt').textContent = save.energy >= MAX_ENERGY ? '精力已满（上限 ' + MAX_ENERGY + '）' : save.energy + '/' + MAX_ENERGY + ' · 下一格 ' + fmtMs(regenLeft());
+  }
+  setInterval(function () { if (!$('vHome').hidden) updateRegen(); }, 1000);
+
+  // 章节列表
+  var chapSub = null;
+  function openChapters(sub) {
+    chapSub = sub;
+    var ch = CHAPTERS[sub.id], next = curChapter(sub.id);
+    $('chapEyebrow').textContent = sub.name + ' · 预估 ' + subScore(sub.id) + '/' + ch.full + ' 分';
+    $('chapTitle').textContent = '选择章节';
+    var box = $('chapList'); box.innerHTML = '';
+    ch.list.forEach(function (name, i) {
+      var el = ch.el[i], st = starsOf(sub.id, i), open = unlocked(sub.id, i);
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'chap' + (i === next && open ? ' next' : ''); b.id = 'chap-' + i;
+      b.disabled = !open || save.energy <= 0;
+      b.innerHTML = '<span class="t"></span><span class="st"></span><span class="d"></span>';
+      b.querySelector('.t').textContent = '第 ' + (i + 1) + ' 章 · ' + name;
+      b.querySelector('.st').textContent = starStr(st);
+      var diff = '●●●●●●'.slice(0, i + 1) + '○○○○○○'.slice(0, ch.list.length - i - 1);
+      b.querySelector('.d').textContent = !open ? '先拿到上一章的 ★ 才能解锁'
+        : '精英：' + el.name + ' · 难度 ' + diff + ' · 本章满分 ' + Math.round(ch.full / ch.list.length);
+      b.addEventListener('click', function () { overlay('chapOv', false); startChapter(sub, i); });
+      box.appendChild(b);
+    });
+    if (save.energy <= 0) $('chapTitle').textContent = '精力用完了，喝杯咖啡或等一会儿';
+    overlay('chapOv', true);
+  }
+  $('chapClose').addEventListener('click', function () { overlay('chapOv', false); });
+
+  // 加载页：5 秒，展示本章精英和小 tips
+  var loading = null;
+  function eliteDef(spec) {
+    if (!spec) return BOSS;
+    if (spec.twins) return LOCK;
+    return GM.list.filter(function (x) { return x.id === spec.sprite; })[0];
+  }
+  function drawIcon(cvEl, def) {
+    var x = cvEl.getContext('2d'); x.clearRect(0, 0, 24, 24);
+    if (def) x.drawImage(GM.frame(def, 0), 0, 0);
+  }
+  function showLoading(o) {
+    $('loadSub').textContent = o.sub; $('loadTitle').textContent = o.title;
+    $('loadKind').textContent = o.kind || '本章精英';
+    $('loadBoss').textContent = o.spec.name; $('loadBark').textContent = '“' + o.spec.say + '”';
+    drawIcon($('loadCv'), eliteDef(o.spec.sprite || o.spec.twins ? o.spec : null));
+    $('loadTip').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
+    $('loadFill').style.width = '0%';
+    $('loadOv').hidden = false;
+    loading = { t: 0, dur: 5, done: o.done, msg: -1 };
+  }
+  function stepLoading(dt) {
+    if (!loading) return;
+    loading.t += dt;
+    var u = Math.min(1, loading.t / loading.dur);
+    $('loadFill').style.width = (Math.floor(u * 20) * 5) + '%';
+    var mi = Math.min(LOAD_MSG.length - 1, Math.floor(u * LOAD_MSG.length));
+    if (mi !== loading.msg) { loading.msg = mi; $('loadStatus').textContent = LOAD_MSG[mi]; sfx('tick'); }
+    if (u >= 1) { var fn = loading.done; loading = null; $('loadOv').hidden = true; fn(); }
+  }
+
   $('relaxBtn').addEventListener('click', function () {
     if (save.energy <= 0) return;
-    save.energy--; save.stress = Math.max(0, save.stress - 35); persist(); renderHome();
+    spendEnergy(); save.stress = Math.max(0, save.stress - 35); persist(); renderHome();
   });
   $('adBtn').addEventListener('click', function () {
     if (save.ads >= ADS_PER_DAY) return;
     var n = 3; $('adCount').textContent = n; overlay('adOv', true);
     var iv = setInterval(function () {
       n--; $('adCount').textContent = n;
-      if (n <= 0) { clearInterval(iv); overlay('adOv', false); save.ads++; save.energy++; persist(); renderHome(); }
+      if (n <= 0) { clearInterval(iv); overlay('adOv', false); regen(); save.ads++; save.energy++; persist(); renderHome(); }
     }, 700);
   });
 
@@ -2212,9 +2470,11 @@
   $('shopClose').addEventListener('click', function () { overlay('shopOv', false); });
 
   // 测试工具
-  $('dbgNext').addEventListener('click', function () { save.dayOffset = (save.dayOffset || 0) + 1; persist(); renderHome(); });
-  $('dbgExam').addEventListener('click', function () { save.dayOffset = (save.dayOffset || 0) + Math.max(0, 7 - dayNum()); persist(); renderHome(); });
+  $('dbgNext').addEventListener('click', function () { save.dayOffset = (save.dayOffset || 0) + 1; persist(); goHome(); });
+  $('dbgExam').addEventListener('click', function () { save.dayOffset = (save.dayOffset || 0) + Math.max(0, 7 - dayNum()); persist(); goHome(); });
   $('dbgRich').addEventListener('click', function () { save.study += 2000; persist(); renderHome(); });
+  $('dbgEnergy').addEventListener('click', function () { save.energy = MAX_ENERGY; save.energyAt = Date.now(); persist(); renderHome(); });
+  $('dbgDaily').addEventListener('click', function () { save.seenDay = null; persist(); goHome(); });
   $('dbgStress').addEventListener('click', function () { save.stress = Math.min(100, save.stress + 30); persist(); renderHome(); });
   $('dbgIntro').addEventListener('click', function () { startIntro(); });
   $('dbgReset').addEventListener('click', function () { save = blank(); persist(); boot(); });
@@ -2223,8 +2483,12 @@
   $('examBtn').addEventListener('click', function () {
     var s = SCHOOLS[save.school];
     $('preExamStats').innerHTML = '';
-    addStat($('preExamStats'), '目标院校', s.name + '（' + s.tier + '）');
-    addStat($('preExamStats'), '考场怪物血量', '×' + s.hp);
+    var sc = totalScore();
+    addStat($('preExamStats'), '目标院校', s.name + '（分数线 ' + s.line + '）');
+    addStat($('preExamStats'), '预估总分', sc + (sc >= s.line ? '（已过线）' : '（差 ' + (s.line - sc) + ' 分）'), true);
+    SUBJECTS.forEach(function (sub) {
+      addStat($('preExamStats'), sub.name + ' ' + subScore(sub.id) + '/' + CHAPTERS[sub.id].full, '怪物血量 ×' + (examMul(sub.id) * s.hp).toFixed(2));
+    });
     addStat($('preExamStats'), '压力', Math.round(save.stress) + (save.stress >= STRESS_LIMIT ? '（伤害 −20%）' : ''));
     overlay('preExamOv', true);
   });
@@ -2419,9 +2683,9 @@
       mobs: [], darts: [], ebullets: [], gems: [], parts: [], nums: [], beams: [], orbs: [],
       spawnAcc: 0, dartCd: 0.3, beamCd: 1.5, orbitAng: 0, hitstop: 0, shake: 0,
       eliteIdx: 0, boss: null, bossSpawned: false, won: false, endTimer: -1, pendingRevive: null, bannerT: 0,
-      phaseIdx: -1, pool: null, completed: false, quit: false
+      phaseIdx: -1, pool: null, completed: false, quit: false, minHp: 1, eliteDown: false, slowT: 0, sayT: 0
     };
-    $('bossbar').hidden = true; $('banner').hidden = true;
+    $('bossbar').hidden = true; $('banner').hidden = true; $('bsay').hidden = true;
     $('bossName').textContent = '408 缝合怪';
     mode = 'play';
     $('pauseBtn').textContent = '暂停';
@@ -2446,21 +2710,38 @@
     var hpScale = (1 + S.t / 90) * S.cfg.hpMul;
     var m = { def: def, x: x, y: y, kx: 0, ky: 0, flash: 0, ph: Math.random() * 2, kind: kind || 'mob', scale: 2, r: 13, mass: 1, dmg: 5,
       sp: (def.speed || 30) * (0.9 + Math.random() * 0.2), orbCd: 0, dead: false };
-    if (m.kind === 'mob') m.max = (def.main ? 16 : 22) * hpScale;
-    if (m.kind === 'elite') { m.scale = 3; m.r = 26; m.mass = 5; m.dmg = 14; m.max = 420 * S.cfg.hpMul; m.sp = 48; }
-    if (m.kind === 'boss') { m.scale = 5; m.r = 46; m.mass = 40; m.dmg = 22; m.max = 3600 * S.cfg.hpMul; m.sp = 42; m.state = 'chase'; m.timer = 3; m.ring = 6; }
+    var ph = S.cfg.phases[Math.max(0, S.phaseIdx)], pm = (ph && ph.mul) || 1;
+    if (m.kind === 'mob') m.max = (def.main ? 16 : 22) * hpScale * pm;
+    if (m.kind === 'elite') { m.scale = 3; m.r = 26; m.mass = 5; m.dmg = 14; m.max = (S.cfg.eliteHp || 420) * S.cfg.hpMul * pm; m.sp = 48; }
+    if (m.kind === 'boss') { m.scale = 5; m.r = 46; m.mass = 40; m.dmg = 22; m.max = 3600 * S.cfg.hpMul * (S.cfg.bossMul || 1); m.sp = 42; m.state = 'chase'; m.timer = 3; m.ring = 6; }
     m.hp = m.max; S.mobs.push(m); return m;
   }
+  function battleSay(def, name, text, dur) {
+    drawIcon($('bsayCv'), def);
+    $('bsayName').textContent = name; $('bsayText').textContent = text;
+    $('bsay').hidden = false; S.sayT = dur || 2.6;
+  }
   function spawnElite() {
-    var a = edgePoint(20), b = edgePoint(20);
-    var m1 = addMob(LOCK, a.x, a.y, 'elite'), m2 = addMob(LOCK, b.x, b.y, 'elite');
-    m1.twin = m2; m2.twin = m1;
-    banner('精英：死锁双子', 2); sfx('boss');
+    var spec = S.cfg.eliteSpec || EXAM_ELITE, def = eliteDef(spec);
+    S.eliteSpec = spec;
+    if (spec.twins) {
+      var a = edgePoint(20), b = edgePoint(20);
+      var m1 = addMob(LOCK, a.x, a.y, 'elite'), m2 = addMob(LOCK, b.x, b.y, 'elite');
+      m1.twin = m2; m2.twin = m1;
+    } else { var e = edgePoint(20); addMob(def, e.x, e.y, 'elite'); }
+    banner('精英：' + spec.name, 2); sfx('boss');
+    battleSay(def, spec.name, spec.say, 3);
+  }
+  function eliteDown(m) {
+    var spec = S.eliteSpec || EXAM_ELITE;
+    S.eliteDown = true; S.slowT = 1.4;
+    battleSay(m.def, spec.name, spec.die, 3.2);
   }
   function spawnBoss() {
     var a = edgePoint(60);
     S.boss = addMob(BOSS, a.x, a.y, 'boss'); S.bossSpawned = true;
     banner('408 缝合怪 来了！', 2.4); S.shake = 8; sfx('boss');
+    battleSay(BOSS, EXAM_BOSS.name, EXAM_BOSS.say, 3);
   }
 
   function hurt(m, dmg, dx, dy, kb) {
@@ -2496,18 +2777,20 @@
       S.hitstop = Math.max(S.hitstop, 0.09); S.shake = 9; sfx('big');
       var tw = m.twin;
       if (tw && !tw.dead) { S.pendingRevive = { m: m, partner: tw, t: 3 }; banner('3 秒内打掉另一只！', 1.4); }
-      else if (S.pendingRevive && S.pendingRevive.partner === m) { S.pendingRevive = null; banner('死锁解除！', 1.4); }
+      else if (S.pendingRevive && S.pendingRevive.partner === m) { S.pendingRevive = null; banner('死锁解除！', 1.4); eliteDown(m); }
+      else if (!tw) eliteDown(m);
     } else if (m.kind === 'boss') {
       burst(m, 70, 320, 0, 0); S.hitstop = 0.25; S.shake = 16; sfx('big'); sfx('boss');
       for (var b = 0; b < 25; b++) S.gems.push({ x: m.x + (Math.random() - 0.5) * 80, y: m.y + (Math.random() - 0.5) * 80, v: 3 });
-      S.won = true; if (S.endTimer < 0) S.endTimer = 1.6;
+      S.won = true; if (S.endTimer < 0) S.endTimer = 3.4;
+      S.slowT = 1.8; battleSay(BOSS, EXAM_BOSS.name, EXAM_BOSS.die, 4);
       banner('408 缝合怪 被打败了！', 2);
     }
   }
   function hurtPlayer(dmg, fx, fy) {
     var p = S.p;
     if (p.inv > 0 || mode !== 'play' || p.hp <= 0) return;
-    p.hp -= dmg; p.inv = 0.8; p.hurt = 0.25;
+    p.hp -= dmg; p.inv = 0.8; p.hurt = 0.25; S.minHp = Math.min(S.minHp, Math.max(0, p.hp) / p.max);
     var dx = p.x - fx, dy = p.y - fy, dl = Math.hypot(dx, dy) || 1;
     p.kx += dx / dl * 260; p.ky += dy / dl * 260;
     S.shake = Math.max(S.shake, 7); S.hitstop = Math.max(S.hitstop, 0.06); sfx('hurt');
@@ -2555,6 +2838,8 @@
   // ======================================================================
   function update(dt) {
     var p = S.p, cfg = S.cfg;
+    if (S.sayT > 0) { S.sayT -= dt; if (S.sayT <= 0) $('bsay').hidden = true; }
+    if (S.slowT > 0) { S.slowT -= dt; dt *= 0.3; }
     S.t += dt;
 
     // 阶段（考试日按科目切换小怪）
@@ -2569,7 +2854,7 @@
     if (cfg.duration && S.t >= cfg.duration && S.endTimer < 0) { S.completed = true; S.endTimer = 0.01; banner('这套题刷完了！', 1.5); }
 
     var cap = W < 420 ? 130 : 170;
-    var rate = Math.min(3.2 + S.t * 0.1, 14) * (S.bossSpawned ? 0.45 : 1);
+    var rate = Math.min(3.2 + S.t * 0.1, 14) * (cfg.rateMul || 1) * (S.bossSpawned ? 0.45 : 1);
     S.spawnAcc += dt * rate;
     while (S.spawnAcc >= 1) {
       S.spawnAcc -= 1;
@@ -2752,12 +3037,13 @@
 
     S.mobs.slice().sort(function (a, b) { return a.y - b.y; }).forEach(function (m) {
       var t = Math.floor(S.t * 3 + m.ph) % 2;
+      if (m.kind === 'elite') { ctx.fillStyle = 'rgba(255,70,70,' + (0.18 + 0.1 * Math.sin(S.t * 6)) + ')'; ctx.beginPath(); ctx.ellipse(m.x, m.y + 4, m.r * 1.3, m.r * 0.9, 0, 0, Math.PI * 2); ctx.fill(); }
       var sq = m.flash > 0 ? 1 + m.flash * (m.kind === 'mob' ? 2 : 0.6) : 1;
       var o = { flip: m.face, sx: sq, sy: 1 / sq };
       spr(m.def, t, m.x, m.y, m.scale, o);
       if (m.flash > 0) { o.white = true; o.alpha = m.kind === 'mob' ? 0.85 : 0.4; spr(m.def, t, m.x, m.y, m.scale, o); }
       if (m.kind === 'elite') {
-        var w = 40, f = Math.max(0, m.hp / m.max);
+        var w = 48, f = Math.max(0, m.hp / m.max);
         ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(m.x - w / 2, m.y - m.r - 14, w, 4);
         ctx.fillStyle = '#f2b53c'; ctx.fillRect(m.x - w / 2, m.y - m.r - 14, w * f, 4);
       }
@@ -2867,6 +3153,7 @@
   $('resumeBtn').addEventListener('click', togglePause);
   $('quitBtn').addEventListener('click', function () { overlay('pauseOv', false); S.quit = true; finishBattle(); });
   $('soundBtn').addEventListener('click', function () { soundOn = !soundOn; if (soundOn) audioInit(); this.textContent = '音效：' + (soundOn ? '开' : '关'); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && !$('vHome').hidden && $('dailyOv').hidden && save.seenDay !== dayKey()) goHome(); });
   document.addEventListener('visibilitychange', function () { if (document.hidden && mode === 'play') togglePause(); });
 
   function finishBattle() {
@@ -2874,45 +3161,73 @@
     mode = 'done';
     overlay('levelOv', false);
     var r = { kills: S.kills, lv: S.lv, t: S.t, won: S.won, completed: S.completed, died: S.p.hp <= 0, quit: S.quit,
-      bossSpawned: S.bossSpawned, bossFrac: S.boss ? Math.max(0, S.boss.hp / S.boss.max) : 1 };
+      eliteDown: S.eliteDown, minHp: S.minHp, bossSpawned: S.bossSpawned, bossFrac: S.boss ? Math.max(0, S.boss.hp / S.boss.max) : 1 };
     S.cfg.onEnd(r);
   }
 
   // ======================================================================
   // 刷题局与考试
   // ======================================================================
-  function startDaily(sub) {
+  function startChapter(sub, ci) {
+    regen();
     if (save.energy <= 0) return;
     audioInit();
-    save.energy--; persist();
-    startBattle({
-      kind: 'daily', hpMul: 1, duration: 120, bossAt: 0,
-      elites: sub.id === 'cs' ? [60] : [],
-      phases: [{ group: sub.id, until: 1e9, label: '刷题：' + sub.name }],
-      onEnd: function (r) {
-        var base = r.kills + r.lv * 5 + (r.completed ? 40 : 0);
-        var mult = sub.id === 'cs' ? 1.2 : 1;
-        var gain = Math.round(base * mult * (r.completed ? 1 : 0.6));
-        save.study += gain; save.stress = Math.min(100, save.stress + RUN_STRESS);
-        save.runs++; save.totalKills += r.kills; persist();
-        showResult(r.completed ? '这套题刷完了！' : (r.quit ? '先放一放' : '被题海淹没了…'),
-          r.completed ? '学习力已经存进你的账户。' : '没刷完也能拿到 60% 的学习力。',
-          [['坚持时间', fmt(r.t)], ['击杀', r.kills], ['等级', r.lv], ['压力', '+' + RUN_STRESS], ['获得学习力', '+' + gain, true]],
-          [{ label: '回书桌', primary: true, fn: backHome }]);
-      }
-    });
+    spendEnergy();
+    var ch = CHAPTERS[sub.id], spec = ch.el[ci];
+    showLoading({ sub: sub.name + ' · 第 ' + (ci + 1) + ' 章', title: ch.list[ci], spec: spec, done: function () {
+      startBattle({
+        kind: 'daily', hpMul: 1 + ci * 0.3, rateMul: 1 + ci * 0.08, duration: 120, bossAt: 0,
+        elites: [70], eliteSpec: spec, eliteHp: 300,
+        phases: [{ group: sub.id, until: 1e9, label: sub.name + ' · ' + ch.list[ci] }],
+        onEnd: function (r) { chapterResult(sub, ci, r); }
+      });
+    } });
+  }
+  function chapterResult(sub, ci, r) {
+    var ch = CHAPTERS[sub.id];
+    var stars = r.completed ? (r.eliteDown ? (r.minHp >= 0.5 ? 3 : 2) : 1) : 0;
+    var old = starsOf(sub.id, ci), score0 = totalScore(), sub0 = subScore(sub.id);
+    if (!save.stars[sub.id]) save.stars[sub.id] = [];
+    if (stars > old) save.stars[sub.id][ci] = stars;
+    var base = r.kills + r.lv * 5 + (r.completed ? 40 : 0) + (r.eliteDown ? 30 : 0);
+    var gain = Math.round(base * (sub.id === 'cs' ? 1.2 : 1) * (1 + ci * 0.15) * (r.completed ? 1 : 0.6));
+    save.study += gain; save.stress = Math.min(100, save.stress + RUN_STRESS);
+    save.runs++; save.totalKills += r.kills;
+    if (save.dayLog) { save.dayLog.runs++; save.dayLog.study += gain; }
+    persist();
+    var sc = totalScore(), line = lineOf(), dSub = subScore(sub.id) - sub0;
+    var title = ['被题海淹没了…', '这章刷完了！', '本章通关！', '完美通关！'][stars];
+    var note = stars === 0 ? '没撑到最后，这章没拿到星。学习力照样拿 60%，升级道具再来。'
+      : stars === 1 ? '撑到了最后，但本章精英“' + ch.el[ci].name + '”还活着。打倒它能拿 ★★。'
+      : stars === 2 ? '打倒了精英！全程血量不低于一半就能拿 ★★★。' : '三颗星，这章吃透了。';
+    if (stars > 0 && stars <= old) note += '（最好成绩是 ' + starStr(old) + '，预估分不变）';
+    var acts = [{ label: '回书桌', primary: true, fn: backHome }];
+    if (stars > 0 && ci + 1 < ch.list.length && !starsOf(sub.id, ci + 1) && save.energy > 0)
+      acts.push({ label: '下一章：' + ch.list[ci + 1], fn: function () { startChapter(sub, ci + 1); } });
+    else if (save.energy > 0 && stars < 3) acts.push({ label: '再刷一次', fn: function () { startChapter(sub, ci); } });
+    showResult(title, note,
+      [['本章星级', starStr(Math.max(stars, old)) + (stars > old && old ? '（新纪录）' : ''), true],
+       [sub.name + ' 预估分', (dSub > 0 ? '+' + dSub + ' → ' : '') + subScore(sub.id) + '/' + ch.full],
+       ['预估总分', score0 === sc ? sc + ' / ' + line : score0 + ' → ' + sc + ' / ' + line, true],
+       ['坚持时间', fmt(r.t)], ['击杀', r.kills], ['压力', '+' + RUN_STRESS], ['获得学习力', '+' + gain]],
+      acts);
   }
 
+  // 某科预估分越高，考场上这一科的怪越弱：0 分 ×1.4，满分 ×0.5
+  function examMul(id) { return 1.4 - 0.9 * mastery(id); }
   function startExam() {
     audioInit();
     var s = SCHOOLS[save.school];
+    showLoading({ sub: '考研日 · ' + s.name, title: '四门连考', kind: '专业课魔王', spec: EXAM_BOSS, done: function () { examBattle(s); } });
+  }
+  function examBattle(s) {
     startBattle({
-      kind: 'exam', hpMul: s.hp, duration: 0, bossAt: 150, elites: [125],
+      kind: 'exam', hpMul: s.hp, duration: 0, bossAt: 150, elites: [125], eliteSpec: EXAM_ELITE, bossMul: examMul('cs'),
       phases: [
-        { group: 'po', until: 37, label: '第一科：政治' },
-        { group: 'en', until: 75, label: '第二科：英语' },
-        { group: 'ma', until: 112, label: '第三科：数学' },
-        { group: 'cs', until: 1e9, label: '第四科：专业课 408' }
+        { group: 'po', until: 37, label: '第一科：政治', mul: examMul('po') },
+        { group: 'en', until: 75, label: '第二科：英语', mul: examMul('en') },
+        { group: 'ma', until: 112, label: '第三科：数学', mul: examMul('ma') },
+        { group: 'cs', until: 1e9, label: '第四科：专业课 408', mul: examMul('cs') }
       ],
       onEnd: function (r) {
         save.runs++; save.totalKills += r.kills;
@@ -2940,7 +3255,7 @@
   function secondTry() {
     save.week++; save.outcome = null; save.finalSchool = null;
     // 二战从今天算第 1 天，今天剩下的精力照常可用
-    save.start = today(); save.stress = 30;
+    save.start = today(); save.stress = 30; save.dayLog = null; save.seenDay = null;
     persist(); backHome();
   }
 
@@ -2956,19 +3271,136 @@
     });
     overlay('resultOv', true);
   }
-  function backHome() { mode = 'idle'; renderHome(); show('vHome'); }
+  function backHome() { goHome(); }
+
+  // ======================================================================
+  // 每日开场：考研魔王一天比一天近 + 昨日战报
+  // ======================================================================
+  var daily = null, dcv = $('dailyCv'), dctx = dcv.getContext('2d'), silCache = {};
+  function silhouette(def, t) {
+    var k = def.id + ':' + t;
+    if (silCache[k]) return silCache[k];
+    var c = document.createElement('canvas'); c.width = c.height = GM.N;
+    var x = c.getContext('2d'); x.drawImage(GM.frame(def, t), 0, 0);
+    x.globalCompositeOperation = 'source-in'; x.fillStyle = '#1c0b1f'; x.fillRect(0, 0, GM.N, GM.N);
+    return (silCache[k] = c);
+  }
+  var rimCache = {};
+  function rimOf(sil) {
+    var k = sil.__k || (sil.__k = Math.random());
+    if (rimCache[k]) return rimCache[k];
+    var c = document.createElement('canvas'); c.width = c.height = GM.N;
+    var x = c.getContext('2d'); x.drawImage(sil, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = '#c8384a'; x.fillRect(0, 0, GM.N, GM.N);
+    return (rimCache[k] = c);
+  }
+  function goHome() {
+    mode = 'idle'; renderHome(); show('vHome');
+    if (save.seenDay !== dayKey()) playDaily();
+  }
+  function weakest() {
+    var best = null;
+    SUB_IDS.forEach(function (id) { var m = mastery(id); if (!best || m < best.m) best = { id: id, m: m }; });
+    return best.id;
+  }
+  function playDaily() {
+    var key = dayKey(), d = dayNum(), sc = totalScore(), line = lineOf(), s = SCHOOLS[save.school], log = save.dayLog;
+    var dl = $('dailyStats'); dl.innerHTML = '';
+    var gapTxt = sc >= line ? '已过线 ✓' : '还差 ' + (line - sc) + ' 分';
+    if (!log || log.key === key) {
+      $('dailyEyebrow').textContent = (save.week > 1 ? '二战 · ' : '') + '主线任务';
+      $('dailyTitle').textContent = '7 天后，考研。';
+      addStat(dl, '目标院校', s.name + '（' + s.tier + '）');
+      addStat(dl, '分数线', line + ' 分');
+      addStat(dl, '当前预估', sc + ' 分', true);
+      $('dailyGoal').innerHTML = '<b>怎么上岸：</b>四门课各分几章，通关章节涨预估分；分数越高，考场上的怪越弱。学习力拿去升级道具。第 7 天进考场，打败专业课魔王就上岸！';
+    } else {
+      $('dailyEyebrow').textContent = '第 ' + Math.min(d, 7) + ' 天 · ' + (log.key === (save.week + '-' + (d - 1)) ? '昨日战报' : '上次战报');
+      $('dailyTitle').textContent = log.runs ? '刷了 ' + log.runs + ' 章题' : '一章都没刷……魔王又近了一步';
+      addStat(dl, '获得学习力', '+' + log.study);
+      addStat(dl, '预估分', log.score0 + ' → ' + sc);
+      addStat(dl, '分数线 ' + line, gapTxt, true);
+      if (d >= 7) {
+        $('dailyGoal').innerHTML = sc >= line ? '<b>今天考研！</b>预估分已过线，考场上的怪会弱很多。去书桌点“进入考场”。'
+          : '<b>今天考研！</b>还差 ' + (line - sc) + ' 分没过线，考场会很难……但也不是没机会。';
+      } else {
+        var w = weakest(), ci = curChapter(w), sub = SUBJECTS.filter(function (x) { return x.id === w; })[0];
+        $('dailyGoal').innerHTML = '<b>今日建议：</b>' + sub.name + ' 只有 ' + subScore(w) + '/' + CHAPTERS[w].full + ' 分，去打 第 ' + (ci + 1) + ' 章 · ' + CHAPTERS[w].list[ci] + '。';
+      }
+    }
+    $('dailyGo').textContent = d >= 7 ? '去考场' : '开始今天的复习';
+    save.dayLog = { key: key, runs: 0, study: 0, score0: sc };
+    save.seenDay = key; persist();
+    var left = Math.max(0, 7 - d);
+    $('dailyBig').innerHTML = d >= 7 ? '今天考研！<small>考研魔王就在眼前</small>' : '距离考研 ' + left + ' 天<small>考研魔王正在逼近</small>';
+    $('dailyName').textContent = '考研魔王 · 408 缝合怪';
+    $('dailyBig').hidden = $('dailyName').hidden = $('dailyCard').hidden = true;
+    $('dailyOv').hidden = false;
+    daily = { t: 0, left: left, steps: 0, shake: 0, flash: 0, stage: 0 };
+    var r = $('dailyOv').getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    daily.w = r.width; daily.h = r.height; daily.dpr = dpr;
+    dcv.width = Math.round(r.width * dpr); dcv.height = Math.round(r.height * dpr);
+    audioInit();
+  }
+  function stepDaily(dt) {
+    if (!daily) return;
+    var D = daily; D.t += dt;
+    D.shake = Math.max(0, D.shake - dt * 30); D.flash = Math.max(0, D.flash - dt * 3);
+    var thumps = [0.5, 1.2, 1.9];
+    while (D.steps < thumps.length && D.t >= thumps[D.steps]) { D.steps++; D.shake = 6 + D.steps * 3; sfx('thud'); }
+    if (D.stage < 1 && D.t >= 2.5) { D.stage = 1; $('dailyBig').hidden = false; D.flash = 0.8; D.shake = 14; sfx('boss'); }
+    if (D.stage < 2 && D.t >= 3.0) { D.stage = 2; $('dailyName').hidden = false; }
+    if (D.stage < 3 && D.t >= 3.6) { D.stage = 3; $('dailyCard').hidden = false; $('dailySkip').hidden = true; sfx('pop'); }
+    drawDaily();
+  }
+  function drawDaily() {
+    var D = daily, c = dctx, w = D.w, h = D.h, t = D.t;
+    c.setTransform(D.dpr, 0, 0, D.dpr, 0, 0); c.imageSmoothingEnabled = false;
+    c.save();
+    if (D.shake > 0.5) c.translate(Math.round((Math.random() * 2 - 1) * D.shake), Math.round((Math.random() * 2 - 1) * D.shake * 0.6));
+    var hz = Math.round(h * 0.62), bands = ['#140814', '#1d0b1c', '#290f24', '#38132b', '#4b1830', '#621f34', '#7a2836'];
+    for (var i = 0; i < bands.length; i++) { c.fillStyle = bands[i]; c.fillRect(-20, Math.floor(i * hz / bands.length), w + 40, Math.ceil(hz / bands.length) + 1); }
+    // 远处的城市剪影
+    c.fillStyle = '#2a0f22';
+    for (var b = 0; b < 14; b++) { var bw = w / 14, bh = 18 + ((b * 37) % 40); c.fillRect(b * bw, hz - bh, bw - 2, bh); }
+    // 魔王：剩的天数越少，越大越近
+    var p = (7 - D.left) / 7, grow = 0.82 + 0.06 * D.steps;
+    var sc = Math.max(3, Math.floor(Math.min(w, h * 0.6) * (0.4 + 0.75 * p) * grow / GM.N)), size = GM.N * sc;
+    var gx = Math.round(w / 2 - size / 2), gy = Math.round(hz - size * (0.86 - 0.1 * p));
+    var sil = silhouette(BOSS, Math.floor(t * 2) % 2), rim = Math.max(2, Math.round(sc / 3));
+    c.globalAlpha = 0.55; c.filter = 'none';
+    c.drawImage(rimOf(sil), gx - rim, gy - rim, size, size); c.drawImage(rimOf(sil), gx + rim, gy - rim, size, size);
+    c.globalAlpha = 1;
+    c.drawImage(sil, gx, gy, size, size);
+    var glow = 0.75 + 0.25 * Math.sin(t * 6);
+    c.shadowColor = '#ff2020'; c.shadowBlur = sc * 3 * glow; c.fillStyle = '#ff3b30';
+    c.fillRect(gx + 7 * sc, gy + 8 * sc, 3 * sc, 3 * sc); c.fillRect(gx + 14 * sc, gy + 8 * sc, 3 * sc, 3 * sc);
+    c.shadowBlur = 0; c.fillStyle = '#ffd0c8';
+    c.fillRect(gx + 8 * sc, gy + 9 * sc, sc, sc); c.fillRect(gx + 15 * sc, gy + 9 * sc, sc, sc);
+    // 地面
+    c.fillStyle = '#0d0610'; c.fillRect(-20, hz, w + 40, h - hz + 20);
+    c.fillStyle = '#1e0d1a';
+    for (var g = 0; g < 6; g++) c.fillRect(-20, hz + 8 + g * g * 9, w + 40, 2);
+    // 你：渺小的背影
+    var me = GS.guyBack({ band: D.left <= 1 }), ms = Math.max(2, Math.floor(w / 130));
+    c.drawImage(me, Math.round(w / 2 - me.width * ms / 2), Math.round(h * 0.86 - me.height * ms), me.width * ms, me.height * ms);
+    c.restore();
+    if (D.flash > 0) { c.globalAlpha = D.flash * 0.6; c.fillStyle = '#ff6a5a'; c.fillRect(0, 0, w, h); c.globalAlpha = 1; }
+    if (t < 0.4) { c.globalAlpha = 1 - t / 0.4; c.fillStyle = '#000'; c.fillRect(0, 0, w, h); c.globalAlpha = 1; }
+  }
+  $('dailySkip').addEventListener('click', function () { if (daily && daily.t < 3.6) { daily.t = 3.6; daily.steps = 3; } });
+  $('dailyGo').addEventListener('click', function () { $('dailyOv').hidden = true; $('dailySkip').hidden = false; daily = null; });
 
   // ======================================================================
   // 启动与主循环
   // ======================================================================
   function boot() {
     mode = 'idle';
-    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv'].forEach(function (o) { overlay(o, false); });
+    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv'].forEach(function (o) { overlay(o, false); });
     if (save.outcome) { renderEnd(); show('vEnd'); return; }
     if (!save.storySeen) { startIntro(); return; }
     if (!save.major) { renderMajors(); show('vMajor'); return; }
     if (save.school == null || !save.start) { renderSchools(); show('vSchool'); return; }
-    renderHome(); show('vHome');
+    goHome();
   }
   boot();
 
@@ -2982,6 +3414,8 @@
       return intro.time();
     },
     introBegin: function () { intro.begin(); },
+    loadSkip: function () { if (loading) { loading.t = 99; stepLoading(0); } },
+    daily: function (sec) { for (var i = 0; i < Math.round(sec * 30); i++) stepDaily(1 / 30); return daily && daily.t; },
     desk: function () { return desk; },
     // 不依赖画面刷新，直接按 1/30 秒步进模拟；升级时自动选第一个
     sim: function (sec) {
@@ -3000,6 +3434,8 @@
     last = ts;
     if (!$('vIntro').hidden) intro.step(dt);
     if (!$('vHome').hidden) desk.step(dt);
+    stepLoading(dt);
+    if (!$('dailyOv').hidden) stepDaily(dt);
     if (S && !$('battle').hidden) {
       if (mode === 'play' && dt > 0) { if (S.hitstop > 0) S.hitstop -= dt; else update(dt); }
       draw(); hud();
