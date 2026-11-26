@@ -229,6 +229,33 @@
   .next-ch b { font-family: var(--display); font-weight: 400; font-size: 17px; }
   .next-ch small { color: var(--dim); font-size: 12px; font-weight: 700; }
 
+  /* 研究生篇 */
+  .gx[hidden] { display: none !important; }
+  .fav { height: 14px; background: #fff; box-shadow: 0 0 0 2px var(--ink); position: relative; }
+  .fav span { display: block; height: 100%; background: #e86fa0; }
+  .fav em { position: absolute; right: 4px; top: 0; font-size: 11px; font-style: normal; font-weight: 700; line-height: 14px; }
+  .book.meet { --c: #2d3a4f; }
+  .book.meet.open { --c: #d9503f; animation: wiggle 0.6s ease-in-out infinite; }
+  .book.lit { --c: #6b4fb0; }
+  .slots3 { display: grid; gap: 10px; }
+  .chk { position: relative; height: 300px; background: #20263a; box-shadow: var(--px); overflow: hidden; display: grid; place-items: center; }
+  .chk .vid { width: 150px; height: 230px; background: #111; box-shadow: 0 0 0 4px #333, 0 0 0 6px var(--ink); display: grid; place-items: center; color: #fff; font-size: 13px; text-align: center; padding: 10px; }
+  .chk .vid.paper { background: #fbf6e9; color: var(--ink); }
+  .chk .door { position: absolute; right: 0; top: 30px; width: 54px; height: 200px; background: #6b4f2a; box-shadow: inset 0 0 0 3px #4a3418; transition: width 0.2s; }
+  .chk .door.open { width: 18px; }
+  .chk .shadow { position: absolute; right: 18px; top: 60px; width: 40px; height: 140px; background: rgba(0,0,0,0.65); border-radius: 20px 20px 0 0; opacity: 0; transition: opacity 0.25s; }
+  .chk .shadow.on { opacity: 1; }
+  .chk .steps { position: absolute; left: 0; right: 0; top: 8px; text-align: center; color: #ff8a8a; font-family: var(--display); font-size: 22px; text-shadow: 2px 2px 0 var(--ink); }
+  .lit-p { font-size: 15px; line-height: 1.75; background: #fff; padding: 12px; box-shadow: 0 0 0 2px var(--ink); }
+  .lit-q { font-weight: 700; font-size: 15px; }
+  .lit-opts { display: grid; gap: 8px; }
+  .lit-opts button { text-align: left; font-size: 14px; padding: 9px 10px; border: 0; cursor: pointer; background: #fff; box-shadow: 0 0 0 2px var(--ink); color: var(--text); }
+  .lit-opts button.ok { background: #c8f0b8; }
+  .lit-opts button.no { background: #f6c1d0; }
+  .shopg { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; background: #fff; padding: 10px; box-shadow: 0 0 0 2px var(--ink); }
+  .shopg b { font-size: 15px; } .shopg small { grid-column: 1; font-size: 12px; color: var(--dim); }
+  .shopg button { grid-row: 1 / 3; grid-column: 2; }
+
   /* 设置 */
   .set-row { display: grid; grid-template-columns: 72px 1fr 40px; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
   .set-row output { font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; color: var(--dim); }
@@ -600,13 +627,15 @@
       <div class="goal">
         <div class="goal-top"><span class="k">主线目标</span><b id="goalTxt"></b></div>
         <div class="goalbar"><span id="goalFill"></span><i id="goalLine"></i></div>
-        <div class="goal-num"><span>当前预估 <b id="scoreNow">0</b> 分</span><span id="goalGap"></span></div>
+        <div class="goal-num"><span><i id="scoreLbl" style="font-style:normal">当前预估</i> <b id="scoreNow">0</b> <i id="scoreUnit" style="font-style:normal">分</i></span><span id="goalGap"></span></div>
       </div>
       <div class="meters">
         <span class="k">学习力</span><b id="studyVal">0</b>
         <span class="k">精力</span><span class="pips" id="energyPips"></span>
         <span></span><span class="regen" id="regenTxt"></span>
         <span class="k">压力</span><div class="bar"><span id="stressBar"></span><em id="stressNum"></em></div>
+        <span class="k gx" hidden>补助</span><b class="gx" id="moneyVal" hidden>¥0</b>
+        <span class="k gx" hidden>导师好感</span><div class="fav gx" hidden><span id="favorBar"></span><em id="favorNum"></em></div>
       </div>
       <p class="warn" id="stressWarn" hidden>压力 60 以上，考试当天容易状态下滑；90 以上还可能睡过头迟到、第一科基本保不住！去摸鱼放松一下吧。</p>
       <p class="msg" id="homeMsg"></p>
@@ -626,7 +655,8 @@
           <button class="ticket" id="shopBtn" type="button"><span class="ic" style="background:#ff9f7a">本</span><span><span class="t">道具与学习素质</span><br><span class="d">用学习力升级，再战也保留</span></span><small>升级</small></button>
           <button class="ticket" id="relaxBtn" type="button"><span class="ic" style="background:#9bd3b0">鱼</span><span><span class="t">摸鱼放松</span><br><span class="d" id="relaxD">刷会儿短视频，压力 −35</span></span><small>免费 · 1 小时 1 次</small></button>
           <button class="ticket" id="adBtn" type="button"><span class="ic" style="background:#c8a27a">咖</span><span><span class="t">喝杯咖啡续命</span><br><span class="d">精力 +1</span></span><small>看广告</small></button>
-          <button class="ticket" type="button" disabled><span class="ic" style="background:#cfe0ff">读</span><span><span class="t">晨读</span><br><span class="d">英文阅读理解，学习力 ×2</span></span><small>即将开放</small></button>
+          <button class="ticket" type="button" id="morningTk" disabled><span class="ic" style="background:#cfe0ff">读</span><span><span class="t">晨读</span><br><span class="d">英文阅读理解，学习力 ×2</span></span><small>即将开放</small></button>
+          <button class="ticket gx" type="button" id="buyBtn" hidden><span class="ic" style="background:#f4c542">购</span><span><span class="t">生活采购</span><br><span class="d">用补助买点让日子好过的东西</span></span><small>花补助</small></button>
         </div>
       </div>
 
@@ -641,6 +671,7 @@
           <button type="button" id="dbgDaily">重看今日动画</button>
           <button type="button" id="dbgIntro">重看开场</button>
           <button type="button" id="dbgAdv">直接到选导师</button>
+          <button type="button" id="dbgMeet">现在开组会</button>
           <button type="button" id="dbgReset">重置存档</button>
         </div>
       </details>
@@ -673,6 +704,7 @@
       <div><b>研三</b><span>答辩：论文、查重、盲审</span><small>即将开放</small></div>
     </div>
     <p class="muted" id="endSoon">研究生篇（开题、组会、导师、答辩）正在制作中。</p>
+    <button class="btn red" id="gradStartBtn" type="button" hidden>开始研一</button>
     <button class="btn ghost" id="restartBtn" type="button">换个专业重新开始</button>
     </div>
   </section>
@@ -730,6 +762,40 @@
       <p class="muted">学习力：<b id="shopStudy">0</b>。升级永久生效，再战也保留。<br><span id="shopProg"></span></p>
       <div class="stack" id="shopList"></div>
       <button class="btn ghost" id="shopClose" type="button">回书桌</button>
+    </div>
+  </div>
+  <div class="ov" id="slotOv" hidden>
+    <div class="panel">
+      <div class="eyebrow" id="slotEyebrow">研究生 · 第一次见导师</div>
+      <h2>和导师约组会时间</h2>
+      <p class="muted" id="slotNote">以后的组会都在这个时间段开。到点打开游戏就算出席，错过了会挨骂。</p>
+      <div class="slots3" id="slotList"></div>
+    </div>
+  </div>
+  <div class="ov" id="chkOv" hidden>
+    <div class="panel">
+      <div class="eyebrow">摸鱼中……</div>
+      <div class="chk"><div class="steps" id="chkSteps"></div><div class="vid" id="chkVid">▶ 正在刷：<br>《研究生的一天》<br>（第 37 集）</div><div class="shadow" id="chkShadow"></div><div class="door" id="chkDoor"></div></div>
+      <p class="muted" id="chkNote">听到脚步声就马上点“切回论文”！提前点就白摸了。</p>
+      <button class="btn red big" id="chkBtn" type="button">切回论文！</button>
+    </div>
+  </div>
+  <div class="ov" id="litOv" hidden>
+    <div class="panel">
+      <div class="eyebrow" id="litEyebrow">读文献</div>
+      <h2 id="litTitle"></h2>
+      <div class="lit-p" id="litText"></div>
+      <div class="lit-q" id="litQ"></div>
+      <div class="lit-opts" id="litOpts"></div>
+      <button class="btn ghost" id="litNext" type="button" hidden>下一题</button>
+    </div>
+  </div>
+  <div class="ov" id="buyOv" hidden>
+    <div class="panel">
+      <div class="eyebrow">生活采购</div>
+      <h2>补助 <span id="buyMoney"></span></h2>
+      <div class="stack" id="buyList"></div>
+      <button class="btn ghost" id="buyClose" type="button">回书桌</button>
     </div>
   </div>
   <div class="ov" id="advOv" hidden>
@@ -851,9 +917,9 @@
   </div>
   <div class="ov" id="preExamOv" hidden>
     <div class="panel">
-      <div class="eyebrow">考研日</div>
-      <h2>四门连考</h2>
-      <p class="muted">四科各 3 分钟：每科开考 15 秒后出 Boss，3 分钟内打倒才算这科过关。四科都过才算考完……吗？三科以上可以调剂，否则再战一年（星星、学习力、道具全保留）。预估分越高，那一科的 Boss 越弱。</p>
+      <div class="eyebrow" id="preExamEyebrow">考研日</div>
+      <h2 id="preExamTitle">四门连考</h2>
+      <p class="muted" id="preExamNote">四科各 3 分钟：每科开考 15 秒后出 Boss，3 分钟内打倒才算这科过关。四科都过才算考完……吗？三科以上可以调剂，否则再战一年（星星、学习力、道具全保留）。预估分越高，那一科的 Boss 越弱。</p>
       <dl class="result" id="preExamStats"></dl>
       <p class="warn" id="preExamWarn" hidden></p>
       <button class="btn" id="examGo" type="button">进入考场</button>
@@ -1527,6 +1593,96 @@
         g.circ(12, 18, 4, '#aeb8c4'); g.circ(12, 18, 2, '#e9efe6');
         g.eye(10, 17 + t); g.p(14, 18 + t, INK);
       }
+    },
+    // 研究生篇 · 研一 · 文献海
+    {
+      id: 'weidu', group: 'g1a', name: '未读文献', course: '研一·文献', main: true, speed: 32,
+      origin: '收藏夹里永远读不完的 PDF', behavior: '成群涌来，数量最多', line: '你收藏了我，但从没打开过',
+      draw: function (g, t) {
+        g.rect(5, 3 + t, 13, 17, '#ffffff'); g.rect(14, 3 + t, 4, 4, '#d5dde6'); g.p(14, 3 + t, null); g.p(15, 3 + t, null); g.p(14, 4 + t, null);
+        g.rect(5, 15 + t, 6, 4, '#e5484d'); g.p(6, 16 + t, '#ffffff'); g.p(8, 16 + t, '#ffffff'); g.p(9, 17 + t, '#ffffff');
+        for (var y = 9; y < 14; y += 2) g.rect(7, y + t, 9, 1, '#c9c2b2');
+        g.eye(7, 6 + t); g.eye(11, 6 + t);
+      }
+    },
+    {
+      id: 'geshi', group: 'g1a', name: '参考文献格式虫', course: '研一·文献', speed: 34,
+      origin: '参考文献格式', behavior: '扭来扭去，碎了还会分裂', line: '作者、题名、刊名、年份……顺序错了！',
+      draw: function (g, t) {
+        var c = t ? '#3d7bd9' : '#2f63b5';
+        g.rect(3, 6, 2, 12, c); g.rect(3, 6, 5, 2, c); g.rect(3, 16, 5, 2, c);
+        g.rect(19, 6, 2, 12, c); g.rect(16, 6, 5, 2, c); g.rect(16, 16, 5, 2, c);
+        g.text('1', 11, 9 + t, '#2f63b5'); g.eye(8, 4 - t); g.eye(13, 4 - t);
+      }
+    },
+    {
+      id: 'yingwen', flip: true, group: 'g1a', name: '英文摘要', course: '研一·文献', speed: 28,
+      origin: '一整页没有中文的 Abstract', behavior: '慢慢飘过来，挡住视线', line: 'Abstract: In this paper, we……',
+      draw: function (g, t) {
+        g.rect(4, 4, 16, 16, '#f4f1ea'); g.rect(4, 4, 16, 3, '#8f6ad1');
+        g.text('A', 6, 9, '#8f6ad1'); g.text('B', 10, 9, '#8f6ad1'); g.text('C', 14, 9, '#8f6ad1');
+        g.rect(6, 16, 12, 1, '#c9c2b2'); g.eye(7, 13 + t); g.eye(14, 13 + t);
+      }
+    },
+    // 研一 · 课程
+    {
+      id: 'zuoye', group: 'g1b', name: '课程作业', course: '研一·课程', main: true, speed: 30,
+      origin: '研一满满的课和作业', behavior: '一本本压过来', line: '下周一交',
+      draw: function (g, t) {
+        g.rect(4, 5 + t, 16, 15, '#4f9a52'); g.rect(4, 5 + t, 2, 15, '#2f6f3a'); g.rect(8, 8 + t, 9, 4, '#f4ecd8');
+        g.rect(9, 9 + t, 6, 1, '#8a5432'); g.rect(9, 11 + t, 4, 1, '#8a5432');
+        g.eye(9, 14 + t); g.eye(14, 14 + t); g.rect(11, 18 + t, 3, 1, INK);
+      }
+    },
+    {
+      id: 'ddl', group: 'g1b', name: 'DDL 闹钟', course: '研一·课程', speed: 30,
+      origin: '截止日期', behavior: '离你越近跑得越快', line: '还剩 23 小时 59 分',
+      draw: function (g, t) {
+        g.circ(12, 13, 8, '#f4f1ea'); g.circ(12, 13, 9, null); g.circ(12, 13, 8, '#f4f1ea');
+        g.circ(5, 5, 3, '#e5484d'); g.circ(19, 5, 3, '#e5484d');
+        g.rect(12, 7, 1, 6, INK); g.line(12, 13, 16, 15, '#e5484d');
+        g.eye(7, 10); g.eye(15, 10); g.rect(8, 20, 2, 2 + t, INK); g.rect(15, 20, 2, 3 - t, INK);
+      }
+    },
+    {
+      id: 'qiandao', group: 'g1b', name: '签到二维码', course: '研一·课程', speed: 36,
+      origin: '课堂扫码签到', behavior: '一闪一闪地蹦过来', line: '扫码签到，迟到算缺勤',
+      draw: function (g, t) {
+        g.rect(3, 3, 18, 18, '#ffffff');
+        [[4, 4], [15, 4], [4, 15]].forEach(function (q) { g.rect(q[0], q[1], 5, 5, INK); g.rect(q[0] + 1, q[1] + 1, 3, 3, '#ffffff'); g.p(q[0] + 2, q[1] + 2, INK); });
+        for (var i = 0; i < 12; i++) { var x = 10 + (i * 7 + t * 3) % 10, y = 10 + (i * 5) % 10; if (x < 21 && y < 21) g.p(x, y, INK); }
+        g.eye(11, 5); g.p(13, 6, INK);
+      }
+    },
+    // 研一 · 杂事
+    {
+      id: 'zaima', group: 'g1c', name: '“在吗”气泡', course: '研一·杂事', main: true, speed: 38,
+      origin: '只发“在吗”不说事的消息', behavior: '绕着你飞，碰到会让你分心变慢', line: '在吗？',
+      draw: function (g, t) {
+        g.rect(3, 4, 18, 12, '#9be15d'); g.rect(2, 6, 1, 8, '#9be15d'); g.rect(21, 6, 1, 8, '#9be15d');
+        g.rect(6, 16, 3, 2, '#9be15d'); g.p(5, 18, '#9be15d');
+        g.rect(7, 9, 2, 2, INK); g.rect(11, 9, 2, 2, INK); g.rect(15, 9, 2, 2, INK);
+        if (t) g.text('?', 18, 0, '#e5484d');
+      }
+    },
+    {
+      id: 'hongdian', group: 'g1c', name: '99+ 红点', course: '研一·杂事', speed: 34,
+      origin: '永远清不完的群消息', behavior: '成群冒出来', line: '@所有人',
+      draw: function (g, t) {
+        g.circ(12, 12, 8 + t, '#e5484d'); g.text('9', 7, 9, '#ffffff'); g.text('9', 11, 9, '#ffffff'); g.text('!', 15, 9, '#ffffff');
+        g.eye(8, 15); g.eye(13, 15);
+      }
+    },
+    {
+      id: 'baoxiao', flip: true, group: 'g1c', name: '报销单', course: '研一·杂事', speed: 26,
+      origin: '贴了一下午的发票', behavior: '慢吞吞但很难缠', line: '发票抬头错了，重开',
+      draw: function (g, t) {
+        g.rect(5, 3, 14, 18, '#fbf6e9');
+        for (var x = 5; x < 19; x += 2) g.p(x, 21, null);
+        for (var y = 7; y < 17; y += 3) g.rect(7, y, 10, 1, '#c9c2b2');
+        g.rect(13, 14, 4, 4, '#e5484d'); g.p(14, 15, '#ffb0a0');
+        g.eye(7, 4 + t); g.eye(11, 4 + t);
+      }
     }
   ];
 
@@ -1559,7 +1715,10 @@
     { id: 'e1', name: '311 · 原理与心理', note: '教育学 · 教育学原理、教育心理学' },
     { id: 'e2', name: '311 · 中外教育史', note: '教育学 · 中国教育史、外国教育史' },
     { id: 'm1', name: '306 · 生理生化', note: '临床医学 · 生理学、生物化学' },
-    { id: 'm2', name: '306 · 病理内外', note: '临床医学 · 病理学、内科学、外科学' }
+    { id: 'm2', name: '306 · 病理内外', note: '临床医学 · 病理学、内科学、外科学' },
+    { id: 'g1a', name: '研一 · 文献海', note: '研究生篇 · 读不完的文献' },
+    { id: 'g1b', name: '研一 · 课程', note: '研究生篇 · 选课、作业、课程论文' },
+    { id: 'g1c', name: '研一 · 杂事', note: '研究生篇 · 群消息、报销、在吗' }
   ];
 
   // 帧缓存：每只怪每帧只画一次，之后直接放大贴图
@@ -2508,7 +2667,8 @@
   var SET = { bgm: 0.5, sfx: 0.8, vib: true, shake: !reduceMotion, nums: true };
   try { var _st = JSON.parse(localStorage.getItem(SET_KEY)); if (_st) for (var _k in SET) if (_st[_k] !== undefined) SET[_k] = _st[_k]; } catch (e) {}
   function saveSet() { try { localStorage.setItem(SET_KEY, JSON.stringify(SET)); } catch (e) {} }
-  function buzz(ms) { if (SET.vib && navigator.vibrate) try { navigator.vibrate(ms); } catch (e) {} }
+  var tapped = false; document.addEventListener('pointerdown', function () { tapped = true; }, { once: true });
+  function buzz(ms) { if (!tapped || window.__bot) return; if (SET.vib && navigator.vibrate) try { navigator.vibrate(ms); } catch (e) {} }
   var $ = function (id) { return document.getElementById(id); };
 
   // ======================================================================
@@ -2542,9 +2702,13 @@
     e1: { name: '311 · 原理与心理', book: '原理心理', d: '条件反射小狗、认知积木、课程表格' },
     e2: { name: '311 · 中外教育史', book: '教育史', d: '人名牌、戒尺小兵、线装书' },
     m1: { name: '306 · 生理生化', book: '生理生化', d: '动作电位闪电、ATP 小电池、酶钥匙' },
-    m2: { name: '306 · 病理内外', book: '病理内外', d: '白细胞巡逻兵、胶囊小药丸、听诊器' }
+    m2: { name: '306 · 病理内外', book: '病理内外', d: '白细胞巡逻兵、胶囊小药丸、听诊器' },
+    g1a: { name: '文献海', book: '文献海', d: '未读文献、格式虫、英文摘要', grad: 1 },
+    g1b: { name: '课程与作业', book: '课程', d: '课程作业、DDL 闹钟、签到码', grad: 1 },
+    g1c: { name: '组里杂事', book: '杂事', d: '“在吗”气泡、99+ 红点、报销单', grad: 1 }
   };
   Object.keys(SUBJ).forEach(function (id) { SUBJ[id].id = id; });
+  var GRAD_SUBS = { 1: ['g1a', 'g1b', 'g1c'] };
   var MAJOR_SUBS = { cs: ['po', 'en', 'ma', 'cs'], mat: ['po', 'en', 'ma', 'mat'], law: ['po', 'en', 'lb', 'lz'],
     acc: ['en', 'am', 'lg', 'wr'], edu: ['po', 'en', 'e1', 'e2'], med: ['po', 'en', 'm1', 'm2'] };
   var SUBJECTS = [], SUB_IDS = [];
@@ -2572,6 +2736,7 @@
     endlessPerSec: 0.6, endlessPerKill: 0.08,
     examBossHp: 27000, retestBossHp: 34000, roundDur: 180, roundBossAt: 15,
     relaxCdMs: 60 * 60 * 1000, celeTwistAt: 6, lateLeft: 60,
+    gradHp: 2.6, gradDmg: 1.7, meetDur: 90, meetBossHp: 9000, meetEase: 0.55, litCap: 20, gradExamHp: 40000,
     baseHp: 40, chapterDur: 300, mobHit: 3, bulletHit: 6, eliteHit: 9, bossHit: 12, invTime: 1.0, rate0: 2.2, rateUp: 0.05, tierRamp0: 0.35, tierRampT: 140, endlessHpT: 40, endlessHp2: 120, endlessDmgT: 50, endlessSpT: 300, dropMob: 0.012, groundMax: 6
   };
   // 章节难度按“在本科里的位置”分 6 档（第 1 档到第 6 档），各科最后一章一样难
@@ -2659,7 +2824,25 @@
       E('baixibao', '炎症风暴', '哪里发炎了？我们全去！', '……炎症消退了。'),
       E('yaowan', '用药选择困难', '青霉素过敏？那用哪个？', '……选对药了。'),
       E('tingzhen', '术前谈话主刀', '无菌观念记住了吗？', '……手术很顺利。'),
-      E('baixibao', '病例分析考官', '主诉、现病史、诊断依据，一个都不能少！', '……诊断正确。')] }
+      E('baixibao', '病例分析考官', '主诉、现病史、诊断依据，一个都不能少！', '……诊断正确。')] },
+    g1a: { full: 40, list: ['选方向', '检索文献', '精读经典', '英文文献', '写综述'], el: [
+      E('weidu', '文献堆成山', '你收藏了 300 篇，读完了 3 篇。', '……第 4 篇，读完了。'),
+      E('geshi', '参考文献地狱', '作者、题名、刊名、年份，一个标点都不能错！', '……格式，终于统一了。'),
+      E('yingwen', '英文文献章鱼', 'Furthermore, notwithstanding, albeit……', '……我被你翻译完了。'),
+      E('weidu', '选题迷雾', '这个方向……好像有人做过了？', '……迷雾散了，题目定了。'),
+      E('yingwen', '综述缝合怪', '把二十篇摘要拼在一起，就是综述了吧？', '……原来要有自己的观点。')] },
+    g1b: { full: 30, list: ['开学选课', '平时作业', '课堂展示', '小组作业', '课程论文'], el: [
+      E('qiandao', '点名王', '这节课点名，没来的扣平时分！', '……全员到齐。'),
+      E('zuoye', '作业连环催', '下周一交，下下周一也交。', '……全交上了。'),
+      E('ddl', 'PPT 翻车怪', '投影仪连不上？视频放不出来？', '……展示顺利结束。'),
+      { twins: true, sprite: 'zuoye', name: '小组作业双子', say: '我负责想法，你负责……全部。', die: '……这次，大家都干活了。' },
+      E('zuoye', '课程论文巨兽', '8000 字，下周交。', '……居然写完了。')] },
+    g1c: { full: 30, list: ['入组见面', '师兄的委托', '报销', '群消息', '导师的“在吗”'], el: [
+      E('hongdian', '99+ 群消息', '@所有人 收到请回复。', '……已读。'),
+      E('zaima', '大师兄的委托', '师弟/师妹，帮我跑个数据呗？', '……谢了，下次请你吃饭。'),
+      E('baoxiao', '报销地狱', '发票抬头错了，重开。', '……报销到账了。'),
+      E('hongdian', '学院紧急通知', '明天交材料，今天才通知。', '……材料交齐了。'),
+      E('zaima', '导师的“在吗”', '在吗？', '……没事了，你忙吧。')] }
   };
   // 精英技能：spit 吐毒液 / bomb 召唤自爆怪 / blink 隐入虚空再突袭 / charge 冲撞 / ring 弹幕
   var ELITE_SK = {
@@ -2676,7 +2859,10 @@
     e1: [['charge'], ['spit', 'ring'], ['bomb', 'charge'], ['blink', 'spit'], ['blink', 'bomb', 'ring']],
     e2: [['ring'], ['charge', 'spit'], ['blink', 'ring'], ['blink', 'bomb', 'spit']],
     m1: [['charge'], ['ring', 'spit'], ['charge', 'bomb'], ['ring', 'blink'], ['blink', 'bomb', 'spit']],
-    m2: [['spit'], ['bomb', 'ring'], ['charge', 'blink'], ['blink', 'spit', 'bomb']]
+    m2: [['spit'], ['bomb', 'ring'], ['charge', 'blink'], ['blink', 'spit', 'bomb']],
+    g1a: [['ring'], ['bomb', 'spit'], ['spit', 'ring'], ['blink', 'spit'], ['blink', 'bomb', 'spit']],
+    g1b: [['charge'], ['spit', 'ring'], ['charge', 'bomb'], ['bomb', 'ring'], ['blink', 'bomb', 'spit']],
+    g1c: [['ring'], ['spit', 'charge'], ['bomb', 'charge'], ['blink', 'bomb'], ['blink', 'spit', 'bomb']]
   };
   Object.keys(CHAPTERS).forEach(function (id) { CHAPTERS[id].el.forEach(function (e, i) { e.sk = ELITE_SK[id][i]; }); });
   var SK_NAME = { spit: '吐毒液', bomb: '召唤自爆怪', blink: '隐入虚空', charge: '冲撞', ring: '弹幕' };
@@ -2712,7 +2898,10 @@
     med: ['西综五科分值不同，生理和内科最值得花时间。', '病例分析先抓主诉，再按诊断依据一条条写。']
   };
   var LOAD_MSG = ['正在削铅笔……', '正在占图书馆的座……', '正在泡速溶咖啡……', '正在给 2B 铅笔开光……', '正在翻开真题集……', '正在把手机调成静音……'];
-  var MAX_ENERGY = 10, REGEN_MS = 30 * 60 * 1000, ADS_PER_DAY = 2, RUN_STRESS = 10, STRESS_LIMIT = 60;
+  var MAX_ENERGY = 10, GRAD_LINE = 0.6, REGEN_MS = 30 * 60 * 1000, ADS_PER_DAY = 2, RUN_STRESS = 10, STRESS_LIMIT = 60;
+  function isGrad() { return !!(save && save.phase === 'grad'); }
+  // 研究生篇：精力上限看导师的“自由”（1 格 8，5 格 12）
+  function maxEnergy() { if (!isGrad()) return MAX_ENERGY; var a = advDef(save.advisor); return 7 + (a ? a.free : 3); }
   function tierOf(id, ci) { var n = CHAPTERS[id].list.length; return n > 1 ? ci / (n - 1) * 5 : 0; }
   function tierVal(arr, t) { var i = Math.min(4, Math.floor(t)), f = t - i; return arr[i] + (arr[i + 1] - arr[i]) * f; }
   // 每颗星的学习力：按章节档位加权，所有星加起来 = 全部升级花费 × 70%
@@ -2730,8 +2919,18 @@
     calcStarUnit();
   }
   setMajor('cs');
-  function fullTotal() { return SUB_IDS.reduce(function (a, k) { return a + CHAPTERS[k].full; }, 0); }
-  function schoolLine(s) { return Math.round(fullTotal() * s.ratio); }
+  // 研究生篇：每年换三条科研线；章节拿星只给 35% 的升级花费（备考篇已经升了不少）
+  function setGradYear(y) {
+    SUB_IDS = (GRAD_SUBS[y] || GRAD_SUBS[1]).slice();
+    SUBJECTS = SUB_IDS.map(function (k) { return SUBJ[k]; });
+    var w = 0;
+    SUB_IDS.forEach(function (id) { CHAPTERS[id].list.forEach(function (_, ci) { w += 3 * (1 + tierOf(id, ci) * 0.4); }); });
+    STAR_UNIT = 0.35 * TOTAL_COST / w;
+  }
+  function setStage() { if (isGrad()) setGradYear(save.gy || 1); else setMajor(save.major); }
+  function litScore() { return isGrad() ? Math.min(BAL.litCap, (save.lit || 0) * 2) : 0; }
+  function fullTotal() { return SUB_IDS.reduce(function (a, k) { return a + CHAPTERS[k].full; }, 0) + (isGrad() ? BAL.litCap : 0); }
+  function schoolLine(s) { return isGrad() ? Math.round(fullTotal() * GRAD_LINE) : Math.round(fullTotal() * s.ratio); }
   // 进度锁：后面的章节要“高级复习”层数够了才开放（每天第一次登录 +1 层），最快第 4 天打通
   function reqReview(id, ci) { var t = tierOf(id, ci); return t < 1.5 ? 0 : t < 2.5 ? 1 : t < 3.5 ? 2 : 3; }
   function starReward(id, ci) { return Math.round(STAR_UNIT * (1 + tierOf(id, ci) * 0.4)); }
@@ -2743,9 +2942,9 @@
   var save = null;
   function blank() {
     return { major: null, school: null, start: null, week: 1, study: 0, up: { notebook: 0, cup: 0, phones: 0, coffee: 0, bag: 0 },
-      stress: 0, energy: MAX_ENERGY, energyAt: Date.now(), energyDay: null, ads: 0, dayOffset: 0, outcome: null, finalSchool: null,
+      stress: 0, energy: maxEnergy(), energyAt: Date.now(), energyDay: null, ads: 0, dayOffset: 0, outcome: null, finalSchool: null,
       totalKills: 0, runs: 0, storySeen: false, stars: { po: [], en: [], ma: [], cs: [] }, seenDay: null, dayLog: null, msgSeen: null,
-      attrs: { focus: 0, stamina: 0, wit: 0 }, review: 0, endlessBest: 0, lastRelax: 0, codex: { m: {}, e: {}, b: {} }, codexSeen: 0, advisor: null };
+      attrs: { focus: 0, stamina: 0, wit: 0 }, review: 0, endlessBest: 0, lastRelax: 0, codex: { m: {}, e: {}, b: {} }, codexSeen: 0, advisor: null, phase: null, gy: 1, gweek: 1, gyDone: 0, money: 0, favor: 50, lit: 0, meetSlot: null, meetLog: {}, owned: {}, gRev0: 0, litSeen: [], buffMeal: false };
   }
   function load() {
     var b = blank();
@@ -2761,11 +2960,11 @@
     for (var i = 0; i < ch.list.length; i++) sc += per * (st[i] || 0) / 3;
     return Math.round(sc);
   }
-  function totalScore() { return SUB_IDS.reduce(function (a, k) { return a + subScore(k); }, 0); }
+  function totalScore() { return SUB_IDS.reduce(function (a, k) { return a + subScore(k); }, 0) + litScore(); }
   function lineOf() { return schoolLine(SCHOOLS[save.school]); }
   function mastery(id) { return subScore(id) / CHAPTERS[id].full; }
   function starsOf(id, i) { return (save.stars[id] || [])[i] || 0; }
-  function unlocked(id, i) { return (i === 0 || starsOf(id, i - 1) > 0) && (save.review || 0) >= reqReview(id, i); }
+  function unlocked(id, i) { return (i === 0 || starsOf(id, i - 1) > 0) && ((save.review || 0) - (isGrad() ? save.gRev0 || 0 : 0)) >= reqReview(id, i); }
   function curChapter(id) {
     var n = CHAPTERS[id].list.length;
     for (var i = 0; i < n; i++) if (!starsOf(id, i)) return i;
@@ -2777,19 +2976,19 @@
   function regen() {
     var now = Date.now();
     if (!save.energyAt) save.energyAt = now;
-    if (save.energy >= MAX_ENERGY) { save.energyAt = now; return; }
+    if (save.energy >= maxEnergy()) { save.energyAt = now; return; }
     var n = Math.floor((now - save.energyAt) / REGEN_MS);
     if (n > 0) {
-      save.energy = Math.min(MAX_ENERGY, save.energy + n); save.energyAt += n * REGEN_MS;
-      if (save.energy >= MAX_ENERGY) save.energyAt = now;
+      save.energy = Math.min(maxEnergy(), save.energy + n); save.energyAt += n * REGEN_MS;
+      if (save.energy >= maxEnergy()) save.energyAt = now;
     }
   }
   function spendEnergy() {
     regen();
-    if (save.energy >= MAX_ENERGY) save.energyAt = Date.now();
+    if (save.energy >= maxEnergy()) save.energyAt = Date.now();
     save.energy--; persist();
   }
-  function regenLeft() { return save.energy >= MAX_ENERGY ? 0 : Math.max(0, REGEN_MS - (Date.now() - save.energyAt)); }
+  function regenLeft() { return save.energy >= maxEnergy() ? 0 : Math.max(0, REGEN_MS - (Date.now() - save.energyAt)); }
   function persist() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
   save = load();
 
@@ -2811,6 +3010,12 @@
       var gap = save.energyDay ? Math.max(1, dayDiff(save.energyDay, t)) : 0;
       save.energyDay = t; save.ads = 0;
       save.stress = Math.max(0, save.stress - 15 * gap);
+      if (isGrad() && gap) {
+        if (save.advisor === 'qian') save.money = (save.money || 0) + 120 * gap;
+        if (save.advisor === 'tao') save.stress = Math.max(0, save.stress - 10 * gap);
+        if (save.owned && save.owned.chair) save.stress = Math.max(0, save.stress - 10 * gap);
+        if (save.owned && save.owned.coffee) save.energy = Math.min(maxEnergy() + 2, save.energy + 2);
+      }
     }
     persist();
   }
@@ -2883,7 +3088,8 @@
     ma: { c: '#4f9a52', mon: 'wuqiong', d: '无穷小量、常数 C' }, cs: { c: '#8f6ad1', mon: 'jiangshi', d: '僵尸进程，有精英怪' },
     mat: { c: '#e08a5c', mon: 'kongwei' }, lb: { c: '#b23a3a', mon: 'fatiao' }, lz: { c: '#8a6a3a', mon: 'zhujian' },
     am: { c: '#4f9a52', mon: 'wuqiong' }, lg: { c: '#3d7bd9', mon: 'jiayan' }, wr: { c: '#2f3f8f', mon: 'gezi' },
-    e1: { c: '#e0a43a', mon: 'xiaogou' }, e2: { c: '#3f6fa8', mon: 'renming' }, m1: { c: '#d9a400', mon: 'dianwei' }, m2: { c: '#e5484d', mon: 'baixibao' }
+    e1: { c: '#e0a43a', mon: 'xiaogou' }, e2: { c: '#3f6fa8', mon: 'renming' }, m1: { c: '#d9a400', mon: 'dianwei' }, m2: { c: '#e5484d', mon: 'baixibao' },
+    g1a: { c: '#3d7bd9', mon: 'weidu' }, g1b: { c: '#4f9a52', mon: 'zuoye' }, g1c: { c: '#7fae3a', mon: 'zaima' }
   };
   function monIcon(id) {
     var def = GM.list.filter(function (x) { return x.id === id; })[0];
@@ -2891,18 +3097,28 @@
     if (def) c.getContext('2d').drawImage(GM.frame(def, 0), 0, 0);
     return c;
   }
-  function dayKey() { return save.week + '-' + dayNum(); }
+  function dayKey() { return (isGrad() ? 'g' + save.gy + '.' + (save.gweek || 1) : save.week) + '-' + dayNum(); }
   // 第几战：1 → 一战，2 → 二战 …… 超过十就写数字
   var CN_NUM = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
   function zhan(w) { return (w <= 10 ? CN_NUM[w - 1] : w + ' ') + '战'; }
 
   // 自习室
   function homeMessage(d) {
+    if (isGrad()) {
+      var A = advDef(save.advisor), mt = meetToday();
+      if (d >= 7) return '<b>今天开题答辩！</b>三位评委已经就位。';
+      if (mt.st === 'open') return '<b>组会开始了！</b>' + A.name + '在会议室等你，快去“组会”卡片。';
+      if (mt.st === 'soon') return '<b>今天有组会：</b>' + slotDef().name + '，记得准时打开游戏。';
+      var gt = ['<b>研一第 1 天。</b>三条科研线 + 读文献都能涨开题进度，第 7 天开题答辩。', '读文献不费体力？费 1 格精力，但英文文献学习力翻倍。',
+        '摸鱼可能被' + A.name + '查岗（' + A.check + '%），听到脚步声赶紧切回论文。', '补助可以去“生活采购”买人体工学椅和咖啡机。',
+        '组会出席会加导师好感，好感越高开题越顺。', '<b>明天开题。</b>压力降到 60 以下再去答辩。'];
+      return gt[Math.min(d - 1, gt.length - 1)];
+    }
     if (d >= 7) return '<b>今天考研！</b>不管准备得怎么样，都得进考场了。';
     if (save.week > 1 && d === 1) return '<b>' + zhan(save.week) + '第 1 天。</b>星星、学习力、道具全都还在，' + (save.week === 2 ? '这次稳了。' : '越挫越勇，这次一定行。');
     var tips = [
       '<b>第 1 天。</b>先把四门课的第 1 章都打通，预估分涨得最快。',
-      '研友说：“' + SUBJECTS[3].name + '的怪最难，后面几章一定要先升级。”',
+      '研友说：“' + SUBJECTS[SUBJECTS.length - 1].name + '的怪最难，后面几章一定要先升级。”',
       '压力 60 以上考研那天容易状态下滑，90 以上可能睡过头迟到。摸鱼是免费的。',
       '精力每 30 分钟回 1 格，满了就不再回，记得常来刷。',
       '后面的章节越来越难，打不过就去“道具”里升级。',
@@ -2912,6 +3128,14 @@
   }
   function phoneChats(d) {
     var left = Math.max(0, 7 - d), list = [];
+    if (isGrad()) {
+      var A = advDef(save.advisor), mt = meetToday();
+      list.push({ who: A.name, av: A.name[0], c: A.c, text: mt.st === 'open' || mt.st === 'soon' ? '今天' + slotDef().name.split(' ')[1] + '组会，别迟到。' : (d === 1 ? A.wx[1] : A.wx[2]) });
+      if (save.advisor === 'lin' && d > 1) list.push({ who: A.name, av: A.name[0], c: A.c, text: '（凌晨 2:13）在吗？' });
+      list.push({ who: '大师兄', av: '兄', c: '#3d7bd9', text: ['开题就是把你要做什么、为什么做、怎么做讲清楚。', '文献先读综述，再读经典，最后追最新的。', '组会别紧张，导师问什么就答什么，不会就说回去查。', '报销记得发票抬头写全称。', '你的开题 PPT 我帮你看看？', '明天别紧张，评委就喜欢问创新点。', '加油！'][Math.min(d, 7) - 1] });
+      list.push({ who: '妈妈', av: '妈', c: '#e0a43a', text: ['到学校了吗？导师人好不好？', '生活费够不够？', '别老熬夜！', '你导师给你发补助了吗？', '多吃点水果。', '明天开题？妈妈相信你。', '开完题回家吃饭。'][Math.min(d, 7) - 1] });
+      return list;
+    }
     list.push({ who: '研友 老王', av: '王', c: '#3d7bd9', text: homeMessage(d).replace(/^研友说：/, '') });
     list.push({ who: '考研倒计时', av: '倒', c: '#d9503f', text: d >= 7 ? '<b>今天考研。</b>带好准考证和 2B 铅笔。' : '距离考研还有 <b>' + left + ' 天</b>。' });
     var fam = ['吃饭了没？别老吃泡面。', '你二姨问你考上没。', '少熬夜！头发要紧。', '家里给你寄了一箱牛奶。', '隔壁小张考公上岸了哦。', '考完回家吃饭。', '妈妈相信你。'];
@@ -2940,19 +3164,27 @@
 
   function renderHome() {
     refreshDay();
-    $('tbEnergy').textContent = save.energy + '/' + MAX_ENERGY; $('tbStudy').textContent = save.study;
+    $('tbEnergy').textContent = save.energy + '/' + maxEnergy(); $('tbStudy').textContent = save.study;
     $('codexDot').hidden = codexCount() <= (save.codexSeen || 0);
     var d = dayNum(), exam = d >= 7, dd = Math.min(d, 7);
     var m = MAJORS.filter(function (x) { return x.id === save.major; })[0];
-    var s = SCHOOLS[save.school];
-    $('homeWho').textContent = (save.week > 1 ? zhan(save.week) + ' · ' : '') + m.name + ' → ' + s.name;
-    $('dayBig').innerHTML = '第 ' + dd + ' 天 <small>/ 7</small>';
-    $('countdown').textContent = exam ? '今天考研！' : '距考研 ' + (7 - d) + ' 天';
-    $('calNum').textContent = exam ? '考' : (7 - d);
-    $('calLbl').textContent = exam ? '就是今天' : '天后考研';
+    var s = SCHOOLS[save.school], G = isGrad(), A = G ? advDef(save.advisor) : null;
+    $('homeWho').textContent = G ? '研一' + (save.gweek > 1 ? '（第 ' + save.gweek + ' 次开题）' : '') + ' · ' + A.name + '组 · ' + (save.finalSchool || s.name)
+      : (save.week > 1 ? zhan(save.week) + ' · ' : '') + m.name + ' → ' + s.name;
+    $('dayBig').innerHTML = (G ? '研一 ' : '') + '第 ' + dd + ' 天 <small>/ 7</small>';
+    $('countdown').textContent = exam ? (G ? '今天开题！' : '今天考研！') : (G ? '距开题 ' : '距考研 ') + (7 - d) + ' 天';
+    $('calNum').textContent = exam ? (G ? '题' : '考') : (7 - d);
+    $('calLbl').textContent = exam ? '就是今天' : (G ? '天后开题' : '天后考研');
+    [].forEach.call(document.querySelectorAll('.gx'), function (el) { el.hidden = !G; });
+    $('morningTk').hidden = G;
+    if (G) {
+      $('moneyVal').textContent = '¥' + (save.money || 0);
+      $('favorBar').style.width = (save.favor || 0) + '%'; $('favorNum').textContent = save.favor || 0;
+      $('examBtn').textContent = '进入开题答辩';
+    } else $('examBtn').textContent = '进入考场';
     $('homeMsg').innerHTML = homeMessage(d);
     var pips = $('energyPips'); pips.innerHTML = '';
-    for (var k = 0; k < Math.max(MAX_ENERGY, save.energy); k++) {
+    for (var k = 0; k < Math.max(maxEnergy(), save.energy); k++) {
       var p = document.createElement('i'); if (k < save.energy) p.className = 'on'; pips.appendChild(p);
     }
     $('studyVal').textContent = save.study;
@@ -2989,22 +3221,40 @@
     eb.style.setProperty('--c', '#2d3142');
     eb.innerHTML = '<span class="ic"></span><span><span class="t">全科复习</span><span class="d"></span><span class="prog"></span></span>';
     eb.querySelector('.ic').appendChild(monIcon('jiangshi'));
-    eb.querySelector('.d').textContent = open ? '无尽模式 · 四科怪物一起上' : '所有章节拿到 ★ 后开放';
+    eb.querySelector('.d').textContent = open ? '无尽模式 · 所有怪物一起上' : '所有章节拿到 ★ 后开放';
     eb.querySelector('.prog').textContent = open ? '最佳 ' + fmt(save.endlessBest || 0) + ' · 后期学习力主要来源' : '还差 ' + SUB_IDS.reduce(function (a, id) { return a + CHAPTERS[id].list.filter(function (_, i) { return !starsOf(id, i); }).length; }, 0) + ' 章';
     eb.addEventListener('click', startEndless);
+    if (G) {
+      // 读文献 + 组会 两张卡片
+      var lb = document.createElement('button'); lb.type = 'button'; lb.className = 'book lit'; lb.id = 'sub-lit'; lb.disabled = save.energy <= 0;
+      lb.innerHTML = '<span class="ic"></span><span><span class="t">读文献</span><span class="d"></span><span class="prog"></span></span>';
+      lb.querySelector('.ic').appendChild(monIcon('weidu'));
+      lb.querySelector('.d').textContent = '读短文答两道题 · 1 精力';
+      lb.querySelector('.prog').textContent = '已读 ' + (save.lit || 0) + ' 篇 · 进度 ' + litScore() + '/' + BAL.litCap;
+      lb.addEventListener('click', startLit); subs.appendChild(lb);
+      var mt = meetToday(), mb = document.createElement('button'); mb.type = 'button'; mb.className = 'book meet' + (mt.st === 'open' ? ' open' : ''); mb.id = 'sub-meet';
+      mb.innerHTML = '<span class="ic"></span><span><span class="t">组会</span><span class="d"></span><span class="prog"></span></span>';
+      var cv = document.createElement('canvas'); cv.width = cv.height = 24; cv.className = 'pix'; advCanvas(cv, A); mb.querySelector('.ic').appendChild(cv);
+      var st = { open: '现在就开！点这里进会议室', soon: '今天 ' + slotDef().name.split(' ')[1] + ' 开', done: '今天的组会开完了 ✓', miss: '今天的组会……错过了', late: '今天的组会……错过了' }[mt.st];
+      mb.querySelector('.d').textContent = st || (mt.next ? '下次：第 ' + mt.next + ' 天 ' + slotDef().name.split(' ')[1] : '这周没有组会了');
+      var plan = meetPlan(), done = plan.filter(function (x) { return save.meetLog[x] === 'done'; }).length;
+      mb.querySelector('.prog').textContent = '本周 ' + done + '/' + plan.length + ' 次 · 每次补助 ¥' + meetPay();
+      mb.disabled = mt.st !== 'open';
+      mb.addEventListener('click', startMeet); subs.appendChild(mb);
+    }
     subs.appendChild(eb);
     var sc = totalScore(), line = lineOf();
-    $('goalTxt').textContent = '预估总分过 ' + line + ' 分（' + s.name + '）';
-    $('scoreNow').textContent = sc;
-    $('goalFill').style.width = (sc / 500 * 100) + '%';
-    $('goalLine').style.left = (line / 500 * 100) + '%';
+    $('goalTxt').textContent = G ? '开题进度过 ' + line + '（第 7 天开题答辩）' : '预估总分过 ' + line + ' 分（' + s.name + '）';
+    $('scoreNow').textContent = sc; $('scoreLbl').textContent = G ? '当前进度' : '当前预估'; $('scoreUnit').textContent = G ? '/ ' + fullTotal() : '分';
+    $('goalFill').style.width = (sc / fullTotal() * 100) + '%';
+    $('goalLine').style.left = (line / fullTotal() * 100) + '%';
     $('goalGap').innerHTML = sc >= line ? '<span class="ok">已过线 ✓ 继续刷，考场更轻松</span>' : '<span class="gap">还差 ' + (line - sc) + ' 分</span>';
     updateRegen();
     $('relaxBtn').disabled = relaxLeft() > 0 || save.stress <= 0;
     $('relaxD').textContent = relaxLeft() > 0 ? '刚摸过鱼，' + fmtMs(relaxLeft()) + ' 后再来' : '刷会儿短视频，压力 −35';
     $('adBtn').disabled = save.ads >= ADS_PER_DAY;
     $('adBtn').querySelector('.d').textContent = '精力 +1，今天还能喝 ' + (ADS_PER_DAY - save.ads) + ' 杯';
-    desk.set({ day: dd, daysLeft: Math.max(0, 7 - d), exam: exam, energy: save.energy, max: MAX_ENERGY, stress: save.stress,
+    desk.set({ day: dd, daysLeft: Math.max(0, 7 - d), exam: exam, energy: save.energy, max: maxEnergy(), stress: save.stress,
       study: save.study, items: save.up, msgNew: msgNew, hour: new Date().getHours() });
   }
 
@@ -3014,7 +3264,7 @@
     if (!save.school && save.school !== 0) return;
     var before = save.energy; regen();
     if (save.energy !== before) { persist(); renderHome(); return; }
-    $('regenTxt').textContent = save.energy >= MAX_ENERGY ? '精力已满（上限 ' + MAX_ENERGY + '）' : save.energy + '/' + MAX_ENERGY + ' · 下一格 ' + fmtMs(regenLeft());
+    $('regenTxt').textContent = save.energy >= maxEnergy() ? '精力已满（上限 ' + maxEnergy() + '）' : save.energy + '/' + maxEnergy() + ' · 下一格 ' + fmtMs(regenLeft());
   }
   setInterval(function () { if (!$('vHome').hidden) updateRegen(); }, 1000);
 
@@ -3050,7 +3300,7 @@
   var loading = null;
   function eliteDef(spec) {
     if (!spec) return BOSS;
-    if (spec.twins) return LOCK;
+    if (spec.twins) return spec.sprite ? GM.list.filter(function (x) { return x.id === spec.sprite; })[0] : LOCK;
     return GM.list.filter(function (x) { return x.id === spec.sprite; })[0];
   }
   function drawIcon(cvEl, def) {
@@ -3081,6 +3331,7 @@
   function relaxLeft() { return Math.max(0, (save.lastRelax || 0) + BAL.relaxCdMs - Date.now()); }
   $('relaxBtn').addEventListener('click', function () {
     if (relaxLeft() > 0 || save.stress <= 0) return;
+    if (isGrad() && Math.random() * 100 < advDef(save.advisor).check) { startCheck(); return; }
     save.lastRelax = Date.now(); save.stress = Math.max(0, save.stress - 35); persist(); sfx('pop'); renderHome();
   });
   $('adBtn').addEventListener('click', function () {
@@ -3125,7 +3376,7 @@
   $('dbgNext').addEventListener('click', function () { save.dayOffset = (save.dayOffset || 0) + 1; persist(); goHome(); });
   $('dbgExam').addEventListener('click', function () { save.dayOffset = (save.dayOffset || 0) + Math.max(0, 7 - dayNum()); persist(); goHome(); });
   $('dbgRich').addEventListener('click', function () { save.study += 2000; persist(); renderHome(); });
-  $('dbgEnergy').addEventListener('click', function () { save.energy = MAX_ENERGY; save.energyAt = Date.now(); persist(); renderHome(); });
+  $('dbgEnergy').addEventListener('click', function () { save.energy = maxEnergy(); save.energyAt = Date.now(); persist(); renderHome(); });
   $('dbgDaily').addEventListener('click', function () { save.seenDay = null; persist(); goHome(); });
   $('dbgStress').addEventListener('click', function () { save.stress = Math.min(100, save.stress + 30); persist(); renderHome(); });
   $('dbgIntro').addEventListener('click', function () { startIntro(); });
@@ -3209,7 +3460,7 @@
       var mine = SUB_IDS.indexOf(sec.sid) >= 0 || sec.sid === 're' || (sec.sid === 'ma' && SUB_IDS.indexOf('am') >= 0);
       h.innerHTML = '<span></span><small></small>';
       h.firstChild.textContent = sec.sub.name;
-      h.lastChild.textContent = n + ' / ' + sec.list.length + (mine ? '' : ' · ' + (sec.sid === 're' ? '' : majorsOf(sec.sid).join('、')) + '专业');
+      h.lastChild.textContent = n + ' / ' + sec.list.length + (mine ? '' : ' · ' + (sec.sub.grad ? '研究生篇' : (sec.sid === 're' ? '' : majorsOf(sec.sid).join('、')) + '专业'));
       el.appendChild(h);
       var grid = document.createElement('div'); grid.className = 'cx-grid';
       sec.list.forEach(function (e) {
@@ -3231,7 +3482,7 @@
     var dl = $('ccStats'); dl.innerHTML = ''; var say = $('ccSay'); say.innerHTML = '';
     function line(text) { var p = document.createElement('p'); p.className = 'cc-say'; p.textContent = text; say.appendChild(p); }
     if (!on) {
-      var where = sec.sid === 're' ? '考研日的复试' : (SUB_IDS.indexOf(sec.sid) >= 0 || (sec.sid === 'ma' && SUB_IDS.indexOf('am') >= 0) ? '“' + sec.sub.name + '”' : majorsOf(sec.sid).join('、') + '专业的“' + sec.sub.name + '”');
+      var where = sec.sub.grad ? '研究生篇的“' + sec.sub.name + '”' : sec.sid === 're' ? '考研日的复试' : (SUB_IDS.indexOf(sec.sid) >= 0 || (sec.sid === 'ma' && SUB_IDS.indexOf('am') >= 0) ? '“' + sec.sub.name + '”' : majorsOf(sec.sid).join('、') + '专业的“' + sec.sub.name + '”');
       addStat(dl, '状态', '还没打倒过');
       line('在' + where + (codexTab === 'b' ? '' : (codexTab === 'e' ? '第 ' + (e.ci + 1) + ' 章' : '')) + '里打倒它，就能收录。');
     } else if (codexTab === 'm') {
@@ -3266,12 +3517,17 @@
 
   // 考试
   $('examBtn').addEventListener('click', function () {
-    var s = SCHOOLS[save.school];
+    var s = SCHOOLS[save.school], G = isGrad();
+    $('preExamEyebrow').textContent = G ? '研一 · 第 7 天' : '考研日';
+    $('preExamTitle').textContent = G ? '开题答辩' : '四门连考';
+    $('preExamNote').textContent = G ? '三轮各 3 分钟：开题汇报、答辩提问、专家评审，每轮一位评委。三轮里过两轮就算开题通过，否则重新开题再来一周。进度越高、导师好感越高，评委越好说话。'
+      : '四科各 3 分钟：每科开考 15 秒后出 Boss，3 分钟内打倒才算这科过关。四科都过才算考完……吗？三科以上可以调剂，否则再战一年（星星、学习力、道具全保留）。预估分越高，那一科的 Boss 越弱。';
     $('preExamStats').innerHTML = '';
     var sc = totalScore();
     var sl = schoolLine(s);
-    addStat($('preExamStats'), '目标院校', s.name + '（分数线 ' + sl + '）');
-    addStat($('preExamStats'), '预估总分', sc + (sc >= sl ? '（已过线）' : '（差 ' + (sl - sc) + ' 分）'), true);
+    if (G) { addStat($('preExamStats'), '导师好感', save.favor + '（评委血量 ×' + favorMul().toFixed(2) + '）'); addStat($('preExamStats'), '开题进度', sc + ' / ' + sl + (sc >= sl ? '（已过线）' : '（差 ' + (sl - sc) + '）'), true); }
+    else { addStat($('preExamStats'), '目标院校', s.name + '（分数线 ' + sl + '）');
+    addStat($('preExamStats'), '预估总分', sc + (sc >= sl ? '（已过线）' : '（差 ' + (sl - sc) + ' 分）'), true); }
     SUBJECTS.forEach(function (sub) {
       addStat($('preExamStats'), sub.name + ' ' + subScore(sub.id) + '/' + CHAPTERS[sub.id].full, '怪物血量 ×' + (examMul(sub.id) * s.hp).toFixed(2));
     });
@@ -3281,7 +3537,7 @@
     w.hidden = save.stress < 60;
     w.textContent = save.stress >= 90 ? '压力太大了！有 3 成概率闹钟没响、睡过头迟到，赶到时' + SUBJECTS[0].name + '只剩 1 分钟。建议先回去摸鱼，把压力降到 90 以下再来。'
       : '压力偏高，考场上大概率状态下滑。摸鱼一次能降 35 压力，降到 60 以下就能正常发挥。';
-    $('examGo').textContent = save.stress >= 90 ? '不管了，硬着头皮进考场' : '进入考场';
+    $('examGo').textContent = save.stress >= 90 ? '不管了，硬着头皮进去' : (G ? '走进答辩室' : '进入考场');
     overlay('preExamOv', true);
   });
   $('examBack').addEventListener('click', function () { overlay('preExamOv', false); });
@@ -3307,6 +3563,22 @@
   }
   function renderEnd() {
     var s = save.finalSchool || SCHOOLS[save.school].name;
+    $('gradStartBtn').hidden = !(save.advisor && !isGrad());
+    if (isGrad() && save.gyDone) {
+      var GA = advDef(save.advisor);
+      $('endEyebrow').textContent = '研究生篇 · 研一 完';
+      $('endTitle').textContent = '开题通过！';
+      $('endText').textContent = '你在' + GA.name + '组度过了研一，开题顺利通过。研二（实验、投稿、中期考核）正在制作中。';
+      var gdl = $('endStats'); gdl.innerHTML = '';
+      addStat(gdl, '补助存款', '¥' + (save.money || 0)); addStat(gdl, '导师好感', save.favor); addStat(gdl, '读过的文献', (save.lit || 0) + ' 篇');
+      addStat(gdl, '开题次数', (save.gweek || 1) + ' 次', true);
+      drawPhoto(); advCanvas($('endAdvCv'), GA); $('endAdvName').textContent = GA.name + ' · ' + GA.role;
+      $('endAdvLine').textContent = '“' + GA.meetWin + '”';
+      $('endAdv').hidden = $('endNext').hidden = false; $('endSoon').hidden = true;
+      var rows = $('endNext').querySelectorAll('small'); rows[0].textContent = '已完成 ✓';
+      return;
+    }
+    $('endEyebrow').textContent = '备考篇 · 完';
     $('endTitle').textContent = save.outcome === 'adjust' ? '调剂上岸！' : '上岸！';
     $('endText').textContent = (save.outcome === 'adjust' ? '虽然没考上第一志愿，但你调剂到了 ' : '你考上了 ') + s + '。' + (save.week > 1 ? zhan(save.week) + '终于成功了。' : '一战上岸。');
     var dl = $('endStats'); dl.innerHTML = '';
@@ -3322,7 +3594,7 @@
       $('endAdvLine').textContent = '组会' + meetText(a.meet) + ' · 查岗 ' + a.check + '% · 补助 ¥' + a.pay + '/月';
     }
   }
-  $('restartBtn').addEventListener('click', function () { save = blank(); save.storySeen = true; persist(); boot(); });
+  $('restartBtn').addEventListener('click', function () { var keepSet = save.codex; save = blank(); save.storySeen = true; save.codex = keepSet || save.codex; persist(); boot(); });
   // ======================================================================
   // 研究生篇：导师双选
   // 组会越多补助越高；每位导师都有自己的坑，没有绝对最好或最差
@@ -3333,32 +3605,38 @@
       meet: 1, check: 5, pay: 600, guide: 1, free: 5,
       good: ['几乎不开组会，作息完全自由', '从不查岗，想摸鱼就摸鱼'],
       bad: ['补助最低，月底要吃泡面', '课题全靠自己摸索，毕业前才突然开始“关心”你'],
-      wx: ['同学你好，欢迎加入。', '我们组比较自由，你先自己看看文献。', '有事……也可以不找我。'] },
+      wx: ['同学你好，欢迎加入。', '我们组比较自由，你先自己看看文献。', '有事……也可以不找我。'],
+      perk: '缺席组会不挨骂；但研三前会突然来一次突击检查', meetSk: ['spit'], meetQ: '最近……在忙什么呀？', meetWin: '嗯，挺好，继续保持。', scold: '没事没事，下次记得来。' },
     { id: 'zhou', name: '周老', role: '学术泰斗', c: '#c8a27a', tag: '头发花白的小老头，常年全国各地开会。',
       meet: 2, check: 10, pay: 900, guide: 3, free: 4,
       good: ['平台大、名气响，推荐信一封顶别人十封', '组里大师兄靠谱，事情有人带'],
       bad: ['一学期见不到几次面，消息隔三天才回', '组会难得开一次，一开就是一下午，还随机点名'],
-      wx: ['小同学，欢迎。', '我下周在外地开会，具体的你先找你大师兄。', '年轻人，要沉得住气。'] },
+      wx: ['小同学，欢迎。', '我下周在外地开会，具体的你先找你大师兄。', '年轻人，要沉得住气。'],
+      perk: '大师兄护法：每局开局自带 1 个公式护盾', meetSk: ['bomb'], meetQ: '你这个方向，三十年前我就想过。', meetWin: '后生可畏啊。', scold: '组会都不来，那你就相当于啥也没干呗。' },
     { id: 'su', name: '苏博士', role: '海归新星', c: '#7fb2ff', tag: '刚从国外回来的年轻女导师，组会全英文。',
       meet: 4, check: 20, pay: 1600, guide: 3, free: 3,
       good: ['国际视野，有机会出国交流、开国际会议', '鼓励你自己提想法，氛围像朋友'],
       bad: ['组会全英文，PPT 也要英文', '只想投顶刊顶会，按国外时间半夜开线上会'],
-      wx: ['Hi! Welcome to the lab~', '我们每周一次 group meeting，记得准备 English slides。', 'Let’s aim high!'] },
+      wx: ['Hi! Welcome to the lab~', '我们每周一次 group meeting，记得准备 English slides。', 'Let’s aim high!'],
+      perk: '英文文献收益再翻倍', meetSk: ['blink', 'spit'], meetQ: 'So, what is your contribution?', meetWin: 'Good job! That’s impressive.', scold: 'Where were you? 那你就相当于啥也没干呗。' },
     { id: 'yan', name: '严教授', role: '严谨细节控', c: '#d98a8a', tag: '短发、眼镜链、红笔不离手的女教授。',
       meet: 6, check: 45, pay: 2000, guide: 5, free: 2,
       good: ['论文一句一句帮你改，质量最高', '要求清清楚楚，答辩和盲审最稳'],
       bad: ['改完的稿子红一片，连 PPT 字体都要统一', '不定时到实验室转一圈，看谁不在'],
-      wx: ['你好。入组前先把我们组的写作规范读三遍。', '每周一交周报，周五组会。', '标点用全角。'] },
+      wx: ['你好。入组前先把我们组的写作规范读三遍。', '每周一交周报，周五组会。', '标点用全角。'],
+      perk: '开题答辩评委血量 −12%，答辩更稳', meetSk: ['spit', 'ring'], meetQ: '第三页第二行，这个逗号为什么是半角？', meetWin: '……这次的汇报，可以。', scold: '无故缺席组会，那你就相当于啥也没干呗。' },
     { id: 'lin', name: '林老师', role: '奋进青椒', c: '#8f6ad1', tag: '格子衫、黑眼圈，正在冲职称的年轻男老师。',
       meet: 8, check: 60, pay: 2600, guide: 4, free: 1,
       good: ['手把手教，技术最强，回消息最快', '论文多、机会多，跟着他成长最快'],
       bad: ['一周两次组会，周末也不例外', '凌晨两点在群里@你：“那个实验跑完了吗？”'],
-      wx: ['欢迎欢迎！明天早上 8 点组会，带电脑。', '服务器账号已经发你了，先把环境配好。', '我们组目标是今年三篇。'] },
+      wx: ['欢迎欢迎！明天早上 8 点组会，带电脑。', '服务器账号已经发你了，先把环境配好。', '我们组目标是今年三篇。'],
+      perk: '手把手：每局开局飞镖 Lv2 + 荧光笔激光', meetSk: ['charge', 'bomb'], meetQ: '实验跑完了吗？结果呢？', meetWin: '不错！今晚把下一组也跑了。', scold: '组会都不来？那你就相当于啥也没干呗。' },
     { id: 'qian', name: '钱老板', role: '横向项目老板', c: '#e0b07a', tag: '啤酒肚、金表，开口就是“咱们这个项目”。',
       meet: 12, check: 35, pay: 3800, guide: 2, free: 1,
       good: ['补助最高，还有项目奖金', '企业资源多，实习和找工作有门路'],
       bad: ['横向项目做不完，自己的论文没时间写', '一周三次项目会，实验室装了打卡机'],
-      wx: ['小伙子/小姑娘，欢迎！', '咱们组项目多，明天先去甲方那边对接一下。', '补助按月发，好好干。'] }
+      wx: ['小伙子/小姑娘，欢迎！', '咱们组项目多，明天先去甲方那边对接一下。', '补助按月发，好好干。'],
+      perk: '每天自动到账 ¥120 项目费', meetSk: ['bomb', 'charge'], meetQ: '甲方又改需求了，今天能出个版本吗？', meetWin: '好！甲方很满意，奖金少不了你的。', scold: '项目会都不来？那你就相当于啥也没干呗。' }
   ];
   function advDef(id) { return ADVISORS.filter(function (a) { return a.id === id; })[0]; }
   // 导师头像（24×24 像素）
@@ -3439,14 +3717,247 @@
     var w = $('advWx'); w.innerHTML = ''; a.wx.forEach(function (m) { var p = document.createElement('p'); p.textContent = m; w.appendChild(p); });
     var dl = $('advStats'); dl.innerHTML = '';
     addStat(dl, '组会', meetText(a.meet)); addStat(dl, '查岗', '每天 ' + a.check + '%'); addStat(dl, '补助', '¥' + a.pay + ' / 月', true);
+    addStat(dl, '精力上限', (7 + a.free) + ' 格'); addStat(dl, '专属', a.perk);
     a.good.forEach(function (g) { addStat(dl, '好处', g); }); a.bad.forEach(function (g) { addStat(dl, '坑', g); });
     overlay('advOv', true);
   }
+
+  // ======================================================================
+  // 研究生篇 · 研一
+  // ======================================================================
+  var MEET_N = { tao: 1, zhou: 1, su: 2, yan: 3, lin: 4, qian: 6 };   // 每 7 天的组会次数
+  var SLOTS = [
+    { id: 'noon', name: '中午 12:00–14:00', h0: 12, h1: 14, d: '吃完午饭顺便开' },
+    { id: 'aft', name: '下午 15:00–17:00', h0: 15, h1: 17, d: '标准的下午组会' },
+    { id: 'eve', name: '晚上 20:00–22:00', h0: 20, h1: 22, d: '下班后的“自愿”组会' }
+  ];
+  function slotDef() { return SLOTS.filter(function (x) { return x.id === (save.meetSlot || 'eve'); })[0]; }
+  function meetPlan() {
+    var n = MEET_N[save.advisor] || 2, days = [];
+    for (var i = 0; i < n; i++) days.push(1 + Math.floor((i + 0.5) * 6 / n));
+    return days;
+  }
+  function meetPay() { var a = advDef(save.advisor); return Math.round(a.pay / (MEET_N[a.id] || 1)); }
+  function openSlots() {
+    var box = $('slotList'); box.innerHTML = '';
+    var a = advDef(save.advisor);
+    $('slotNote').textContent = a.name + '：“以后组会就定在这个时间。”到点打开游戏就算出席，错过了要挨骂。' + (a.id === 'tao' ? '（陶老师说不来也没关系。）' : '');
+    SLOTS.forEach(function (sl) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn ghost';
+      b.innerHTML = '<b></b><br><small></small>'; b.querySelector('b').textContent = sl.name; b.querySelector('small').textContent = sl.d;
+      b.addEventListener('click', function () { save.meetSlot = sl.id; overlay('slotOv', false); enterGrad(); });
+      box.appendChild(b);
+    });
+    overlay('slotOv', true);
+  }
+  function enterGrad() {
+    save.phase = 'grad'; save.gy = 1; save.gweek = 1; save.gyDone = 0;
+    save.start = today(); save.seenDay = null; save.dayLog = null; save.msgSeen = null;
+    save.money = save.money || 0; save.favor = save.favor == null ? 50 : save.favor; save.lit = save.lit || 0;
+    save.meetLog = {}; save.gRev0 = save.review || 0; save.gStars0 = null; save.owned = save.owned || {};
+    setGradYear(1);
+    save.energy = maxEnergy(); save.energyAt = Date.now();
+    persist(); stampThen('研一开学', function () { goHome(); });
+  }
+  function gradRetry() {
+    save.gweek = (save.gweek || 1) + 1; save.start = today(); save.seenDay = null; save.dayLog = null;
+    save.meetLog = {}; save.stress = Math.min(save.stress, 30); persist(); backHome();
+  }
+  // 今天的组会状态：none / soon / open / done / miss
+  function meetToday() {
+    var d = dayNum(), plan = meetPlan();
+    if (plan.indexOf(d) < 0) return { st: 'none', next: plan.filter(function (x) { return x > d; })[0] };
+    var log = save.meetLog[d], sl = slotDef(), h = new Date().getHours() + new Date().getMinutes() / 60;
+    if (log) return { st: log, day: d };
+    if (h < sl.h0) return { st: 'soon', day: d };
+    if (h < sl.h1) return { st: 'open', day: d };
+    return { st: 'late', day: d };
+  }
+  // 结算错过的组会（包括这几天没打开游戏）
+  function settleMeets() {
+    if (!isGrad()) return null;
+    var d = dayNum(), plan = meetPlan(), missed = 0, a = advDef(save.advisor);
+    plan.forEach(function (x) {
+      if (save.meetLog[x]) return;
+      var mt = x === d ? meetToday() : null;
+      if (x < d || (mt && mt.st === 'late')) { save.meetLog[x] = 'miss'; missed++; }
+    });
+    if (missed && a.id !== 'tao') { save.favor = Math.max(0, save.favor - 8 * missed); save.stress = Math.min(100, save.stress + 15 * missed); }
+    if (missed) { persist(); return { n: missed, a: a }; }
+    return null;
+  }
+  function meetCfg(onEnd) {
+    var t = 1 + Math.min(4, (save.review || 0) - (save.gRev0 || 0)) * 0.5;
+    return { kind: 'meet', meet: true, hpMul: tierVal(TIER.hp, t) * BAL.gradHp * BAL.meetEase, rateMul: tierVal(TIER.rate, t), mobDmg: tierVal(TIER.dmg, t) * BAL.gradDmg * BAL.meetEase, mobSpeed: tierVal(TIER.speed, t),
+      duration: BAL.meetDur, bossAt: 0, elites: [], phases: [{ group: 'all', until: 1e9, label: '组会 · 撑到散会' }], onEnd: onEnd };
+  }
+  function spawnMeetBoss() {
+    var a = advDef(save.advisor), e = edgePoint(60);
+    S.boss = addMob(ADV_SPR[a.id], e.x, e.y, 'boss'); S.bossSpawned = true;
+    S.boss.max = S.boss.hp = Math.round(BAL.meetBossHp * (1 + ((save.review || 0) - (save.gRev0 || 0)) * 0.25));
+    S.boss.skills = a.meetSk; S.boss.dmg = BAL.bossHit * 0.8; S.boss.ringN = 12; S.boss.ringCd = 6;
+    $('bossName').textContent = a.name + ' 的提问';
+    banner('组会开始：' + a.name, 2.2); sfx('boss');
+    battleSay(ADV_SPR[a.id], a.name, a.meetQ, 3.4);
+  }
+  function startMeet() {
+    var mt = meetToday(); if (mt.st !== 'open' && !window.__meetNow) return;
+    window.__meetNow = false;
+    var d = dayNum(), a = advDef(save.advisor);
+    audioInit();
+    showLoading({ sub: '组会 · ' + slotDef().name, title: a.name + '的组会', kind: '导师提问', spec: { name: a.name, say: a.meetQ, boss: ADV_SPR[a.id], sk: a.meetSk }, done: function () {
+      startBattle(meetCfg(function (r) {
+        save.meetLog[d] = 'done';
+        var ok = r.completed || r.won, pay = ok ? meetPay() : Math.round(meetPay() / 2), fav = ok ? (r.won ? 8 : 5) : -3, st = Math.round(40 + r.kills * 0.1);
+        save.money = (save.money || 0) + pay; save.favor = Math.max(0, Math.min(100, (save.favor || 50) + fav)); save.study += st;
+        save.runs++; save.totalKills += r.kills; persist();
+        showResult(ok ? (r.won ? '组会大获成功！' : '组会顺利结束') : '汇报翻车了……',
+          ok ? (r.won ? a.meetWin : '导师点点头：“下周继续。”') : '导师叹了口气：“回去再想想。”补助照发一半。',
+          [['补助', '+¥' + pay, true], ['导师好感', (fav > 0 ? '+' : '') + fav + ' → ' + save.favor], ['学习力', '+' + st], ['击杀', r.kills]],
+          [{ label: '回书桌', primary: true, fn: backHome }]);
+      }));
+    } });
+  }
+  // ---------- 摸鱼查岗 ----------
+  var chk = null;
+  function startCheck() {
+    var a = advDef(save.advisor);
+    chk = { t: 0, t0: performance.now(), at: 1.4 + Math.random() * 2.8, win: 0.9, state: 'play' };
+    $('chkSteps').textContent = ''; $('chkShadow').className = 'shadow'; $('chkDoor').className = 'door';
+    $('chkVid').className = 'vid'; $('chkVid').innerHTML = '▶ 正在刷：<br>《研究生的一天》<br>（第 ' + (10 + Math.floor(Math.random() * 90)) + ' 集）';
+    $('chkNote').textContent = '听到脚步声就马上点“切回论文”！提前点就白摸了。'; $('chkBtn').textContent = '切回论文！';
+    overlay('chkOv', true);
+  }
+  function stepCheck() {
+    if (!chk || chk.state !== 'play') return;
+    chk.t = (performance.now() - chk.t0) / 1000;
+    if (chk.t >= chk.at && !chk.warned) { chk.warned = true; $('chkSteps').textContent = '嗒、嗒、嗒……'; $('chkDoor').className = 'door open'; sfx('thud'); buzz(40); }
+    if (chk.warned && chk.t >= chk.at + 0.35) $('chkShadow').className = 'shadow on';
+    if (chk.warned && chk.t >= chk.at + chk.win) endCheck('caught');
+  }
+  function endCheck(how) {
+    if (!chk || chk.state !== 'play') return;
+    chk.state = how; var a = advDef(save.advisor), note;
+    save.lastRelax = Date.now();
+    if (how === 'early') { save.stress = Math.max(0, save.stress - 12); note = '白紧张一场……压力只降了 12。'; }
+    else if (how === 'safe') { save.stress = Math.max(0, save.stress - 35); save.favor = Math.min(100, save.favor + 1); note = a.name + '探头看了一眼：“嗯，挺认真。”压力 −35，好感 +1。'; $('chkVid').className = 'vid paper'; $('chkVid').textContent = '第二章 研究现状……'; sfx('level'); }
+    else { save.stress = Math.max(0, save.stress - 20); save.favor = Math.max(0, save.favor - 6); note = a.name + '：“同学，你在看什么？”好感 −6。'; sfx('hurt'); buzz(120); $('chkShadow').className = 'shadow on'; }
+    persist();
+    $('chkNote').textContent = note; $('chkBtn').textContent = '回书桌';
+    setTimeout(function () { if (chk && chk.state !== 'play') { $('chkBtn').onclick = null; } }, 0);
+  }
+  setInterval(stepCheck, 30);
+  $('chkBtn').addEventListener('click', function () {
+    if (!chk) return;
+    if (chk.state === 'play') { endCheck(chk.warned ? 'safe' : 'early'); return; }
+    chk = null; overlay('chkOv', false); renderHome();
+  });
+  // ---------- 读文献 ----------
+  // 原创短文（虚构研究），每篇两道题：[题目, [选项], 正确项]
+  var LIT = [
+    { en: 0, t: '午睡与记忆', p: '一项虚构的研究让两组大学生背同一份单词表。A 组背完后午睡 20 分钟，B 组背完后刷手机。三小时后测试，A 组平均记住 31 个，B 组记住 24 个。作者认为，短时间的睡眠帮助大脑把刚学的内容“存档”。但作者也提醒，样本只有 40 人，而且没有控制两组原本的记忆力差异。',
+      q: [['A 组和 B 组的主要区别是？', ['背的单词表不同', '背完后有没有午睡', '测试的时间不同'], 1], ['作者提到的研究局限是？', ['样本量小，且没控制原有差异', '测试题目太难', '午睡时间太长'], 0]] },
+    { en: 0, t: '城市里的麻雀', p: '研究者统计了三个城市公园里麻雀的叫声。靠近马路的麻雀，叫声的最低音明显比安静区域的高。研究者推测，汽车噪音主要在低频，麻雀把叫声“抬高”是为了让同伴听得见。不过这只是相关关系，要证明因果，还需要在同一群麻雀身上人为改变噪音再观察。',
+      q: [['马路边的麻雀叫声有什么特点？', ['声音更小', '最低音更高', '叫得更少'], 1], ['为什么说还不能证明因果？', ['只观察到了相关关系', '麻雀数量太少', '没有录音设备'], 0]] },
+    { en: 0, t: '咖啡与专注', p: '某实验让被试分别喝含咖啡因和不含咖啡因的饮料，但被试不知道自己喝的是哪种。结果显示，以为自己喝了咖啡的人，专注测试成绩也有提高，哪怕他们喝的其实是无咖啡因版。作者认为，“期待”本身就能带来一部分效果，这在研究里叫作安慰剂效应。',
+      q: [['为什么不告诉被试喝的是哪种？', ['为了排除心理期待的影响', '为了节省成本', '因为饮料味道一样'], 0], ['“以为喝了咖啡也会进步”说明了什么？', ['咖啡因完全没用', '期待本身也有效果', '无咖啡因饮料更好'], 1]] },
+    { en: 0, t: '番茄工作法', p: '一份虚构的问卷调查了 200 名研究生的学习方式。使用“学 25 分钟、休息 5 分钟”的人，自评效率比连续学习的人高。但研究者发现，用这种方法的人本来就更会规划时间。因此，效率高可能是规划能力带来的，而不一定是方法本身的作用。',
+      q: [['这项研究的数据来自哪里？', ['问卷调查', '脑电实验', '考试成绩'], 0], ['研究者为什么对结论保持谨慎？', ['问卷太长', '可能存在其他影响因素', '样本都是本科生'], 1]] },
+    { en: 0, t: '植物也会“说话”', p: '研究者发现，叶子被虫咬过的番茄会释放一种气味。附近没被咬的番茄闻到后，会提前产生让虫子讨厌的物质。研究者把这称为植物之间的“预警”。为了确认是气味起作用，他们用玻璃罩隔开两株植物，只留气体通道，结果预警依然发生。',
+      q: [['被咬的番茄做了什么？', ['长出更多叶子', '释放一种气味', '改变了颜色'], 1], ['用玻璃罩的目的是？', ['确认是气体在传递信号', '保护植物不被晒', '防止虫子逃跑'], 0]] },
+    { en: 0, t: '排队的心理学', p: '在一家虚构的食堂，研究者把两个窗口改成“一条长队分配到多个窗口”。虽然平均等待时间几乎没变，但学生对排队的不满明显减少。研究者认为，人们在意的不只是等多久，还有“公平感”：一条队不会出现“旁边那队更快”的情况。',
+      q: [['改成一条长队后，平均等待时间？', ['明显变短', '几乎没变', '明显变长'], 1], ['不满减少的主要原因是？', ['饭菜更好吃了', '人们觉得更公平', '窗口变多了'], 1]] },
+    { en: 0, t: '数据的“幸存者”', p: '一篇虚构的文章统计了成功创业者的习惯，发现他们大多“早起”。但评论者指出，研究只调查了成功的人，那些同样早起却失败的人没有被统计进来。这种只看“活下来”的样本而得出结论的错误，叫作幸存者偏差。',
+      q: [['评论者指出的问题是？', ['样本只包括成功者', '早起的定义不清', '调查时间太短'], 0], ['这种错误叫作？', ['安慰剂效应', '幸存者偏差', '霍桑效应'], 1]] },
+    { en: 0, t: '被观察的工人', p: '一项早年的工厂研究发现，不管是调亮还是调暗车间的灯，工人的效率都提高了。后来研究者意识到，真正的原因可能是工人知道自己正在被研究，于是更努力。人在被观察时改变行为的现象，后来被称为霍桑效应。',
+      q: [['灯光调暗后，效率怎样？', ['下降了', '也提高了', '没有变化'], 1], ['效率提高的可能原因是？', ['灯光颜色', '工人知道自己被观察', '工资上涨'], 1]] },
+    { en: 0, t: '冷知识：手机与睡眠', p: '一项虚构的追踪研究给 60 名研究生戴上睡眠手环。睡前一小时还在刷手机的人，平均入睡时间晚了 23 分钟，深睡比例也更低。但研究者也发现，压力大的人更爱睡前刷手机，所以“刷手机导致失眠”和“压力导致两者”都有可能。',
+      q: [['研究用什么记录睡眠？', ['问卷', '睡眠手环', '视频'], 1], ['研究者提出的另一种解释是？', ['手环不准', '压力同时影响刷手机和睡眠', '样本太大'], 1]] },
+    { en: 1, t: 'Reading Before Sleep', p: 'In a fictional study, 80 students read either a paper book or a phone screen for 30 minutes before bed. Students who read paper books fell asleep 12 minutes earlier on average. However, the authors note that the phone group often switched to social media, so the effect may come from the content rather than the screen.',
+      q: [['What did the paper-book group do?', ['Fell asleep earlier', 'Slept fewer hours', 'Read more pages'], 0], ['Why are the authors cautious?', ['The study was too long', 'Phone users often switched to social media', 'Paper books were too expensive'], 1]] },
+    { en: 1, t: 'Bees and Colors', p: 'Researchers trained bees to find sugar water on blue cards. Later, they removed the sugar and placed blue and yellow cards together. Most bees still visited the blue cards first. This suggests bees can learn and remember colors linked to food, at least for several hours.',
+      q: [['Where was the sugar water at first?', ['On yellow cards', 'On blue cards', 'On both cards'], 1], ['What does the result suggest?', ['Bees cannot see colors', 'Bees remember colors linked to food', 'Bees prefer yellow'], 1]] },
+    { en: 1, t: 'Walking Meetings', p: 'A fictional company replaced some sitting meetings with walking meetings. Employees reported more creative ideas after walking. Yet the meetings were also shorter, and only volunteers joined. The authors suggest a controlled experiment to separate the effect of walking from these other differences.',
+      q: [['What did employees report?', ['More creative ideas', 'Longer meetings', 'More tiredness'], 0], ['What do the authors suggest next?', ['Stop all meetings', 'A controlled experiment', 'Only sitting meetings'], 1]] },
+    { en: 1, t: 'Noise in the Library', p: 'In a fictional survey, students rated a quiet library and a café with soft background noise. Surprisingly, many students said they focused better in the café. The researchers think a low level of noise may help some people feel less isolated, but loud noise clearly reduced focus for everyone.',
+      q: [['Where did many students say they focused better?', ['The quiet library', 'The café', 'At home'], 1], ['What did loud noise do?', ['Helped everyone', 'Reduced focus for everyone', 'Had no effect'], 1]] },
+    { en: 1, t: 'Handwriting Notes', p: 'Two groups watched the same lecture. One group took notes by hand, the other typed on laptops. The typing group wrote more words, but often copied the lecture word for word. In a later test of understanding, the handwriting group scored higher, possibly because they had to summarize ideas in their own words.',
+      q: [['Which group wrote more words?', ['The typing group', 'The handwriting group', 'Both the same'], 0], ['Why might the handwriting group score higher?', ['They summarized in their own words', 'They had better pens', 'They watched a different lecture'], 0]] }
+  ];
+  var lit = null;
+  function startLit() {
+    regen(); if (save.energy <= 0) return;
+    audioInit(); spendEnergy();
+    var pool = LIT.filter(function (x) { return (save.litSeen || []).indexOf(LIT.indexOf(x)) < 0; });
+    if (!pool.length) { save.litSeen = []; pool = LIT.slice(); }
+    var P = pool[Math.floor(Math.random() * pool.length)], idx = LIT.indexOf(P);
+    save.litSeen = (save.litSeen || []).concat([idx]); persist();
+    lit = { P: P, qi: 0, right: 0 };
+    $('litEyebrow').textContent = '读文献 · ' + (P.en ? '英文（收益 ×2）' : '中文');
+    $('litTitle').textContent = P.t; $('litText').textContent = P.p;
+    showLitQ(); overlay('litOv', true); $('litOv').scrollTop = 0;
+  }
+  function showLitQ() {
+    var q = lit.P.q[lit.qi], box = $('litOpts'); box.innerHTML = '';
+    $('litQ').textContent = (lit.qi + 1) + '. ' + q[0]; $('litNext').hidden = true;
+    q[1].forEach(function (o, i) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = String.fromCharCode(65 + i) + '. ' + o;
+      b.addEventListener('click', function () {
+        if (box.dataset.done) return; box.dataset.done = '1';
+        var ok = i === q[2]; if (ok) lit.right++;
+        b.className = ok ? 'ok' : 'no'; box.children[q[2]].className = 'ok'; sfx(ok ? 'level' : 'hurt');
+        $('litNext').hidden = false; $('litNext').textContent = lit.qi + 1 < lit.P.q.length ? '下一题' : '读完了';
+      });
+      box.appendChild(b);
+    });
+    delete box.dataset.done;
+  }
+  $('litNext').addEventListener('click', function () {
+    if (lit.qi + 1 < lit.P.q.length) { lit.qi++; showLitQ(); return; }
+    overlay('litOv', false);
+    var mul = lit.P.en ? (save.advisor === 'su' ? 4 : 2) : 1, gain = lit.right * 25 * mul, got = lit.right > 0;
+    if (got) save.lit = (save.lit || 0) + 1;
+    save.study += gain; save.runs++;
+    if (save.dayLog) { save.dayLog.runs++; save.dayLog.study += gain; }
+    persist();
+    showResult(lit.right === 2 ? '读懂了！' : lit.right ? '读了个大概' : '没读懂……',
+      got ? '文献笔记 +1，开题进度 +2。' : '一道都没答对，这篇白读了。',
+      [['答对', lit.right + ' / 2'], ['学习力', '+' + gain + (mul > 1 ? '（×' + mul + '）' : '')], ['已读文献', (save.lit || 0) + ' 篇（开题进度 ' + litScore() + '/' + BAL.litCap + '）', true]],
+      [{ label: '回书桌', primary: true, fn: backHome }].concat(save.energy > 0 ? [{ label: '再读一篇', fn: startLit }] : []));
+    lit = null;
+  });
+  // ---------- 生活采购 ----------
+  var GOODS = [
+    { id: 'meal', name: '外卖大餐', price: 80, d: '下一局生命上限 +30%（一次性）', once: false },
+    { id: 'chair', name: '人体工学椅', price: 1500, d: '以后每天压力额外 −10', once: true },
+    { id: 'coffee', name: '咖啡机', price: 2400, d: '以后每天第一次登录精力 +2', once: true }
+  ];
+  function renderBuy() {
+    $('buyMoney').textContent = '¥' + (save.money || 0);
+    var box = $('buyList'); box.innerHTML = '';
+    GOODS.forEach(function (g) {
+      var own = g.once && save.owned[g.id], b = document.createElement('div'); b.className = 'shopg';
+      b.innerHTML = '<b></b><button class="btn" type="button"></button><small></small>';
+      b.querySelector('b').textContent = g.name; b.querySelector('small').textContent = g.d;
+      var btn = b.querySelector('button'); btn.style.width = 'auto'; btn.textContent = own ? '已拥有' : (g.id === 'meal' && save.buffMeal ? '已点' : '¥' + g.price);
+      btn.disabled = own || (g.id === 'meal' && save.buffMeal) || (save.money || 0) < g.price;
+      btn.addEventListener('click', function () {
+        save.money -= g.price; if (g.once) save.owned[g.id] = true; if (g.id === 'meal') save.buffMeal = true;
+        persist(); sfx('stamp'); renderBuy(); renderHome();
+      });
+      box.appendChild(b);
+    });
+  }
+  $('buyBtn').addEventListener('click', function () { renderBuy(); overlay('buyOv', true); });
+  $('buyClose').addEventListener('click', function () { overlay('buyOv', false); });
+  $('gradStartBtn').addEventListener('click', function () { openSlots(); });
+  if ($('dbgMeet')) $('dbgMeet').addEventListener('click', function () { if (!isGrad()) return; window.__meetNow = true; startMeet(); });
+
   $('advBack').addEventListener('click', function () { overlay('advOv', false); });
   $('advPick').addEventListener('click', function () {
     var a = advPicked; if (!a) return;
     overlay('advOv', false); save.advisor = a.id; persist();
-    stampThen('双选成功', function () { renderEnd(); show('vEnd'); });
+    stampThen('双选成功', function () { openSlots(); });
   });
 
 
@@ -3626,6 +4137,27 @@
       });
     }
   };
+  // 研一开题答辩：三位评委
+  var JUDGE_A = { id: 'judge_a', draw: function (g, t) {
+      g.rect(5, 15, 14, 9, '#5a3d6b'); g.rect(10, 15, 4, 3, '#f4f1ea');
+      g.circ(12, 9, 6, '#f3c9a0'); g.rect(6, 3, 12, 4, '#6b4a3a'); g.rect(5, 5, 3, 9, '#6b4a3a'); g.rect(16, 5, 3, 9, '#6b4a3a');
+      g.rect(8, 8, 3, 3, '#ffffff'); g.rect(13, 8, 3, 3, '#ffffff'); g.p(9 + t, 9, INK); g.p(14 + t, 9, INK); g.rect(8, 7, 8, 1, INK);
+      g.rect(10, 13, 4, 1, INK); g.text('?', 19, 0 + t, '#f4c542');
+    } };
+  var JUDGE_B = { id: 'judge_b', draw: function (g, t) {
+      g.rect(4, 15, 16, 9, '#2d3a4f'); g.rect(10, 15, 4, 9, '#f4f1ea'); g.rect(11, 16, 2, 6, '#d9503f');
+      g.circ(12, 9, 7, '#efc8a0'); g.rect(5, 8, 2, 4, '#9a9a9a'); g.rect(17, 8, 2, 4, '#9a9a9a'); g.p(9, 4, '#ffffff');
+      g.line(8, 7, 10, 8, INK); g.line(16, 7, 14, 8, INK); g.p(9, 9, INK); g.p(15, 9, INK);
+      g.rect(9, 13, 6, 1, INK); g.p(9, 14, INK); g.p(14, 14, INK);
+      g.line(19, 12 + t, 22, 20 + t, '#d9503f');
+    } };
+  var JUDGE_C = { id: 'judge_c', draw: function (g, t) {
+      g.rect(5, 15, 14, 9, '#4f7a5a'); g.rect(10, 15, 4, 2, '#ffffff');
+      g.circ(12, 9, 6, '#f3c9a0'); g.rect(6, 2, 12, 4, '#1c1c1c'); g.rect(6, 5, 2, 2, '#1c1c1c');
+      g.rect(8, 8, 3, 2, INK); g.rect(13, 8, 3, 2, INK); g.p(11, 8, INK); g.p(12, 8, INK);
+      g.rect(10, 12, 4, 1, INK); g.p(13, 11, INK);
+      g.rect(1, 17 - t, 6, 5, '#aeb8c4'); g.rect(2, 18 - t, 4, 3, '#7fd1ff');
+    } };
   // 考研日每一科的 Boss
   var EXAM_BOSSES = {
     po: { def: BOSS_PO, name: '材料分析巨卷', say: '辨析题：论你上岸的必然性与偶然性！', die: '答……答到点子上了……', sk: ['spit'] },
@@ -3641,7 +4173,10 @@
     e1: { def: BOSS_E1, name: '教育理论巨塔', say: '三大流派、四个阶段，你分得清吗？', die: '……塔，被你一层层拆完了。', sk: ['bomb', 'spit'] },
     e2: { def: BOSS_E2, name: '教育史时间线巨龙', say: '这个制度是哪一年颁布的？', die: '……时间线，被你理顺了。', sk: ['blink', 'spit', 'bomb'] },
     m1: { def: BOSS_M1, name: '人体循环巨心', say: '心输出量等于什么？给你一秒钟！', die: '……心率，恢复正常了。', sk: ['bomb', 'spit'] },
-    m2: { def: BOSS_M2, name: '西综五头龙', say: '还有五年本科、三年规培等着你哦。', die: '……五个头，都被你打下来了。', sk: ['blink', 'spit', 'bomb'] }
+    m2: { def: BOSS_M2, name: '西综五头龙', say: '还有五年本科、三年规培等着你哦。', die: '……五个头，都被你打下来了。', sk: ['blink', 'spit', 'bomb'] },
+    g1a: { def: JUDGE_A, round: '开题汇报', name: '评委甲 · 创新点之问', say: '你的创新点在哪？请用一句话说清楚。', die: '……嗯，有点意思。', sk: ['spit'] },
+    g1b: { def: JUDGE_B, round: '答辩提问', name: '评委乙 · 工作量之问', say: '工作量不够，三年能做完吗？', die: '……工作量，够了。', sk: ['bomb'] },
+    g1c: { def: JUDGE_C, round: '专家评审', name: '评委丙 · 新颖性之问', say: '这个方向，去年别人就做过了。', die: '……你做的确实不一样。', sk: ['blink', 'spit'] }
   };
 
   // ======================================================================
@@ -3992,7 +4527,7 @@
   function baseStats() {
     var u = save.up, a = save.attrs, rv = save.review || 0;
     return {
-      dmg: (1 + u.notebook * 0.06) * (1 + a.focus * 0.05) * (1 + rv * BAL.reviewDmg),
+      dmg: (1 + u.notebook * 0.06) * (1 + a.focus * 0.05) * (1 + rv * BAL.reviewDmg) * (isGrad() && advDef(save.advisor) ? 1 + advDef(save.advisor).guide * 0.05 : 1),
       hp: BAL.baseHp + u.cup * 15 + a.stamina * 10 + rv * BAL.reviewHp,
       rate: 1 + u.phones * 0.06, speed: 1 + u.coffee * 0.05, pickup: 1 + u.bag * 0.2, xp: 1 + a.wit * 0.06
     };
@@ -4014,6 +4549,11 @@
     };
     renderSlots();
     if (cfg.accident) S.b.dmg *= cfg.accident.mul;   // 水平 = 整体输出
+    if (isGrad()) {
+      if (save.advisor === 'lin') { S.lv_.darts = 2; S.lv_.beam = 1; }
+      if (save.advisor === 'zhou') S.lv_.orbit = 1;
+      if (save.buffMeal) { S.p.max = S.p.hp = Math.round(S.p.max * 1.3); save.buffMeal = false; persist(); }
+    }
     if (cfg.rounds) startRound();
     if (cfg.rounds && cfg.accident && cfg.accident.late) {
       // 睡过头：赶到考场政治只剩最后 1 分钟，Boss 直接在场，基本不可能写完
@@ -4064,7 +4604,7 @@
     var def = eliteDef(spec), list = [];
     if (spec.twins) {
       var a = edgePoint(20), b = edgePoint(20);
-      var m1 = addMob(LOCK, a.x, a.y, 'elite'), m2 = addMob(LOCK, b.x, b.y, 'elite');
+      var m1 = addMob(def, a.x, a.y, 'elite'), m2 = addMob(def, b.x, b.y, 'elite');
       m1.twin = m2; m2.twin = m1; list = [m1, m2];
     } else { var e = edgePoint(20); list = [addMob(def, e.x, e.y, 'elite')]; }
     list.forEach(function (m) { m.spec = spec; m.main = !!main; m.skills = spec.sk || []; if (hpK) { m.max *= hpK; m.hp = m.max; } });
@@ -4187,6 +4727,11 @@
       var RB = S.cfg.rounds[S.ri].boss; codexHit('b', RB.name);
       S.slowT = 1.6; battleSay(RB.def, RB.name, RB.die, 3.4);
       roundOver(true);
+    } else if (m.kind === 'boss' && S.cfg.meet) {
+      burst(m, 70, 320, 0, 0); S.hitstop = 0.25; S.shake = 16; sfx('big');
+      S.won = true; if (S.endTimer < 0) S.endTimer = 3;
+      var MA = advDef(save.advisor); S.slowT = 1.6; battleSay(ADV_SPR[MA.id], MA.name, MA.meetWin, 3.6);
+      banner('问题全答上了！提前散会', 2.4);
     } else if (m.kind === 'boss') {
       burst(m, 70, 320, 0, 0); S.hitstop = 0.25; S.shake = 16; sfx('big'); sfx('boss');
       for (var b = 0; b < 25; b++) S.gems.push({ x: m.x + (Math.random() - 0.5) * 80, y: m.y + (Math.random() - 0.5) * 80, v: 3 });
@@ -4325,9 +4870,10 @@
         if (S.eliteIdx < cfg.elites.length && S.t >= cfg.elites[S.eliteIdx].at) { var EL = cfg.elites[S.eliteIdx++]; spawnElite(EL.spec, EL.hpK, EL.main); }
         if (cfg.endless && S.t >= S.nextElite) { S.nextElite += 50; spawnElite(randomEliteSpec(), 1 + S.t / 240); }
         if (cfg.bossAt && !S.bossSpawned && S.t >= cfg.bossAt) spawnBoss();
+        if (cfg.meet && !S.bossSpawned && S.t >= 2) spawnMeetBoss();
         if (cfg.duration && S.t >= cfg.duration && S.endTimer < 0 && p.hp > 0) {
           S.completed = true; S.ending = { t: 0 };
-          banner('叮铃铃——下课！', 2.8); sfx('bell'); S.shake = 4;
+          banner(cfg.meet ? '组会结束！今天先到这儿' : '叮铃铃——下课！', 2.8); sfx('bell'); S.shake = 4;
         }
       }
     }
@@ -4342,7 +4888,8 @@
       if (S.mobs.length < cap) { var e = edgePoint(); addMob(S.pool[Math.floor(Math.random() * S.pool.length)], e.x, e.y, 'mob'); }
     }
 
-    var dir = inputDir(), sp = speed();
+    var dir = inputDir(), sp = speed() * (S.distractT > 0 ? 0.55 : 1);
+    if (S.distractT > 0) S.distractT -= dt;
     p.x += (dir.x * sp + p.kx) * dt; p.y += (dir.y * sp + p.ky) * dt;
     var damp = Math.exp(-9 * dt); p.kx *= damp; p.ky *= damp;
     if (dir.x || dir.y) { p.fx = dir.x; p.fy = dir.y; if (Math.abs(dir.x) > 0.1) p.face = dir.x < 0; }
@@ -4356,6 +4903,7 @@
       if (frozen) { m.flash = Math.max(0, m.flash - dt); m.x += m.kx * dt; m.y += m.ky * dt; m.kx *= mdamp; m.ky *= mdamp; return; }
       var chase = Math.max(0, 1 - Math.hypot(m.kx, m.ky) / 220);
       var vx = dx / d * m.sp * chase, vy = dy / d * m.sp * chase;
+      if (m.def.id === 'ddl' && d < 150) { vx *= 1.9; vy *= 1.9; }
       if (m.kami) {   // 自爆怪：贴近就点燃引信，停下闪红，0.8 秒后爆炸
         if (m.fuse > 0) { vx = 0; vy = 0; m.fuse -= dt; m.flash = Math.floor(m.fuse * 12) % 2 ? 0.08 : 0; if (m.fuse <= 0) { kamiBoom(m); return; } }
         else if (d < 48) { m.fuse = 0.8; sfx('tick'); }
@@ -4368,6 +4916,7 @@
       m.kx *= mdamp; m.ky *= mdamp;
       m.flash = Math.max(0, m.flash - dt); m.orbCd = Math.max(0, m.orbCd - dt); m.face = dx < 0;
       if (d > Math.hypot(W, H) * 0.9 && m.kind === 'mob') { var e = edgePoint(); m.x = e.x; m.y = e.y; }
+      if (d < m.r + 12 && !m.ghost && m.def.id === 'zaima' && p.inv <= 0) S.distractT = 1.2;
       if (d < m.r + 12 && !m.ghost) { if (p.inv <= 0) { if (m.kind === 'mob') S.hitC = (S.hitC || 0) + 1; else S.hitBoss = (S.hitBoss || 0) + 1; } hurtPlayer(m.dmg, m.x, m.y); }
     });
     separate();
@@ -4818,7 +5367,7 @@
     $('hpText').textContent = Math.ceil(p.hp) + '/' + p.max;
     if (S.cfg.rounds) $('timer').textContent = fmt(Math.max(0, BAL.roundDur - S.rt));
     else if (S.cfg.endless) $('timer').textContent = fmt(S.t);
-    else { var total = S.cfg.duration || S.cfg.bossAt; $('timer').textContent = S.bossSpawned ? 'BOSS' : fmt(Math.max(0, total - S.t)); }
+    else { var total = S.cfg.duration || S.cfg.bossAt; $('timer').textContent = S.bossSpawned && !S.cfg.meet ? 'BOSS' : fmt(Math.max(0, total - S.t)); }
     $('lvTxt').textContent = S.lv; $('killTxt').textContent = S.kills;
     var b = S.boss && !S.boss.dead ? S.boss : null;
     $('bossbar').hidden = !b;
@@ -4883,6 +5432,11 @@
   // ======================================================================
   // ---------- 章节 ----------
   function chapterCfg(sub, ci, onEnd) {
+    var ch = CHAPTERS[sub.id], t = tierOf(sub.id, ci), cfg = chapterCfg0(sub, ci, onEnd);
+    if (sub.grad) { cfg.hpMul *= BAL.gradHp; cfg.mobDmg *= BAL.gradDmg; }
+    return cfg;
+  }
+  function chapterCfg0(sub, ci, onEnd) {
     var ch = CHAPTERS[sub.id], t = tierOf(sub.id, ci);
     return {
       kind: 'daily', hpMul: tierVal(TIER.hp, t), rateMul: tierVal(TIER.rate, t), mobDmg: tierVal(TIER.dmg, t), mobSpeed: tierVal(TIER.speed, t),
@@ -4983,7 +5537,9 @@
     var d = EXAM_STATE[id];
     return { id: id, label: d.label, mul: d.mul, late: !!d.late, banner: d.banner, good: d.mul > 1, text: d.texts[Math.floor(Math.random() * d.texts.length)] };
   }
+  function favorMul() { var f = save.favor == null ? 50 : save.favor; return (1.15 - f / 250) * (save.advisor === 'yan' ? 0.88 : 1); }
   function examCfg(s, accident, onEnd) {
+    if (isGrad()) return gradExamCfg(s, accident, onEnd);
     function boss(def, name, say, die, k, sub, ring, ringCd, sk) {
       return { def: def, name: name, say: say, die: die, ring: ring, ringCd: ringCd, sk: sk,
         hp: Math.round((sub ? BAL.examBossHp : BAL.retestBossHp) * k * s.hp * (sub ? examMul(sub) : 1)) };
@@ -4999,13 +5555,25 @@
       onEnd: onEnd
     };
   }
+  function gradExamCfg(s, accident, onEnd) {
+    var K = [1.0, 1.25, 1.5], R = [12, 14, 16], RC = [6, 5.5, 5];
+    return {
+      kind: 'exam', hpMul: s.hp * BAL.gradHp * 0.8, mobDmg: BAL.gradDmg, rateMul: 0.9, duration: 0, bossAt: 0, elites: [], accident: accident, phases: [{ group: SUB_IDS[0], until: 1e9, label: '' }],
+      rounds: SUBJECTS.map(function (sub, i) {
+        var B = EXAM_BOSSES[sub.id];
+        return { group: sub.id, name: B.round, tag: '第' + CN_NUM[i] + '轮 · ' + B.round + '（3 分钟）',
+          boss: { def: B.def, name: B.name, say: B.say, die: B.die, ring: R[i], ringCd: RC[i], sk: B.sk, hp: Math.round(BAL.gradExamHp * K[i] * examMul(sub.id) * favorMul()) } };
+      }),
+      onEnd: onEnd
+    };
+  }
   function startExam() {
     audioInit();
     var s = SCHOOLS[save.school];
     var accident = rollExamState(save.stress);
     var B0 = EXAM_BOSSES[SUB_IDS[0]];
     var first = { name: B0.name, say: accident && accident.late ? '同学，还有一分钟收卷。' : B0.say, boss: B0.def, sk: B0.sk };
-    showLoading({ sub: '考研日 · ' + s.name, title: accident && accident.late ? '迟到了！' : '四门连考', kind: '第一科 Boss', spec: first, done: function () {
+    showLoading({ sub: isGrad() ? '研一 · 开题答辩' : '考研日 · ' + s.name, title: accident && accident.late ? '迟到了！' : (isGrad() ? '三位评委' : '四门连考'), kind: isGrad() ? '第一位评委' : '第一科 Boss', spec: first, done: function () {
       startBattle(examCfg(s, accident, function (r) { examResult(s, r, accident); }));
       if (accident) { if (!accident.late) banner(accident.banner, 2.6); battleSay(GM.player, '你（内心）', accident.text + (accident.good ? '！' : '……'), 4); }
     } });
@@ -5013,6 +5581,18 @@
   }
   function examResult(s, r, acc) {
     save.runs++; save.totalKills += r.kills;
+    if (isGrad()) {
+      var gr = r.results || [], gp = gr.filter(Boolean).length;
+      var gst = [['考场状态', acc ? acc.label : '正常发挥'], ['通过轮次', gp + ' / 3', true], ['导师好感', save.favor], ['击杀', r.kills]];
+      if (gp >= 2 && !r.quit) {
+        save.gyDone = 1; save.favor = Math.min(100, save.favor + 10); persist();
+        showResult('开题通过！', '三位评委交换了眼神：“这个题目，可以做。”研一顺利结束。', gst, [{ label: '研一结业', primary: true, fn: function () { renderEnd(); show('vEnd'); } }]);
+      } else {
+        persist();
+        showResult('开题没通过……', '评委：“回去再改改，下个月重新开题。”星星、文献和补助都保留，再来一周。', gst, [{ label: '重新开题', primary: true, fn: gradRetry }]);
+      }
+      return;
+    }
     var res = r.results || [], passed = res.slice(0, 4).filter(Boolean).length, lower = SCHOOLS[Math.max(0, save.school - 1)];
     var adj = save.school > 0 ? lower.name : '青藤学院（调剂）';
     var stats = [['这是', zhan(save.week)], ['考场状态', acc ? acc.label : '正常发挥'], ['初试过关科目', passed + ' / 4'], ['复试', res[4] === true ? '通过' : (passed === 4 ? '没通过' : '没进复试')], ['击杀', r.kills]];
@@ -5104,6 +5684,40 @@
     var key = dayKey(), d = dayNum(), sc = totalScore(), line = lineOf(), s = SCHOOLS[save.school], log = save.dayLog;
     var dl = $('dailyStats'); dl.innerHTML = '';
     var gapTxt = sc >= line ? '已过线 ✓' : '还差 ' + (line - sc) + ' 分';
+    var MISS = settleMeets();
+    if (isGrad()) {
+      var A = advDef(save.advisor);
+      if (!log || log.key === key) {
+        $('dailyEyebrow').textContent = '研一 · 主线任务';
+        $('dailyTitle').textContent = '7 天后，开题答辩。';
+        addStat(dl, '导师', A.name + '（' + A.role + '）');
+        addStat(dl, '开题线', line + ' / ' + fullTotal());
+        addStat(dl, '组会', '这周 ' + meetPlan().length + ' 次 · ' + slotDef().name, true);
+        $('dailyGoal').innerHTML = '<b>怎么开题：</b>打通文献海、课程、杂事三条线，再多读文献，开题进度过线；组会准时出席拿补助和好感。第 7 天面对三位评委！';
+      } else {
+        save.review = (save.review || 0) + 1;
+        $('dailyEyebrow').textContent = '研一 第 ' + Math.min(d, 7) + ' 天 · 昨日小结';
+        $('dailyTitle').textContent = MISS ? '你错过了 ' + MISS.n + ' 次组会……' : (log.runs ? '忙了 ' + log.runs + ' 件事' : '昨天什么都没干……');
+        addStat(dl, '开题进度', log.score0 + ' → ' + sc + ' / ' + line);
+        addStat(dl, '补助', '¥' + (save.money || 0)); addStat(dl, '导师好感', save.favor);
+        addStat(dl, '高级复习 第 ' + save.review + ' 层', '伤害 +' + Math.round(save.review * BAL.reviewDmg * 100) + '%', true);
+        $('dailyGoal').innerHTML = MISS ? '<b>' + A.name + '：</b>“' + A.scold + '”' + (A.id === 'tao' ? '' : '（好感 −' + 8 * MISS.n + '，压力 +' + 15 * MISS.n + '）')
+          : d >= 7 ? '<b>今天开题！</b>' + (sc >= line ? '进度已过线，评委会好对付些。' : '进度还没过线，答辩会很难。') : '<b>今日建议：</b>' + (meetToday().st === 'soon' ? '今天有组会（' + slotDef().name + '），记得准时来。' : '去刷章节和读文献，把开题进度往上推。');
+      }
+      $('dailyGo').textContent = d >= 7 ? '去答辩' : '开始今天的科研';
+      save.dayLog = { key: key, runs: 0, study: 0, score0: sc };
+      save.seenDay = key; persist();
+      var gl = Math.max(0, 7 - d);
+      $('dailyBig').innerHTML = d >= 7 ? '今天开题！<small>评委已就位</small>' : '距离开题 ' + gl + ' 天<small>开题答辩组正在逼近</small>';
+      $('dailyName').textContent = '开题答辩组 · 三位评委';
+      $('dailyBig').hidden = $('dailyName').hidden = $('dailyCard').hidden = true;
+      $('dailyOv').hidden = false;
+      daily = { t: 0, left: gl, steps: 0, shake: 0, flash: 0, stage: 0 };
+      var r2 = $('dailyOv').getBoundingClientRect(), dpr2 = Math.min(window.devicePixelRatio || 1, 2);
+      daily.w = r2.width; daily.h = r2.height; daily.dpr = dpr2;
+      dcv.width = Math.round(r2.width * dpr2); dcv.height = Math.round(r2.height * dpr2);
+      audioInit(); return;
+    }
     if (!log || log.key === key) {
       $('dailyEyebrow').textContent = (save.week > 1 ? zhan(save.week) + ' · ' : '') + '主线任务';
       $('dailyTitle').textContent = '7 天后，考研。';
@@ -5132,7 +5746,7 @@
     save.seenDay = key; persist();
     var left = Math.max(0, 7 - d);
     $('dailyBig').innerHTML = d >= 7 ? '今天考研！<small>考研魔王就在眼前</small>' : '距离考研 ' + left + ' 天<small>考研魔王正在逼近</small>';
-    $('dailyName').textContent = '考研魔王 · ' + EXAM_BOSSES[SUB_IDS[3]].name;
+    $('dailyName').textContent = '考研魔王 · ' + EXAM_BOSSES[SUB_IDS[SUB_IDS.length - 1]].name;
     $('dailyBig').hidden = $('dailyName').hidden = $('dailyCard').hidden = true;
     $('dailyOv').hidden = false;
     daily = { t: 0, left: left, steps: 0, shake: 0, flash: 0, stage: 0 };
@@ -5166,7 +5780,7 @@
     var p = (7 - D.left) / 7, grow = 0.82 + 0.06 * D.steps;
     var sc = Math.max(3, Math.floor(Math.min(w, h * 0.6) * (0.4 + 0.75 * p) * grow / GM.N)), size = GM.N * sc;
     var gx = Math.round(w / 2 - size / 2), gy = Math.round(hz - size * (0.86 - 0.1 * p));
-    var sil = silhouette(EXAM_BOSSES[SUB_IDS[3]].def, Math.floor(t * 2) % 2), rim = Math.max(2, Math.round(sc / 3));
+    var sil = silhouette(EXAM_BOSSES[SUB_IDS[SUB_IDS.length - 1]].def, Math.floor(t * 2) % 2), rim = Math.max(2, Math.round(sc / 3));
     c.globalAlpha = 0.55; c.filter = 'none';
     c.drawImage(rimOf(sil), gx - rim, gy - rim, size, size); c.drawImage(rimOf(sil), gx + rim, gy - rim, size, size);
     c.globalAlpha = 1;
@@ -5194,9 +5808,10 @@
   // 启动与主循环
   // ======================================================================
   function boot() {
-    mode = 'idle'; setMajor(save.major);
-    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv', 'celeOv', 'letterOv', 'setOv', 'codexOv', 'codexCard', 'advOv'].forEach(function (o) { overlay(o, false); });
+    mode = 'idle'; setStage();
+    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv', 'celeOv', 'letterOv', 'setOv', 'codexOv', 'codexCard', 'advOv', 'slotOv', 'chkOv', 'litOv', 'buyOv'].forEach(function (o) { overlay(o, false); });
     if (!save.codex || !save.codex.m) save.codex = { m: {}, e: {}, b: {} };
+    if (isGrad()) { if (save.gyDone) { renderEnd(); show('vEnd'); } else goHome(); return; }
     if (save.outcome && !save.advisor) { renderAdvisors(); show('vAdvisor'); return; }
     if (save.outcome) { renderEnd(); show('vEnd'); return; }
     if (!save.storySeen) { startIntro(); return; }
@@ -5224,12 +5839,15 @@
       opt = opt || {};
       var keep = { up: save.up, attrs: save.attrs, review: save.review, stars: save.stars };
       if (opt.major) setMajor(opt.major);
+      var keepPh = save.phase, keepAdv = save.advisor;
+      if (opt.grad) { save.phase = 'grad'; save.advisor = opt.advisor || 'su'; save.gRev0 = 0; setGradYear(1); }
       save.up = opt.up || { notebook: 0, cup: 0, phones: 0, coffee: 0, bag: 0 };
       save.attrs = opt.attrs || { focus: 0, stamina: 0, wit: 0 };
       save.review = opt.review || 0; if (opt.stars) save.stars = opt.stars;
       var out = null, done = function (r) { out = r; }, cfg;
       if (kind === 'chapter') cfg = chapterCfg(SUBJ[opt.sub], opt.ci, done);
       else if (kind === 'endless') cfg = endlessCfg(done);
+      else if (kind === 'meet') cfg = meetCfg(done);
       else cfg = examCfg(SCHOOLS[opt.school == null ? 1 : opt.school], opt.accident || null, done);
       window.__bot = true; startBattle(cfg);
       for (var i = 0; i < (opt.maxT || 1500) * 30 && !out; i++) {
@@ -5248,10 +5866,11 @@
       var res = { t: Math.round(S.t), kills: S.kills, lv: S.lv, hp: Math.round(S.p.hp), completed: S.completed, elite: S.eliteDown, minHp: +S.minHp.toFixed(2), results: S.results.slice(), ttk: S.ttk.slice(), hits: [S.hitC || 0, S.hitB || 0, S.hitBoss || 0, S.hitHz || 0, S.poolHits || 0], max: S.p.max, used: S.used, main: S.mainDown, allEl: S.eliteKills };
       save.up = keep.up; save.attrs = keep.attrs; save.review = keep.review; save.stars = keep.stars;
       if (opt.major) setMajor(save.major);
+      if (opt.grad) { save.phase = keepPh; save.advisor = keepAdv; setStage(); }
       mode = 'idle'; ['levelOv', 'resultOv', 'celeOv', 'letterOv'].forEach(function (o) { overlay(o, false); }); $('bsay').hidden = true;
       return res;
     },
-    totalCost: TOTAL_COST, starUnit: function () { return STAR_UNIT; }, subs: function () { return SUB_IDS.slice(); }, setMajor: setMajor, bosses: EXAM_BOSSES, bal: BAL, tier: TIER,
+    totalCost: TOTAL_COST, setGradYear: setGradYear, starUnit: function () { return STAR_UNIT; }, subs: function () { return SUB_IDS.slice(); }, setMajor: setMajor, bosses: EXAM_BOSSES, bal: BAL, tier: TIER,
     // 不依赖画面刷新，直接按 1/30 秒步进模拟；升级时自动选第一个
     sim: function (sec) {
       for (var i = 0; i < Math.round(sec * 30); i++) {
