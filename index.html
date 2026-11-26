@@ -159,7 +159,7 @@
   }
 
   /* ---------- 报名表（选专业、选院校） ---------- */
-  .form-view { background: var(--wood) repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 26px, rgba(255,255,255,0.04) 26px 28px, transparent 28px 61px); align-content: center; }
+  .form-view { background: var(--wood) repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 26px, rgba(255,255,255,0.04) 26px 28px, transparent 28px 61px); align-content: safe center; }   /* safe：内容比屏幕高时从顶部排，不会把标题推到滚不到的地方 */
   .form-head { display: grid; gap: 4px; text-align: center; border-bottom: 3px double var(--ink); padding-bottom: 10px; }
   .form-head .eyebrow { color: var(--red); font-weight: 700; }
   .opt {
@@ -4106,7 +4106,7 @@
     $('endAdv').hidden = $('endNext').hidden = !a; $('endSoon').hidden = !!a;
     if (a) {
       advCanvas($('endAdvCv'), a); $('endAdvName').textContent = a.name + ' · ' + a.role;
-      $('endAdvLine').textContent = '组会' + meetText(a.meet) + ' · 查岗 ' + a.check + '% · 补助 ¥' + a.pay + '/月';
+      $('endAdvLine').textContent = '组会' + meetText(a) + ' · 查岗 ' + a.check + '% · 补助 ¥' + a.pay + '/月';
     }
   }
   $('restartBtn').addEventListener('click', function () { var keepSet = save.codex; save = blank(); save.storySeen = true; save.codex = keepSet || save.codex; persist(); boot(); });
@@ -4201,7 +4201,8 @@
   ADVISORS.forEach(function (a) { ADV_SPR[a.id] = { id: 'adv_' + a.id, draw: ADV_ART[a.id] }; });
   function advCanvas(cv, a, t) { var x = cv.getContext('2d'); x.clearRect(0, 0, 24, 24); x.drawImage(GM.frame(ADV_SPR[a.id], t || 0), 0, 0); cv.style.setProperty('--c', a.c); }
   function pip5(n) { var h = '<span class="pip5">'; for (var i = 0; i < 5; i++) h += '<i' + (i < n ? ' class="on"' : '') + '></i>'; return h + '</span>'; }
-  function meetText(n) { return n % 4 ? '每月 ' + n + ' 次' : '每周 ' + (n / 4) + ' 次'; }
+  // 卡片上显示游戏里每 7 天实际开几次组会（和 MEET_N 保持一致）
+  function meetText(a) { return '每周 ' + (MEET_N[a.id] || 1) + ' 次'; }
   function renderAdvisors() {
     var box = $('advList'); box.innerHTML = '';
     ADVISORS.forEach(function (a) {
@@ -4215,7 +4216,7 @@
       var role = document.createElement('span'); role.className = 'role'; role.textContent = a.role; b.querySelector('.t').appendChild(role);
       b.querySelector('.tag').textContent = a.tag;
       var st = b.querySelectorAll('.adv-stats b');
-      st[0].textContent = meetText(a.meet); st[1].textContent = a.check + '%'; st[2].textContent = '¥' + a.pay + '/月';
+      st[0].textContent = meetText(a); st[1].textContent = a.check + '%'; st[2].textContent = '¥' + a.pay + '/月';
       if (a.check >= 40) st[1].className = 'hot'; if (a.meet >= 8) st[0].className = 'hot';
       var pc = b.querySelector('.adv-pc');
       a.good.slice(0, 1).concat(a.bad.slice(0, 1)).forEach(function (txt, i) { var p = document.createElement('span'); p.className = i ? 'b' : 'g'; p.textContent = txt; pc.appendChild(p); });
@@ -4231,7 +4232,7 @@
     $('advWxHd').textContent = a.name + ' 给你发来了消息';
     var w = $('advWx'); w.innerHTML = ''; a.wx.forEach(function (m) { var p = document.createElement('p'); p.textContent = m; w.appendChild(p); });
     var dl = $('advStats'); dl.innerHTML = '';
-    addStat(dl, '组会', meetText(a.meet)); addStat(dl, '查岗', '每天 ' + a.check + '%'); addStat(dl, '补助', '¥' + a.pay + ' / 月', true);
+    addStat(dl, '组会', meetText(a)); addStat(dl, '查岗', '每天 ' + a.check + '%'); addStat(dl, '补助', '¥' + a.pay + ' / 月', true);
     addStat(dl, '精力上限', (7 + a.free) + ' 格'); addStat(dl, '专属', a.perk);
     a.good.forEach(function (g) { addStat(dl, '好处', g); }); a.bad.forEach(function (g) { addStat(dl, '坑', g); });
     overlay('advOv', true);
