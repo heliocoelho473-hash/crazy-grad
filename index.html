@@ -286,6 +286,8 @@
   .tog[aria-pressed=true] { background: var(--green, #4f9a52); color: #fff; }
   .set-sep { height: 0; border-top: 2px dashed rgba(29,22,38,0.25); }
   .btn.danger { background: var(--paper); color: var(--red); }
+  .priv-text { max-height: 46vh; overflow-y: auto; font-size: 13px; line-height: 1.7; background: #fff; padding: 10px 12px; box-shadow: 0 0 0 2px var(--ink); }
+  .priv-text h3 { font-size: 14px; margin: 10px 0 4px; }
   .set-foot { font-size: 12px; color: var(--dim); text-align: center; line-height: 1.6; }
 
   /* 图鉴 */
@@ -867,6 +869,17 @@
       <button class="btn ghost" id="advBack" type="button">再看看别的导师</button>
     </div>
   </div>
+  <div class="ov" id="privOv" hidden>
+    <div class="panel">
+      <div class="eyebrow">欢迎来到《疯狂的研究生》</div>
+      <h2>隐私政策</h2>
+      <p class="muted" id="privLead">开始游戏前，请阅读并同意下面的隐私政策。</p>
+      <div class="priv-text" id="privText"></div>
+      <p class="muted" id="privWarn" hidden>不同意的话就没法开始游戏。你可以随时回来重新选择。</p>
+      <button class="btn red" id="privOk" type="button">同意并继续</button>
+      <button class="btn ghost" id="privNo" type="button">不同意</button>
+    </div>
+  </div>
   <div class="ov" id="setOv" hidden>
     <div class="panel">
       <div class="eyebrow">设置</div>
@@ -876,11 +889,13 @@
       <div class="set-tog"><span>手机震动<small>受伤和 Boss 出场时轻震一下</small></span><button class="tog" id="setVib" type="button"></button></div>
       <div class="set-tog"><span>画面震动<small>受击、爆炸时屏幕晃动</small></span><button class="tog" id="setShake" type="button"></button></div>
       <div class="set-tog"><span>伤害数字<small>关掉画面会更干净</small></span><button class="tog" id="setNums" type="button"></button></div>
+      <div class="set-tog"><span>TapTap 账号<small id="ttState">未在 TapTap 里运行</small></span><button class="tog-btn btn ghost" id="ttLogin" type="button" style="width:auto">登录</button></div>
       <div class="set-sep"></div>
       <button class="btn ghost" id="setIntro" type="button">重看开场动画</button>
+      <button class="btn ghost" id="setPrivacy" type="button">隐私政策</button>
       <button class="btn danger" id="setReset" type="button">重置存档</button>
       <button class="btn" id="setClose" type="button">好了</button>
-      <p class="set-foot">疯狂的研究生 · 原型版 v0.7<br>本游戏纯属虚构，怪物与真实人物、机构无关。</p>
+      <p class="set-foot">疯狂的研究生 · v1.0<br>本游戏纯属虚构，怪物与真实人物、机构无关。</p>
     </div>
   </div>
   <div class="ov" id="codexOv" hidden>
@@ -902,8 +917,9 @@
   </div>
   <div class="ov" id="adOv" hidden>
     <div class="panel">
-      <p class="muted">广告占位：上线后这里播放 TapADN 激励视频</p>
+      <p class="muted" id="adNote">网页试玩版：这里模拟一段广告。在 TapTap 里会播放真实的激励视频，完整看完才给奖励。</p>
       <div class="adbox" id="adCount">3</div>
+      <button class="btn ghost" id="adClose" type="button" hidden>知道了</button>
     </div>
   </div>
   <div class="ov" id="chapOv" hidden>
@@ -3717,13 +3733,91 @@
     if (isGrad() && Math.random() * 100 < advDef(save.advisor).check) { startCheck(); return; }
     save.lastRelax = Date.now(); save.stress = Math.max(0, save.stress - 35); persist(); sfx('pop'); renderHome();
   });
+
+  // ======================================================================
+  // TapTap 平台：登录、激励视频、隐私同意
+  // 在 TapTap 里运行时平台会提供全局对象 tap；网页试玩版里没有 tap，就走模拟广告
+  // ======================================================================
+  var TT = { has: typeof tap !== 'undefined', logged: false, code: null, err: null, ad: null, adReady: false, cb: null, unit: window.__AD_UNIT || '' };
+  var PRIV_KEY = 'crazygrad.privacy.v1';
+  var PRIV_HTML = '<p>《疯狂的研究生》（以下简称“本游戏”）非常重视你的个人信息。本政策说明本游戏会处理哪些信息、为什么处理，以及你有哪些权利。</p>' +
+    '<h3>一、我们处理的信息</h3><p>1. <b>游戏进度</b>：存档、设置只保存在你手机本地，不会上传到我们的服务器（本游戏没有自己的服务器）。</p>' +
+    '<p>2. <b>TapTap 登录</b>：通过 TapTap 提供的登录接口（tap.login）获取一个临时登录凭证，用于确认你是 TapTap 用户。本游戏不会获取你的手机号、实名信息或通讯录。</p>' +
+    '<p>3. <b>广告</b>：本游戏通过 TapTap 小游戏广告（TapADN）展示激励视频广告。广告服务可能会按照 TapTap 及其广告服务的隐私政策收集设备信息（如设备型号、系统版本、网络状态）用于广告投放和反作弊。具体请查看 TapTap 的隐私政策。</p>' +
+    '<h3>二、第三方 SDK</h3><p>TapTap 小游戏运行环境与登录服务（TapTap）；TapTap 小游戏广告服务（TapADN）。</p>' +
+    '<h3>三、你的权利</h3><p>你可以随时在“设置 → 重置存档”删除本地存档。不同意本政策时，本游戏不会开始运行，也不会调用登录和广告。</p>' +
+    '<h3>四、未成年人</h3><p>未成年人应在监护人陪同下阅读本政策并使用本游戏。</p>' +
+    '<h3>五、联系我们</h3><p>开发者：【请填写开发者名称】<br>联系邮箱：【请填写联系邮箱】</p>' +
+    '<p class="muted">更新日期：2026 年 11 月</p>';
+  function privAgreed() { try { return localStorage.getItem(PRIV_KEY) === '1'; } catch (e) { return false; } }
+  function askPrivacy(then) {
+    $('privText').innerHTML = PRIV_HTML; $('privWarn').hidden = true;
+    $('privLead').textContent = '开始游戏前，请阅读并同意下面的隐私政策。';
+    $('privOk').hidden = $('privNo').hidden = false;
+    $('privOk').onclick = function () { try { localStorage.setItem(PRIV_KEY, '1'); } catch (e) {} overlay('privOv', false); ttInit(); then && then(); };
+    $('privNo').onclick = function () { $('privWarn').hidden = false; };
+    overlay('privOv', true);
+  }
+  $('setPrivacy').addEventListener('click', function () {
+    $('privText').innerHTML = PRIV_HTML; $('privWarn').hidden = true; $('privLead').textContent = '你已同意本政策。';
+    $('privOk').hidden = false; $('privNo').hidden = true;
+    $('privOk').onclick = function () { overlay('privOv', false); };
+    overlay('privOv', true);
+  });
+  function ttState() {
+    if (!$('ttState')) return;
+    $('ttState').textContent = !TT.has ? '网页试玩版，不需要登录' : TT.logged ? '已登录' : TT.err ? '登录失败：' + TT.err : '登录中……';
+    $('ttLogin').hidden = !TT.has || TT.logged;
+  }
+  function ttLogin() {
+    if (!TT.has || !tap.login) { ttState(); return; }
+    TT.err = null; ttState();
+    try {
+      tap.login({ success: function (res) { TT.logged = !!(res && res.code); TT.code = res && res.code; if (!TT.logged) TT.err = '没有拿到凭证'; ttState(); },
+        fail: function (e) { TT.logged = false; TT.err = (e && (e.errMsg || e.errno)) || '未知错误'; ttState(); } });
+    } catch (e) { TT.err = String(e && e.message || e); ttState(); }
+  }
+  $('ttLogin').addEventListener('click', ttLogin);
+  $('setBtn').addEventListener('click', ttState);
+  var ttStarted = false;
+  function ttInit() {
+    if (ttStarted || !TT.has) { ttState(); return; }
+    ttStarted = true;
+    ttLogin();
+    if (TT.unit && tap.createRewardedVideoAd) {
+      try {
+        TT.ad = tap.createRewardedVideoAd({ adUnitId: TT.unit });
+        TT.ad.onLoad(function () { TT.adReady = true; });
+        TT.ad.onError(function () { TT.adReady = false; });
+        TT.ad.onClose(function (res) { var cb = TT.cb; TT.cb = null; TT.adReady = false; if (cb) cb(!!(res && res.isEnded)); });
+        TT.ad.load().catch(function () {});
+      } catch (e) { TT.ad = null; }
+    }
+  }
+  // 播放激励视频：done(true) = 完整看完，发奖励；done(false, why) = 没看完 / 加载失败，不发
+  function showRewardAd(done) {
+    if (TT.ad) {
+      TT.cb = done;
+      TT.ad.show().catch(function () { return TT.ad.load().then(function () { return TT.ad.show(); }); })
+        .catch(function () { TT.cb = null; done(false, 'fail'); });
+      return;
+    }
+    if (TT.has || window.__RELEASE) { done(false, 'fail'); return; }   // 平台里却没有广告：不卡住游戏，也不白给奖励
+    // 网页试玩版：3 秒模拟广告
+    var n = 3; $('adCount').textContent = n; $('adClose').hidden = true; $('adCount').hidden = false; overlay('adOv', true);
+    var iv = setInterval(function () { n--; $('adCount').textContent = n; if (n <= 0) { clearInterval(iv); overlay('adOv', false); done(true); } }, 700);
+  }
+  function adFailNote(why) {
+    $('adNote').textContent = why === 'fail' ? '广告暂时加载不出来，等一会儿再试试。' : '要完整看完广告才能续命哦。';
+    $('adCount').hidden = true; $('adClose').hidden = false; overlay('adOv', true);
+  }
+  $('adClose').addEventListener('click', function () { overlay('adOv', false); $('adCount').hidden = false; });
   $('adBtn').addEventListener('click', function () {
     if (save.ads >= ADS_PER_DAY) return;
-    var n = 3; $('adCount').textContent = n; overlay('adOv', true);
-    var iv = setInterval(function () {
-      n--; $('adCount').textContent = n;
-      if (n <= 0) { clearInterval(iv); overlay('adOv', false); regen(); save.ads++; save.energy++; persist(); renderHome(); }
-    }, 700);
+    showRewardAd(function (ok, why) {
+      if (!ok) { adFailNote(why); return; }
+      regen(); save.ads++; save.energy++; persist(); sfx('level'); renderHome();
+    });
   });
 
   // 道具商店
@@ -6569,7 +6663,11 @@
   // ======================================================================
   function boot() {
     mode = 'idle'; setStage();
-    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv', 'celeOv', 'letterOv', 'setOv', 'codexOv', 'codexCard', 'advOv', 'slotOv', 'chkOv', 'litOv', 'buyOv'].forEach(function (o) { overlay(o, false); });
+    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv', 'celeOv', 'letterOv', 'setOv', 'codexOv', 'codexCard', 'advOv', 'slotOv', 'chkOv', 'litOv', 'buyOv', 'privOv'].forEach(function (o) { overlay(o, false); });
+    if ((window.__RELEASE || TT.has) && !privAgreed()) { askPrivacy(boot2); return; }
+    ttInit(); boot2();
+  }
+  function boot2() {
     if (!save.codex || !save.codex.m) save.codex = { m: {}, e: {}, b: {} };
     if (isGrad()) { if (save.gyDone) { renderEnd(); show('vEnd'); } else goHome(); return; }
     if (save.outcome && !save.advisor) { renderAdvisors(); show('vAdvisor'); return; }
