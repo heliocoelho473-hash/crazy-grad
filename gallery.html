@@ -243,6 +243,11 @@
     '>': ['#..', '.#.', '..#', '.#.', '#..'],
     'E': ['###', '#..', '##.', '#..', '###'],
     'R': ['##.', '#.#', '##.', '#.#', '#.#'],
+    '%': ['#.#', '..#', '.#.', '#..', '#.#'],
+    '8': ['###', '#.#', '###', '#.#', '###'],
+    '2': ['##.', '..#', '.#.', '#..', '###'],
+    '[': ['##', '#.', '#.', '#.', '##'],
+    ']': ['##', '.#', '.#', '.#', '##'],
     '甲': ['#####', '#.#.#', '#####', '..#..', '..#..'],
     '乙': ['####.', '...#.', '..#..', '.#...', '#####'],
     '丙': ['#####', '..#..', '#####', '#.#.#', '#...#']
@@ -1028,6 +1033,91 @@
         a.forEach(function (q, i) { g.rect(q[0] - 1, q[1] - 1, 2, 2, i === 0 ? '#3d7bd9' : '#9fb4cc'); });
         g.eye(9, 11); g.eye(14, 11); g.rect(10, 15, 4, 1, INK);
       }
+    },
+    // 研究生篇 · 研三 · 写论文
+    {
+      id: 'kongbai', group: 'g3a', name: '空白文档', course: '研三·写论文', main: true, speed: 31,
+      origin: '新建文档，一个字都没写', behavior: '成群涌来，数量最多', line: '光标闪了三个小时',
+      draw: function (g, t) {
+        g.rect(5, 3, 14, 18, '#ffffff'); g.rect(5, 3, 14, 2, '#3d7bd9');
+        if (t) g.rect(8, 8, 1, 4, INK);
+        g.eye(9, 14); g.eye(14, 14); g.rect(11, 18, 3, 1, '#c9c2b2');
+      }
+    },
+    {
+      id: 'cuobie', group: 'g3a', name: '错别字虫', course: '研三·写论文', speed: 40,
+      origin: '“研究”写成“研允”', behavior: '扭来扭去，很难瞄准', line: '的地得，傻傻分不清',
+      draw: function (g, t) {
+        var y = [12, 10, 12, 14, 12];
+        for (var i = 0; i < 5; i++) g.circ(4 + i * 4, (t ? y[i] : y[(i + 2) % 5]), 2, i === 4 ? '#e5484d' : '#f2b53c');
+        g.p(19, 11 + (t ? 0 : 2), '#ffffff'); g.p(20, 10 + (t ? 0 : 2), INK);
+        g.line(19, 8, 21, 5, INK);
+      }
+    },
+    {
+      id: 'yema', flip: true, group: 'g3a', name: '页码乱序', course: '研三·写论文', speed: 28,
+      origin: '一插分节符页码就全乱了', behavior: '时不时瞬移到别的位置', line: '第 3 页后面是第 1 页',
+      draw: function (g, t) {
+        g.rect(6, 5, 12, 15, '#e8e1cf'); g.rect(4, 3, 12, 15, '#ffffff');
+        g.text(t ? '3' : '1', 13, 13, '#e5484d'); g.rect(6, 6, 7, 1, '#c9c2b2'); g.rect(6, 8, 5, 1, '#c9c2b2');
+        g.eye(6, 11); g.eye(10, 11);
+      }
+    },
+    // 研三 · 降重
+    {
+      id: 'biaohong', group: 'g3b', name: '查重标红句', course: '研三·降重', main: true, speed: 32,
+      origin: '查重报告里一片红', behavior: '打碎了会分裂成两小句', line: '重复率：38%',
+      draw: function (g, t) {
+        g.rect(2, 7 + t, 20, 10, '#e5484d'); g.rect(2, 7 + t, 20, 2, '#ff8a8a');
+        g.rect(4, 11 + t, 7, 1, '#ffffff'); g.rect(13, 11 + t, 7, 1, '#ffffff'); g.rect(4, 14 + t, 11, 1, '#ffffff');
+        g.eye(7, 3 + t); g.eye(14, 3 + t);
+      }
+    },
+    {
+      id: 'geshicuo', group: 'g3b', name: '格式错误', course: '研三·降重', speed: 30,
+      origin: '学院格式审查', behavior: '一路歪歪扭扭地冲过来', line: '一级标题应为黑体三号',
+      draw: function (g, t) {
+        g.rect(4, 4, 16, 16, '#fbf6e9'); g.rect(6, 7, 12, 2, INK); g.rect(8 + t, 11, 10, 1, '#8a8a8a'); g.rect(6 - t, 13, 10, 1, '#8a8a8a'); g.rect(9, 15, 9, 1, '#8a8a8a');
+        g.circ(18, 18, 3, '#e5484d'); g.p(18, 17, '#ffffff'); g.p(18, 19, '#ffffff');
+        g.eye(7, 17); g.eye(12, 17);
+      }
+    },
+    {
+      id: 'yinyong', flip: true, group: 'g3b', name: '引用缺失', course: '研三·降重', speed: 34,
+      origin: '“此处需要引用”', behavior: '成对蹦过来', line: '[来源请求]',
+      draw: function (g, t) {
+        g.text('[', 3, 8 + t, '#3d7bd9'); g.text('?', 9, 8 - t, '#e5484d'); g.text(']', 16, 8 + t, '#3d7bd9');
+        g.eye(8, 16); g.eye(13, 16); g.rect(10, 19, 3, 1, INK);
+      }
+    },
+    // 研三 · 答辩准备
+    {
+      id: 'niming', group: 'g3c', name: '匿名评审意见', course: '研三·答辩', main: true, speed: 30,
+      origin: '盲审返回的意见表', behavior: '若隐若现地飘过来', line: '评审人：***',
+      draw: function (g, t) {
+        g.rect(4, 4, 16, 17, '#dfe6ee'); g.rect(4, 4, 16, 4, '#2d3a4f');
+        g.text('X', 6, 10, '#2d3a4f'); g.text('X', 10, 10, '#2d3a4f'); g.text('X', 14, 10, '#2d3a4f');
+        g.rect(7, 17, 10, 2, '#2d3a4f'); g.p(8 + t * 6, 17, '#7fd1ff');
+      }
+    },
+    {
+      id: 'ppt', group: 'g3c', name: '答辩 PPT', course: '研三·答辩', speed: 34,
+      origin: '改到第 17 版的答辩 PPT', behavior: '跑得快，撞一下很疼', line: '最终版_改_再改_真的最终版.pptx',
+      draw: function (g, t) {
+        g.rect(3, 4, 18, 13, '#f2b53c'); g.rect(5, 6, 14, 9, '#ffffff');
+        g.rect(7, 12, 2, 2, '#3d7bd9'); g.rect(10, 10, 2, 4, '#4f9a52'); g.rect(13, 8, 2, 6, '#e5484d');
+        g.rect(11, 17, 2, 3, INK); g.rect(8, 20, 8, 1, INK);
+        g.eye(6, 1 + t); g.eye(16, 1 + t);
+      }
+    },
+    {
+      id: 'yanbi', flip: true, group: 'g3c', name: '延毕通知', course: '研三·答辩', speed: 24,
+      origin: '“经研究决定，你延期毕业”', behavior: '慢吞吞但血很厚', line: '明年见',
+      draw: function (g, t) {
+        g.rect(4, 3, 16, 19, '#ffffff'); g.rect(4, 3, 16, 3, '#e5484d');
+        g.rect(6, 9, 12, 1, '#c9c2b2'); g.rect(6, 11, 10, 1, '#c9c2b2'); g.circ(15, 17, 3, '#e5484d'); g.circ(15, 17, 2, '#ffffff');
+        g.eye(7, 14 + t); g.eye(10, 14 + t);
+      }
     }
   ];
 
@@ -1066,7 +1156,10 @@
     { id: 'g1c', name: '研一 · 杂事', note: '研究生篇 · 群消息、报销、在吗' },
     { id: 'g2a', name: '研二 · 实验', note: '研究生篇 · 报错、内存泄漏、失败的实验' },
     { id: 'g2b', name: '研二 · 数据', note: '研究生篇 · 乱码、p 值、离群点' },
-    { id: 'g2c', name: '研二 · 投稿', note: '研究生篇 · 审稿意见、拒稿信、漫长的等待' }
+    { id: 'g2c', name: '研二 · 投稿', note: '研究生篇 · 审稿意见、拒稿信、漫长的等待' },
+    { id: 'g3a', name: '研三 · 写论文', note: '研究生篇 · 空白文档、错别字、页码' },
+    { id: 'g3b', name: '研三 · 降重', note: '研究生篇 · 标红句、格式、引用' },
+    { id: 'g3c', name: '研三 · 答辩准备', note: '研究生篇 · 盲审意见、PPT、延毕通知' }
   ];
 
   // 帧缓存：每只怪每帧只画一次，之后直接放大贴图

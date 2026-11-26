@@ -267,6 +267,15 @@
   .book.sub { --c: #b5544a; }
   .book.sub.ready { animation: wiggle 0.6s ease-in-out infinite; }
 
+  /* 研三：降重 / 结局 */
+  .cc-o { font-size: 15px; line-height: 1.7; background: #fff; padding: 10px 12px; box-shadow: 0 0 0 2px var(--ink); }
+  .cc-o mark { background: #f6c1d0; color: inherit; }
+  .cc-rate { font-family: var(--display); font-size: 26px; color: #d9503f; }
+  .book.cc { --c: #c23b3b; }
+  .endg { display: grid; gap: 4px; text-align: left; background: #fff; padding: 10px 12px; box-shadow: 0 0 0 2px var(--ink); border: 0; cursor: pointer; color: var(--text); font: inherit; }
+  .endg b { font-size: 16px; } .endg small { font-size: 12px; color: var(--dim); }
+  .endg[disabled] { opacity: 0.5; cursor: default; }
+
   /* 设置 */
   .set-row { display: grid; grid-template-columns: 72px 1fr 40px; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
   .set-row output { font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; color: var(--dim); }
@@ -684,6 +693,7 @@
           <button type="button" id="dbgAdv">直接到选导师</button>
           <button type="button" id="dbgMeet">现在开组会</button>
           <button type="button" id="dbgY2">直接到研二</button>
+          <button type="button" id="dbgY3">直接到研三</button>
           <button type="button" id="dbgReview">审稿结果马上出</button>
           <button type="button" id="dbgReset">重置存档</button>
         </div>
@@ -714,7 +724,7 @@
     <div class="next-ch" id="endNext" hidden>
       <div><b>研一</b><span>开题：读文献、写综述</span><small>即将开放</small></div>
       <div><b>研二</b><span>中期：做实验、投稿、考核</span><small>即将开放</small></div>
-      <div><b>研三</b><span>答辩：论文、查重、盲审</span><small>即将开放</small></div>
+      <div><b>研三</b><span>答辩：降重、盲审、毕业</span><small>即将开放</small></div>
     </div>
     <p class="muted" id="endSoon">研究生篇（开题、组会、导师、答辩）正在制作中。</p>
     <button class="btn red" id="gradStartBtn" type="button" hidden>开始研一</button>
@@ -828,6 +838,24 @@
       <p class="muted" id="subNote"></p>
       <div class="stack" id="subList"></div>
       <button class="btn ghost" id="subClose" type="button">回书桌</button>
+    </div>
+  </div>
+  <div class="ov" id="ccOv" hidden>
+    <div class="panel">
+      <div class="eyebrow" id="ccEyebrow">降重</div>
+      <h2>查重率 <span class="cc-rate" id="ccRate"></span></h2>
+      <p class="muted" id="ccNote">选一个改写：意思不变、说法要换。只换一两个字还是会被标红。</p>
+      <div class="cc-o" id="ccO"></div>
+      <div class="lit-opts" id="ccOpts"></div>
+      <button class="btn ghost" id="ccNext" type="button" hidden>下一句</button>
+    </div>
+  </div>
+  <div class="ov" id="endingOv" hidden>
+    <div class="panel">
+      <div class="eyebrow">研究生篇 · 毕业去向</div>
+      <h2>毕业以后，去哪儿？</h2>
+      <p class="muted">发表的论文、导师好感、攒下的补助，决定了你能选哪条路。</p>
+      <div class="stack" id="endingList"></div>
     </div>
   </div>
   <div class="ov" id="advOv" hidden>
@@ -1026,6 +1054,11 @@
     '>': ['#..', '.#.', '..#', '.#.', '#..'],
     'E': ['###', '#..', '##.', '#..', '###'],
     'R': ['##.', '#.#', '##.', '#.#', '#.#'],
+    '%': ['#.#', '..#', '.#.', '#..', '#.#'],
+    '8': ['###', '#.#', '###', '#.#', '###'],
+    '2': ['##.', '..#', '.#.', '#..', '###'],
+    '[': ['##', '#.', '#.', '#.', '##'],
+    ']': ['##', '.#', '.#', '.#', '##'],
     '甲': ['#####', '#.#.#', '#####', '..#..', '..#..'],
     '乙': ['####.', '...#.', '..#..', '.#...', '#####'],
     '丙': ['#####', '..#..', '#####', '#.#.#', '#...#']
@@ -1811,6 +1844,91 @@
         a.forEach(function (q, i) { g.rect(q[0] - 1, q[1] - 1, 2, 2, i === 0 ? '#3d7bd9' : '#9fb4cc'); });
         g.eye(9, 11); g.eye(14, 11); g.rect(10, 15, 4, 1, INK);
       }
+    },
+    // 研究生篇 · 研三 · 写论文
+    {
+      id: 'kongbai', group: 'g3a', name: '空白文档', course: '研三·写论文', main: true, speed: 31,
+      origin: '新建文档，一个字都没写', behavior: '成群涌来，数量最多', line: '光标闪了三个小时',
+      draw: function (g, t) {
+        g.rect(5, 3, 14, 18, '#ffffff'); g.rect(5, 3, 14, 2, '#3d7bd9');
+        if (t) g.rect(8, 8, 1, 4, INK);
+        g.eye(9, 14); g.eye(14, 14); g.rect(11, 18, 3, 1, '#c9c2b2');
+      }
+    },
+    {
+      id: 'cuobie', group: 'g3a', name: '错别字虫', course: '研三·写论文', speed: 40,
+      origin: '“研究”写成“研允”', behavior: '扭来扭去，很难瞄准', line: '的地得，傻傻分不清',
+      draw: function (g, t) {
+        var y = [12, 10, 12, 14, 12];
+        for (var i = 0; i < 5; i++) g.circ(4 + i * 4, (t ? y[i] : y[(i + 2) % 5]), 2, i === 4 ? '#e5484d' : '#f2b53c');
+        g.p(19, 11 + (t ? 0 : 2), '#ffffff'); g.p(20, 10 + (t ? 0 : 2), INK);
+        g.line(19, 8, 21, 5, INK);
+      }
+    },
+    {
+      id: 'yema', flip: true, group: 'g3a', name: '页码乱序', course: '研三·写论文', speed: 28,
+      origin: '一插分节符页码就全乱了', behavior: '时不时瞬移到别的位置', line: '第 3 页后面是第 1 页',
+      draw: function (g, t) {
+        g.rect(6, 5, 12, 15, '#e8e1cf'); g.rect(4, 3, 12, 15, '#ffffff');
+        g.text(t ? '3' : '1', 13, 13, '#e5484d'); g.rect(6, 6, 7, 1, '#c9c2b2'); g.rect(6, 8, 5, 1, '#c9c2b2');
+        g.eye(6, 11); g.eye(10, 11);
+      }
+    },
+    // 研三 · 降重
+    {
+      id: 'biaohong', group: 'g3b', name: '查重标红句', course: '研三·降重', main: true, speed: 32,
+      origin: '查重报告里一片红', behavior: '打碎了会分裂成两小句', line: '重复率：38%',
+      draw: function (g, t) {
+        g.rect(2, 7 + t, 20, 10, '#e5484d'); g.rect(2, 7 + t, 20, 2, '#ff8a8a');
+        g.rect(4, 11 + t, 7, 1, '#ffffff'); g.rect(13, 11 + t, 7, 1, '#ffffff'); g.rect(4, 14 + t, 11, 1, '#ffffff');
+        g.eye(7, 3 + t); g.eye(14, 3 + t);
+      }
+    },
+    {
+      id: 'geshicuo', group: 'g3b', name: '格式错误', course: '研三·降重', speed: 30,
+      origin: '学院格式审查', behavior: '一路歪歪扭扭地冲过来', line: '一级标题应为黑体三号',
+      draw: function (g, t) {
+        g.rect(4, 4, 16, 16, '#fbf6e9'); g.rect(6, 7, 12, 2, INK); g.rect(8 + t, 11, 10, 1, '#8a8a8a'); g.rect(6 - t, 13, 10, 1, '#8a8a8a'); g.rect(9, 15, 9, 1, '#8a8a8a');
+        g.circ(18, 18, 3, '#e5484d'); g.p(18, 17, '#ffffff'); g.p(18, 19, '#ffffff');
+        g.eye(7, 17); g.eye(12, 17);
+      }
+    },
+    {
+      id: 'yinyong', flip: true, group: 'g3b', name: '引用缺失', course: '研三·降重', speed: 34,
+      origin: '“此处需要引用”', behavior: '成对蹦过来', line: '[来源请求]',
+      draw: function (g, t) {
+        g.text('[', 3, 8 + t, '#3d7bd9'); g.text('?', 9, 8 - t, '#e5484d'); g.text(']', 16, 8 + t, '#3d7bd9');
+        g.eye(8, 16); g.eye(13, 16); g.rect(10, 19, 3, 1, INK);
+      }
+    },
+    // 研三 · 答辩准备
+    {
+      id: 'niming', group: 'g3c', name: '匿名评审意见', course: '研三·答辩', main: true, speed: 30,
+      origin: '盲审返回的意见表', behavior: '若隐若现地飘过来', line: '评审人：***',
+      draw: function (g, t) {
+        g.rect(4, 4, 16, 17, '#dfe6ee'); g.rect(4, 4, 16, 4, '#2d3a4f');
+        g.text('X', 6, 10, '#2d3a4f'); g.text('X', 10, 10, '#2d3a4f'); g.text('X', 14, 10, '#2d3a4f');
+        g.rect(7, 17, 10, 2, '#2d3a4f'); g.p(8 + t * 6, 17, '#7fd1ff');
+      }
+    },
+    {
+      id: 'ppt', group: 'g3c', name: '答辩 PPT', course: '研三·答辩', speed: 34,
+      origin: '改到第 17 版的答辩 PPT', behavior: '跑得快，撞一下很疼', line: '最终版_改_再改_真的最终版.pptx',
+      draw: function (g, t) {
+        g.rect(3, 4, 18, 13, '#f2b53c'); g.rect(5, 6, 14, 9, '#ffffff');
+        g.rect(7, 12, 2, 2, '#3d7bd9'); g.rect(10, 10, 2, 4, '#4f9a52'); g.rect(13, 8, 2, 6, '#e5484d');
+        g.rect(11, 17, 2, 3, INK); g.rect(8, 20, 8, 1, INK);
+        g.eye(6, 1 + t); g.eye(16, 1 + t);
+      }
+    },
+    {
+      id: 'yanbi', flip: true, group: 'g3c', name: '延毕通知', course: '研三·答辩', speed: 24,
+      origin: '“经研究决定，你延期毕业”', behavior: '慢吞吞但血很厚', line: '明年见',
+      draw: function (g, t) {
+        g.rect(4, 3, 16, 19, '#ffffff'); g.rect(4, 3, 16, 3, '#e5484d');
+        g.rect(6, 9, 12, 1, '#c9c2b2'); g.rect(6, 11, 10, 1, '#c9c2b2'); g.circ(15, 17, 3, '#e5484d'); g.circ(15, 17, 2, '#ffffff');
+        g.eye(7, 14 + t); g.eye(10, 14 + t);
+      }
     }
   ];
 
@@ -1849,7 +1967,10 @@
     { id: 'g1c', name: '研一 · 杂事', note: '研究生篇 · 群消息、报销、在吗' },
     { id: 'g2a', name: '研二 · 实验', note: '研究生篇 · 报错、内存泄漏、失败的实验' },
     { id: 'g2b', name: '研二 · 数据', note: '研究生篇 · 乱码、p 值、离群点' },
-    { id: 'g2c', name: '研二 · 投稿', note: '研究生篇 · 审稿意见、拒稿信、漫长的等待' }
+    { id: 'g2c', name: '研二 · 投稿', note: '研究生篇 · 审稿意见、拒稿信、漫长的等待' },
+    { id: 'g3a', name: '研三 · 写论文', note: '研究生篇 · 空白文档、错别字、页码' },
+    { id: 'g3b', name: '研三 · 降重', note: '研究生篇 · 标红句、格式、引用' },
+    { id: 'g3c', name: '研三 · 答辩准备', note: '研究生篇 · 盲审意见、PPT、延毕通知' }
   ];
 
   // 帧缓存：每只怪每帧只画一次，之后直接放大贴图
@@ -2839,10 +2960,13 @@
     g1c: { name: '组里杂事', book: '杂事', d: '“在吗”气泡、99+ 红点、报销单', grad: 1 },
     g2a: { name: '实验室', book: '实验', d: '报错红字、内存泄漏、失败的试管', grad: 2 },
     g2b: { name: '数据分析', book: '数据', d: '乱码表格、p 值、异常数据点', grad: 2 },
-    g2c: { name: '投稿之路', book: '审稿', d: '审稿意见、拒稿信、Under Review', grad: 2 }
+    g2c: { name: '投稿之路', book: '审稿', d: '审稿意见、拒稿信、Under Review', grad: 2 },
+    g3a: { name: '写论文', book: '写论文', d: '空白文档、错别字虫、页码乱序', grad: 3 },
+    g3b: { name: '降重与格式', book: '格式', d: '查重标红句、格式错误、引用缺失', grad: 3 },
+    g3c: { name: '答辩准备', book: '答辩', d: '匿名评审意见、答辩 PPT、延毕通知', grad: 3 }
   };
   Object.keys(SUBJ).forEach(function (id) { SUBJ[id].id = id; });
-  var GRAD_SUBS = { 1: ['g1a', 'g1b', 'g1c'], 2: ['g2a', 'g2b', 'g2c'] };
+  var GRAD_SUBS = { 1: ['g1a', 'g1b', 'g1c'], 2: ['g2a', 'g2b', 'g2c'], 3: ['g3a', 'g3b', 'g3c'] };
   var MAJOR_SUBS = { cs: ['po', 'en', 'ma', 'cs'], mat: ['po', 'en', 'ma', 'mat'], law: ['po', 'en', 'lb', 'lz'],
     acc: ['en', 'am', 'lg', 'wr'], edu: ['po', 'en', 'e1', 'e2'], med: ['po', 'en', 'm1', 'm2'] };
   var SUBJECTS = [], SUB_IDS = [];
@@ -2870,7 +2994,7 @@
     endlessPerSec: 0.6, endlessPerKill: 0.08,
     examBossHp: 27000, retestBossHp: 34000, roundDur: 180, roundBossAt: 15,
     relaxCdMs: 60 * 60 * 1000, celeTwistAt: 6, lateLeft: 60,
-    gradHp: 2.6, gradDmg: 1.7, grad2Hp: 1.3, grad2Dmg: 1.25, grad2Exam: 1.8, grad2Meet: 1.5, meetDur: 90, meetBossHp: 9000, meetEase: 0.55, litCap: 20, gradExamHp: 40000,
+    gradHp: 2.6, gradDmg: 1.7, grad3Hp: 2.1, grad3Dmg: 1.5, grad3Exam: 2.3, grad3Meet: 2.0, grad2Hp: 1.3, grad2Dmg: 1.25, grad2Exam: 1.8, grad2Meet: 1.5, meetDur: 90, meetBossHp: 9000, meetEase: 0.55, litCap: 20, gradExamHp: 40000,
     baseHp: 40, chapterDur: 300, mobHit: 3, bulletHit: 6, eliteHit: 9, bossHit: 12, invTime: 1.0, rate0: 2.2, rateUp: 0.05, tierRamp0: 0.35, tierRampT: 140, endlessHpT: 40, endlessHp2: 120, endlessDmgT: 50, endlessSpT: 300, dropMob: 0.012, groundMax: 6
   };
   // 章节难度按“在本科里的位置”分 6 档（第 1 档到第 6 档），各科最后一章一样难
@@ -2994,7 +3118,25 @@
       E('jugao', '秒拒编辑', 'Desk reject，48 小时内。', '……这次送外审了。'),
       E('dengdai', '漫长的审稿', '状态：审稿中（第 93 天）。', '……终于有消息了。'),
       { sprite: 'yijian', reflect: true, name: '审稿人 2 号', say: '我对这篇文章有一些小小的意见。（共 37 条）', die: '……建议接收。' },
-      E('jugao', '拒稿连环信', 'We regret…… We regret…… We regret……', '……Accepted！')] }
+      E('jugao', '拒稿连环信', 'We regret…… We regret…… We regret……', '……Accepted！')] },
+    g3a: { full: 40, ease: 0.85, list: ['列提纲', '写绪论', '写正文', '写结论', '写致谢'], el: [
+      E('kongbai', '第一章都没写', '字数：0 / 30000。', '……第一章，写完了！'),
+      E('cuobie', '错别字大王', '“研究”写成“研允”，“数据”写成“数椐”。', '……全文校对完毕。'),
+      E('yema', '目录生成失败', '错误！未定义书签。', '……目录自动生成了。'),
+      E('cuobie', '字数焦虑', '还差 8000 字……要不把字体调大？', '……字数够了，而且都是干货。'),
+      E('kongbai', '致谢写不出来', '致谢：感谢……感谢谁来着？', '……感谢自己没有放弃。')] },
+    g3b: { full: 30, ease: 1.4, list: ['第一次查重', '格式审查', '改引用', '逐句降重', '终稿查重'], el: [
+      E('biaohong', '重复率 38%', '整段都是红的哦。', '……降到 20% 了。'),
+      E('geshicuo', '格式审查官', '页边距 2.5 厘米，行距 1.5 倍，图表要编号！', '……格式审查通过。'),
+      E('yinyong', '引用格式混乱', '参考文献列表和正文对不上。', '……一一对应了。'),
+      { sprite: 'biaohong', scan: true, name: '查重系统', say: '开始比对数据库……', die: '……总重复率 8.7%，通过。' },
+      E('biaohong', '降重降成病句', '“本文的研究的方法的创新的点是……”', '……句子通顺了。')] },
+    g3c: { full: 30, list: ['送盲审', '等结果', '做 PPT', '答辩彩排', '最后一夜'], el: [
+      { sprite: 'niming', stealth: true, name: '盲审专家', say: '你不知道我是谁，我也不告诉你。', die: '……同意答辩。' },
+      E('niming', '盲审意见：大修', '建议修改后重新送审。', '……修改到位。'),
+      E('ppt', 'PPT 翻车', '投影仪连不上，字体全乱了。', '……换了台电脑，终于好了。'),
+      { sprite: 'yanbi', countdown: true, name: '延毕预警', say: '距离论文提交截止，还剩 20 秒……', die: '……赶在截止前交上了！' },
+      E('ppt', '答辩彩排', '大师兄：“这页讲太久了，删掉。”', '……彩排通过，明天正式上场。')] }
   };
   // 精英技能：spit 吐毒液 / bomb 召唤自爆怪 / blink 隐入虚空再突袭 / charge 冲撞 / ring 弹幕
   var ELITE_SK = {
@@ -3017,12 +3159,15 @@
     g1c: [['ring'], ['spit', 'charge'], ['bomb', 'charge'], ['blink', 'bomb'], ['blink', 'spit', 'bomb']],
     g2a: [['ring'], ['spit', 'bomb'], ['charge'], ['ring', 'spit'], ['blink', 'bomb', 'spit']],
     g2b: [['charge'], ['blink', 'ring'], ['spit'], ['blink', 'charge'], ['bomb', 'ring', 'spit']],
-    g2c: [['ring'], ['charge', 'spit'], ['bomb', 'ring'], ['ring', 'spit'], ['blink', 'charge', 'bomb']]
+    g2c: [['ring'], ['charge', 'spit'], ['bomb', 'ring'], ['ring', 'spit'], ['blink', 'charge', 'bomb']],
+    g3a: [['charge'], ['spit', 'ring'], ['blink'], ['bomb', 'charge'], ['blink', 'spit', 'ring']],
+    g3b: [['ring'], ['charge', 'bomb'], ['spit', 'ring'], ['ring'], ['blink', 'bomb', 'spit']],
+    g3c: [['blink', 'spit'], ['ring', 'bomb'], ['charge', 'spit'], ['bomb', 'ring'], ['blink', 'charge', 'bomb']]
   };
   Object.keys(CHAPTERS).forEach(function (id) { CHAPTERS[id].el.forEach(function (e, i) { e.sk = ELITE_SK[id][i]; }); });
   var SK_NAME = { spit: '吐毒液', bomb: '召唤自爆怪', blink: '隐入虚空', charge: '冲撞', ring: '弹幕' };
   // 研二精英的专属机制（图鉴和加载页显示）
-  function elExtra(e) { return e.chain ? '连续来 ' + e.chain + ' 只' : e.jam ? '定时让你的攻击停 2 秒' : e.reflect ? '周期性“反驳”，期间打它会反伤' : ''; }
+  function elExtra(e) { return e.chain ? '连续来 ' + e.chain + ' 只' : e.jam ? '定时让你的攻击停 2 秒' : e.reflect ? '周期性“反驳”，期间打它会反伤' : e.scan ? '扫描线扫过全场，碰到会受伤' : e.countdown ? '20 秒后全场怪物加速' : e.stealth ? '匿名隐身，时隐时现' : ''; }
   var SK = {
     spit: { cd: 4.2, first: 2.5 }, bomb: { cd: 8, first: 4 }, blink: { cd: 7, first: 5 }, charge: { cd: 5, first: 3 }, ring: { cd: 5.5, first: 4.5 }
   };
@@ -3056,6 +3201,7 @@
   };
   var GRAD_TIPS = {
     1: ['综述先读近五年的，再顺着参考文献往回追。', '组会汇报前一晚把 PPT 发给大师兄看看。', '开题报告最重要的是讲清楚“为什么值得做”。', '文献管理软件早点用起来，后面写论文能省一大半时间。'],
+    3: ['降重要换说法，不是换同义词。', '查重系统的红线扫过来时往旁边躲。', '延毕预警出来先集火，20 秒后全场加速。', '盲审专家会隐身，看准它现身的时候输出。', '答辩委员会每打掉 1/5 血就换一位委员提问。', '致谢可以写得真诚一点。'],
     2: ['实验记录本每天都写，中期考核会翻。', '数据不显著就如实写，千万别改数据。', 'p 值暗着打不动，先躲开，亮起来再集中火力。', '投稿先投稍微够一够的期刊，被拒了再往下投。', '审稿人 2 号反驳的时候（红圈），别硬打。', '服务器宕机时攻击无效，先跑位躲怪。']
   };
   var LOAD_MSG = ['正在削铅笔……', '正在占图书馆的座……', '正在泡速溶咖啡……', '正在给 2B 铅笔开光……', '正在翻开真题集……', '正在把手机调成静音……'];
@@ -3064,7 +3210,15 @@
   function gyN() { return isGrad() ? save.gy || 1 : 0; }
   function gyName(y) { return ['', '研一', '研二', '研三'][y || gyN() || 1]; }
   // 每年第 7 天的大考叫什么
-  function examWord() { return gyN() === 2 ? '中期考核' : '开题'; }
+  var YR = {
+    1: { ex: '开题', exFull: '开题答辩', prog: '开题进度', line: '开题线', cal: '题', group: '开题答辩组', groupD: '三位评委', go: '去答辩', btn: '进入开题答辩', loadT: '三位评委' },
+    2: { ex: '中期考核', exFull: '中期考核', prog: '中期进度', line: '中期线', cal: '核', group: '中期考核组', groupD: '两位评委 + 导师', go: '去考核', btn: '进入中期考核', loadT: '中期考核组' },
+    3: { ex: '毕业答辩', exFull: '毕业答辩', prog: '论文进度', line: '毕业线', cal: '答', group: '答辩委员会', groupD: '两位盲审专家 + 答辩委员会', go: '去答辩', btn: '进入毕业答辩', loadT: '盲审与答辩' }
+  };
+  function Y() { return YR[gyN() || 1]; }
+  // 每学年的难度倍率：k = Hp / Dmg / Exam / Meet
+  function yK(k, y) { y = y || gyN(); return y >= 2 ? BAL['grad' + y + k] || 1 : 1; }
+  function examWord() { return Y().ex; }
   // 研究生篇：精力上限看导师的“自由”（1 格 8，5 格 12）
   function maxEnergy() { if (!isGrad()) return MAX_ENERGY; var a = advDef(save.advisor); return 7 + (a ? a.free : 3); }
   function tierOf(id, ci) { var n = CHAPTERS[id].list.length; return n > 1 ? ci / (n - 1) * 5 : 0; }
@@ -3094,7 +3248,12 @@
   }
   function setStage() { if (isGrad()) setGradYear(save.gy || 1); else setMajor(save.major); }
   // 研一：读文献每篇 +2；研二：每次实验成功 +2（都封顶 20）
-  function litScore() { return isGrad() ? Math.min(BAL.litCap, (gyN() === 2 ? save.exp || 0 : save.lit || 0) * 2) : 0; }
+  function litScore() { if (!isGrad()) return 0; if (gyN() === 3) return ccScore(); return Math.min(BAL.litCap, (gyN() === 2 ? save.exp || 0 : save.lit || 0) * 2); }
+  // 研三：查重率从 38% 降到目标（严教授组 5%，其他 10%），降得越多进度越高
+  function ccTarget() { return save.advisor === 'yan' ? 5 : 10; }
+  function ccRate() { return save.cc == null ? 38 : save.cc; }
+  function ccScore() { return Math.round(BAL.litCap * Math.max(0, Math.min(1, (38 - ccRate()) / (38 - ccTarget())))); }
+  function ccMul() { return gyN() === 3 ? 1 + Math.max(0, ccRate() - ccTarget()) / 40 : 1; }
   function fullTotal() { return SUB_IDS.reduce(function (a, k) { return a + CHAPTERS[k].full; }, 0) + (isGrad() ? BAL.litCap : 0); }
   function schoolLine(s) { return isGrad() ? Math.round(fullTotal() * GRAD_LINE) : Math.round(fullTotal() * s.ratio); }
   // 进度锁：后面的章节要“高级复习”层数够了才开放（每天第一次登录 +1 层），最快第 4 天打通
@@ -3256,7 +3415,8 @@
     am: { c: '#4f9a52', mon: 'wuqiong' }, lg: { c: '#3d7bd9', mon: 'jiayan' }, wr: { c: '#2f3f8f', mon: 'gezi' },
     e1: { c: '#e0a43a', mon: 'xiaogou' }, e2: { c: '#3f6fa8', mon: 'renming' }, m1: { c: '#d9a400', mon: 'dianwei' }, m2: { c: '#e5484d', mon: 'baixibao' },
     g1a: { c: '#3d7bd9', mon: 'weidu' }, g1b: { c: '#4f9a52', mon: 'zuoye' }, g1c: { c: '#7fae3a', mon: 'zaima' },
-    g2a: { c: '#4a4a4a', mon: 'baocuo' }, g2b: { c: '#2f8f6a', mon: 'luanma' }, g2c: { c: '#b5544a', mon: 'yijian' }
+    g2a: { c: '#4a4a4a', mon: 'baocuo' }, g2b: { c: '#2f8f6a', mon: 'luanma' }, g2c: { c: '#b5544a', mon: 'yijian' },
+    g3a: { c: '#3d7bd9', mon: 'kongbai' }, g3b: { c: '#c23b3b', mon: 'biaohong' }, g3c: { c: '#2d3a4f', mon: 'niming' }
   };
   function monIcon(id) {
     var def = GM.list.filter(function (x) { return x.id === id; })[0];
@@ -3271,6 +3431,15 @@
 
   // 自习室
   function homeMessage(d) {
+    if (isGrad() && gyN() === 3) {
+      var A3 = advDef(save.advisor), mt3 = meetToday();
+      if (d >= 7) return '<b>今天毕业答辩！</b>盲审专家和答辩委员会已经就位。';
+      if (mt3.st === 'open') return '<b>组会开始了！</b>' + A3.name + (A3.id === 'tao' ? '突然要检查你的进度' : '在会议室等你') + '，快去“组会”卡片。';
+      if (mt3.st === 'soon') return '<b>今天有组会：</b>' + slotDef().name + '，记得准时打开游戏。';
+      var gt3 = ['<b>研三第 1 天。</b>写论文、格式、答辩准备三条线 + 降重都能涨论文进度，第 7 天毕业答辩。' + (A3.id === 'tao' ? '陶老师突然发消息：“这周开两次组会，我看看你的进度。”' : ''),
+        '降重：选“意思不变、说法要换”的那个改写。只换一两个字还是会被标红。', '查重率要降到 ' + ccTarget() + '% 以下，不然评委会更难缠。', '“延毕预警”出现 20 秒后全场加速，先打它。', '查重系统的红色扫描线扫过来时，往旁边躲。', '<b>明天答辩。</b>压力降到 60 以下再去。'];
+      return gt3[Math.min(d - 1, gt3.length - 1)];
+    }
     if (isGrad() && gyN() === 2) {
       var A2 = advDef(save.advisor), mt2 = meetToday();
       if (d >= 7) return '<b>今天中期考核！</b>两位评委和' + A2.name + '已经就位。';
@@ -3308,6 +3477,11 @@
       var A = advDef(save.advisor), mt = meetToday();
       list.push({ who: A.name, av: A.name[0], c: A.c, text: mt.st === 'open' || mt.st === 'soon' ? '今天' + slotDef().name.split(' ')[1] + '组会，别迟到。' : (d === 1 ? A.wx[1] : A.wx[2]) });
       if (save.advisor === 'lin' && d > 1) list.push({ who: A.name, av: A.name[0], c: A.c, text: '（凌晨 2:13）在吗？' });
+      if (gyN() === 3) {
+        list.push({ who: '大师兄', av: '兄', c: '#3d7bd9', text: ['最后一年了，先把论文框架搭起来。', '查重别拖到最后一天，学校只给两次机会。', '降重不是换同义词，是换说法。', '盲审意见别慌，逐条回复就行。', 'PPT 别放大段文字。', '被问倒了就说：“这是个很好的问题，我会在后续研究中考虑。”', '毕业快乐！'][Math.min(d, 7) - 1] });
+        list.push({ who: '妈妈', av: '妈', c: '#e0a43a', text: ['最后一年了，工作找得怎么样？', '你二姨问你什么时候毕业。', '论文写完了吗？别熬夜。', '查重是什么？要不要妈妈帮你查？', '多吃点水果。', '明天答辩？妈妈相信你。', '毕业典礼妈妈去看你！'][Math.min(d, 7) - 1] });
+        return list;
+      }
       if (gyN() === 2) {
         list.push({ who: '大师兄', av: '兄', c: '#3d7bd9', text: ['研二最要紧的就是出数据，别怕失败。', '跑实验前先备份，别问我怎么知道的。', '投稿先投稍微够一够的，被拒了再往下投。', '审稿人 2 号永远最难缠，习惯就好。', '数据不显著就如实写，千万别改数据。', '中期考核主要看进展，有论文就更稳了。', '加油！'][Math.min(d, 7) - 1] });
         list.push({ who: '妈妈', av: '妈', c: '#e0a43a', text: ['研二了，忙不忙？', '实验做得怎么样？', '别在实验室过夜！', '你发表那个……论文，是什么意思？', '多吃点水果。', '明天考核？妈妈相信你。', '考完回家吃饭。'][Math.min(d, 7) - 1] });
@@ -3355,14 +3529,14 @@
       : (save.week > 1 ? zhan(save.week) + ' · ' : '') + m.name + ' → ' + s.name;
     $('dayBig').innerHTML = (G ? gyName() + ' ' : '') + '第 ' + dd + ' 天 <small>/ 7</small>';
     $('countdown').textContent = exam ? (G ? '今天' + EW + '！' : '今天考研！') : (G ? '距' + EW + ' ' : '距考研 ') + (7 - d) + ' 天';
-    $('calNum').textContent = exam ? (G ? (gyN() === 2 ? '核' : '题') : '考') : (7 - d);
+    $('calNum').textContent = exam ? (G ? Y().cal : '考') : (7 - d);
     $('calLbl').textContent = exam ? '就是今天' : (G ? '天后' + EW : '天后考研');
     [].forEach.call(document.querySelectorAll('.gx'), function (el) { el.hidden = !G; });
     $('morningTk').hidden = G;
     if (G) {
       $('moneyVal').textContent = '¥' + (save.money || 0);
       $('favorBar').style.width = (save.favor || 0) + '%'; $('favorNum').textContent = save.favor || 0;
-      $('examBtn').textContent = gyN() === 2 ? '进入中期考核' : '进入开题答辩';
+      $('examBtn').textContent = Y().btn;
     } else $('examBtn').textContent = '进入考场';
     $('homeMsg').innerHTML = homeMessage(d);
     var pips = $('energyPips'); pips.innerHTML = '';
@@ -3406,19 +3580,28 @@
     eb.querySelector('.d').textContent = open ? '无尽模式 · 所有怪物一起上' : '所有章节拿到 ★ 后开放';
     eb.querySelector('.prog').textContent = open ? '最佳 ' + fmt(save.endlessBest || 0) + ' · 后期学习力主要来源' : '还差 ' + SUB_IDS.reduce(function (a, id) { return a + CHAPTERS[id].list.filter(function (_, i) { return !starsOf(id, i); }).length; }, 0) + ' 章';
     eb.addEventListener('click', startEndless);
-    if (G && gyN() === 2) {
-      // 做实验 + 投稿
+    if (G && gyN() >= 2) {
+      // 研二：做实验；研三：降重。两年都能投稿
+      if (gyN() === 3) {
+        var cb = document.createElement('button'); cb.type = 'button'; cb.className = 'book cc'; cb.id = 'sub-cc'; cb.disabled = save.energy <= 0;
+        cb.innerHTML = '<span class="ic"></span><span><span class="t">降重</span><span class="d"></span><span class="prog"></span></span>';
+        cb.querySelector('.ic').appendChild(monIcon('biaohong'));
+        cb.querySelector('.d').textContent = '改写标红句 · 1 精力';
+        cb.querySelector('.prog').textContent = '查重率 ' + ccRate() + '%（目标 ' + ccTarget() + '%）· 进度 ' + litScore() + '/' + BAL.litCap;
+        cb.addEventListener('click', startCC); subs.appendChild(cb);
+      } else {
       var xb = document.createElement('button'); xb.type = 'button'; xb.className = 'book exp'; xb.id = 'sub-exp'; xb.disabled = save.energy <= 0;
       xb.innerHTML = '<span class="ic"></span><span><span class="t">做实验</span><span class="d"></span><span class="prog"></span></span>';
       xb.querySelector('.ic').appendChild(monIcon('shiguan'));
       xb.querySelector('.d').textContent = '调参数小游戏 · 1 精力';
       xb.querySelector('.prog').textContent = '成功 ' + (save.exp || 0) + ' 次 · 进度 ' + litScore() + '/' + BAL.litCap;
       xb.addEventListener('click', startExp); subs.appendChild(xb);
+      }
       var pp = save.paper, rdy = pp && paperReady(), pb = document.createElement('button'); pb.type = 'button'; pb.className = 'book sub' + (rdy ? ' ready' : ''); pb.id = 'sub-paper';
       pb.innerHTML = '<span class="ic"></span><span><span class="t">投稿</span><span class="d"></span><span class="prog"></span></span>';
       pb.querySelector('.ic').appendChild(monIcon(rdy ? 'yijian' : 'dengdai'));
       pb.querySelector('.d').textContent = !pp ? '可用数据 ' + dataLeft() + ' 份 · 选个期刊投出去' : rdy ? '审稿结果出来了！点开看看' : '《' + jDef(pp.j).name + '》审稿中 · ' + paperWait();
-      pb.querySelector('.prog').textContent = '已发表 ' + (save.pubs || []).length + ' 篇' + ((save.pubs || []).length ? ' · 中期评委血量 −' + Math.round((1 - pubMul()) * 100) + '%' : '');
+      pb.querySelector('.prog').textContent = '已发表 ' + (save.pubs || []).length + ' 篇' + ((save.pubs || []).length ? ' · 评委血量 −' + Math.round((1 - pubMul()) * 100) + '%' : '');
       pb.addEventListener('click', openPaper); subs.appendChild(pb);
     }
     if (G) {
@@ -3443,7 +3626,7 @@
     }
     subs.appendChild(eb);
     var sc = totalScore(), line = lineOf();
-    $('goalTxt').textContent = G ? (gyN() === 2 ? '中期进度过 ' + line + '（第 7 天中期考核）' : '开题进度过 ' + line + '（第 7 天开题答辩）') : '预估总分过 ' + line + ' 分（' + s.name + '）';
+    $('goalTxt').textContent = G ? (Y().prog + '过 ' + line + '（第 7 天' + Y().exFull + '）') : '预估总分过 ' + line + ' 分（' + s.name + '）';
     $('scoreNow').textContent = sc; $('scoreLbl').textContent = G ? '当前进度' : '当前预估'; $('scoreUnit').textContent = G ? '/ ' + fullTotal() : '分';
     $('goalFill').style.width = (sc / fullTotal() * 100) + '%';
     $('goalLine').style.left = (line / fullTotal() * 100) + '%';
@@ -3719,14 +3902,15 @@
   $('examBtn').addEventListener('click', function () {
     var s = SCHOOLS[save.school], G = isGrad();
     $('preExamEyebrow').textContent = G ? gyName() + ' · 第 7 天' : '考研日';
-    $('preExamTitle').textContent = G ? (gyN() === 2 ? '中期考核' : '开题答辩') : '四门连考';
-    $('preExamNote').textContent = G && gyN() === 2 ? '三轮各 3 分钟：进展汇报、数据质询，最后是' + advDef(save.advisor).name + '亲自终审。三轮里过两轮就算通过，否则延期中期再来一周。进度、导师好感、发表的论文都会让评委变弱。' : G ? '三轮各 3 分钟：开题汇报、答辩提问、专家评审，每轮一位评委。三轮里过两轮就算开题通过，否则重新开题再来一周。进度越高、导师好感越高，评委越好说话。'
+    $('preExamTitle').textContent = G ? Y().exFull : '四门连考';
+    $('preExamNote').textContent = G && gyN() === 3 ? '三轮各 3 分钟：两位匿名盲审专家，最后是五位委员组成的答辩委员会（每打掉 1/5 血换一位委员提问）。三轮里过两轮就能毕业，否则延毕一年再来一周。查重率没降到 ' + ccTarget() + '% 以下，评委会更难缠。' : G && gyN() === 2 ? '三轮各 3 分钟：进展汇报、数据质询，最后是' + advDef(save.advisor).name + '亲自终审。三轮里过两轮就算通过，否则延期中期再来一周。进度、导师好感、发表的论文都会让评委变弱。' : G ? '三轮各 3 分钟：开题汇报、答辩提问、专家评审，每轮一位评委。三轮里过两轮就算开题通过，否则重新开题再来一周。进度越高、导师好感越高，评委越好说话。'
       : '四科各 3 分钟：每科开考 15 秒后出 Boss，3 分钟内打倒才算这科过关。四科都过才算考完……吗？三科以上可以调剂，否则再战一年（星星、学习力、道具全保留）。预估分越高，那一科的 Boss 越弱。';
     $('preExamStats').innerHTML = '';
     var sc = totalScore();
     var sl = schoolLine(s);
-    if (G && gyN() === 2) addStat($('preExamStats'), '已发表论文', (save.pubs || []).length + ' 篇（评委血量 ×' + pubMul().toFixed(2) + '）');
-    if (G) { addStat($('preExamStats'), '导师好感', save.favor + '（评委血量 ×' + favorMul().toFixed(2) + '）'); addStat($('preExamStats'), gyN() === 2 ? '中期进度' : '开题进度', sc + ' / ' + sl + (sc >= sl ? '（已过线）' : '（差 ' + (sl - sc) + '）'), true); }
+    if (G && gyN() === 3) addStat($('preExamStats'), '查重率', ccRate() + '%（目标 ' + ccTarget() + '%，评委血量 ×' + ccMul().toFixed(2) + '）');
+    if (G && gyN() >= 2) addStat($('preExamStats'), '已发表论文', (save.pubs || []).length + ' 篇（评委血量 ×' + pubMul().toFixed(2) + '）');
+    if (G) { addStat($('preExamStats'), '导师好感', save.favor + '（评委血量 ×' + favorMul().toFixed(2) + '）'); addStat($('preExamStats'), Y().prog, sc + ' / ' + sl + (sc >= sl ? '（已过线）' : '（差 ' + (sl - sc) + '）'), true); }
     else { addStat($('preExamStats'), '目标院校', s.name + '（分数线 ' + sl + '）');
     addStat($('preExamStats'), '预估总分', sc + (sc >= sl ? '（已过线）' : '（差 ' + (sl - sc) + ' 分）'), true); }
     SUBJECTS.forEach(function (sub) {
@@ -3760,24 +3944,45 @@
     c.fillStyle = '#c0392b'; for (var i = 0; i < 7; i++) c.fillRect(22 + i * 8, 9, 4, 4);
     c.drawImage(GM.frame(GM.player, 0), 36, 18, 24, 24);
     c.drawImage(GM.frame(GM.list[0], 0), 8, 26, 16, 16);
-    c.drawImage(GM.frame(GM.list[11], 0), 72, 26, 16, 16);
+    if (!(isGrad() && save.ending)) c.drawImage(GM.frame(GM.list[11], 0), 72, 26, 16, 16);
+    if (isGrad() && save.ending) {   // 毕业照：学士帽 + 导师站旁边
+      c.fillStyle = '#1c1c1c'; c.fillRect(39, 17, 18, 2); c.fillRect(43, 19, 10, 2);
+      c.fillStyle = '#f4c542'; c.fillRect(55, 18, 1, 5);
+      var A = advDef(save.advisor); if (A && ADV_SPR[A.id]) c.drawImage(GM.frame(ADV_SPR[A.id], 0), 62, 18, 24, 24);
+    }
   }
   function renderEnd() {
     var s = save.finalSchool || SCHOOLS[save.school].name;
-    $('gradStartBtn').hidden = !(save.advisor && !isGrad()) && !(isGrad() && save.gyDone && gyN() === 1);
-    $('gradStartBtn').textContent = isGrad() ? '开始研二' : '开始研一';
+    var gsb = $('gradStartBtn');
+    if (isGrad() && save.gyDone) { gsb.hidden = gyN() >= 3 && !!save.ending; gsb.textContent = ['', '开始研二', '开始研三', '选择毕业去向'][Math.min(3, gyN())]; }
+    else { gsb.hidden = !(save.advisor && !isGrad()); gsb.textContent = '开始研一'; }
+    if (isGrad() && save.gyDone && gyN() === 3) {
+      var GC = advDef(save.advisor), EN = save.ending && ENDINGS.filter(function (e) { return e.id === save.ending; })[0];
+      $('endEyebrow').textContent = EN ? '研究生篇 · 完' : '研究生篇 · 研三';
+      $('endTitle').textContent = EN ? '毕业快乐！' : '答辩通过！';
+      $('endText').textContent = EN ? EN.text() : '五位委员一致同意授予学位。最后一步：选一个毕业去向。';
+      var gdl3 = $('endStats'); gdl3.innerHTML = '';
+      addStat(gdl3, '毕业去向', EN ? EN.name : '待选', true);
+      addStat(gdl3, '考研', zhan(save.week || 1) + '上岸'); addStat(gdl3, '读研', '3 年' + (save.yanbi ? '（延毕 ' + save.yanbi + ' 次）' : ''));
+      addStat(gdl3, '已发表论文', (save.pubs || []).length + ' 篇'); addStat(gdl3, '补助存款', '¥' + (save.money || 0)); addStat(gdl3, '导师好感', save.favor);
+      drawPhoto(); advCanvas($('endAdvCv'), GC); $('endAdvName').textContent = GC.name + ' · ' + GC.role;
+      $('endAdvLine').textContent = '“' + GC.meetWin + '”';
+      $('endAdv').hidden = $('endNext').hidden = false; $('endSoon').hidden = true;
+      var rows3 = $('endNext').querySelectorAll('small'); rows3[0].textContent = rows3[1].textContent = '已完成 ✓'; rows3[2].textContent = EN ? '已完成 ✓' : '答辩通过 ✓';
+      return;
+    }
     if (isGrad() && save.gyDone && gyN() === 2) {
       var GB = advDef(save.advisor);
       $('endEyebrow').textContent = '研究生篇 · 研二 完';
       $('endTitle').textContent = '中期通过！';
-      $('endText').textContent = '你在' + GB.name + '组熬过了研二：实验、数据、投稿，一样没落下。研三（降重、盲审、答辩和毕业结局）正在制作中。';
+      $('endText').textContent = '你在' + GB.name + '组熬过了研二：实验、数据、投稿，一样没落下。研三：降重、盲审、毕业答辩和毕业去向，点下面开始。';
       var gdl2 = $('endStats'); gdl2.innerHTML = '';
       addStat(gdl2, '补助存款', '¥' + (save.money || 0)); addStat(gdl2, '导师好感', save.favor); addStat(gdl2, '实验成功', (save.exp || 0) + ' 次');
       addStat(gdl2, '已发表论文', (save.pubs || []).length ? save.pubs.join('、') : '0 篇', true);
       drawPhoto(); advCanvas($('endAdvCv'), GB); $('endAdvName').textContent = GB.name + ' · ' + GB.role;
       $('endAdvLine').textContent = '“' + GB.meetWin + '”';
       $('endAdv').hidden = $('endNext').hidden = false; $('endSoon').hidden = true;
-      var rows2 = $('endNext').querySelectorAll('small'); rows2[0].textContent = '已完成 ✓'; rows2[1].textContent = '已完成 ✓';
+      var rows2 = $('endNext').querySelectorAll('small'); rows2[0].textContent = '已完成 ✓'; rows2[1].textContent = '已完成 ✓'; rows2[2].textContent = '可以开始';
       return;
     }
     if (isGrad() && save.gyDone) {
@@ -3949,7 +4154,7 @@
   ];
   function slotDef() { return SLOTS.filter(function (x) { return x.id === (save.meetSlot || 'eve'); })[0]; }
   function meetPlan() {
-    var n = MEET_N[save.advisor] || 2, days = [];
+    var n = gyN() === 3 && save.advisor === 'tao' ? 2 : MEET_N[save.advisor] || 2, days = [];
     for (var i = 0; i < n; i++) days.push(1 + Math.floor((i + 0.5) * 6 / n));
     return days;
   }
@@ -3981,6 +4186,7 @@
     save.start = today(); save.seenDay = null; save.dayLog = null; save.msgSeen = null;
     save.meetLog = {}; save.gRev0 = save.review || 0;
     if (y === 2) { save.exp = 0; save.expUsed = 0; save.paper = null; save.pubs = save.pubs || []; }
+    if (y === 3) { save.cc = 38; save.ccSeen = []; save.ending = null; }
     setGradYear(y);
     save.energy = maxEnergy(); save.energyAt = Date.now();
     persist(); stampThen(gyName(y) + '开学', function () { goHome(); });
@@ -4008,20 +4214,20 @@
       var mt = x === d ? meetToday() : null;
       if (x < d || (mt && mt.st === 'late')) { save.meetLog[x] = 'miss'; missed++; }
     });
-    if (missed && a.id !== 'tao') { save.favor = Math.max(0, save.favor - 8 * missed); save.stress = Math.min(100, save.stress + 15 * missed); }
+    if (missed && (a.id !== 'tao' || gyN() === 3)) { save.favor = Math.max(0, save.favor - 8 * missed); save.stress = Math.min(100, save.stress + 15 * missed); }
     if (missed) { persist(); return { n: missed, a: a }; }
     return null;
   }
   function meetCfg(onEnd) {
     var t = 1 + Math.min(4, (save.review || 0) - (save.gRev0 || 0)) * 0.5;
-    var y2 = gyN() === 2 ? BAL.grad2Hp : 1;
+    var y2 = yK('Hp');
     return { kind: 'meet', meet: true, hpMul: tierVal(TIER.hp, t) * BAL.gradHp * BAL.meetEase * y2, rateMul: tierVal(TIER.rate, t), mobDmg: tierVal(TIER.dmg, t) * BAL.gradDmg * BAL.meetEase, mobSpeed: tierVal(TIER.speed, t),
       duration: BAL.meetDur, bossAt: 0, elites: [], phases: [{ group: 'all', until: 1e9, label: '组会 · 撑到散会' }], onEnd: onEnd };
   }
   function spawnMeetBoss() {
     var a = advDef(save.advisor), e = edgePoint(60);
     S.boss = addMob(ADV_SPR[a.id], e.x, e.y, 'boss'); S.bossSpawned = true;
-    S.boss.max = S.boss.hp = Math.round(BAL.meetBossHp * (1 + ((save.review || 0) - (save.gRev0 || 0)) * 0.25) * (gyN() === 2 ? BAL.grad2Meet : 1));
+    S.boss.max = S.boss.hp = Math.round(BAL.meetBossHp * (1 + ((save.review || 0) - (save.gRev0 || 0)) * 0.25) * yK('Meet'));
     S.boss.skills = a.meetSk; S.boss.dmg = BAL.bossHit * 0.8; S.boss.ringN = 12; S.boss.ringCd = 6;
     $('bossName').textContent = a.name + ' 的提问';
     banner('组会开始：' + a.name, 2.2); sfx('boss');
@@ -4176,13 +4382,109 @@
     });
   }
 
+
+  // ---------- 研三 · 降重（改写小游戏） ----------
+  // o = 标红的原句，ok = 意思不变、换了说法，dup = 只换一两个字（还是重复），bad = 意思变了
+  var CC = [
+    { o: '随着经济的快速发展，人们的生活水平不断提高。', ok: '在经济高速增长的带动下，居民生活质量持续改善。', dup: '随着经济的快速的发展，人们的生活水平不断的提高。', bad: '随着经济的停滞，人们的生活水平有所下降。' },
+    { o: '本文采用问卷调查的方法收集数据。', ok: '本研究的数据通过发放问卷获得。', dup: '本文采取问卷调查的方法收集数据。', bad: '本文没有收集任何数据。' },
+    { o: '实验结果表明，该方法具有较好的效果。', ok: '从实验数据来看，这一方法的表现令人满意。', dup: '实验结果表明，该方法具有较好的成效。', bad: '实验结果表明，该方法完全无效。' },
+    { o: '近年来，人工智能技术受到了广泛关注。', ok: '这几年，人工智能逐渐成为各界讨论的热点。', dup: '近些年来，人工智能技术受到了广泛的关注。', bad: '近年来，人工智能技术已经无人问津。' },
+    { o: '该问题的研究具有重要的理论意义和实践价值。', ok: '探讨这一问题，既能丰富理论，也能指导实践。', dup: '该问题的研究具有重要的理论意义与实践价值。', bad: '该问题的研究既没有理论意义也没有实践价值。' },
+    { o: '样本量较小是本研究的主要局限。', ok: '本研究最大的不足在于样本数量有限。', dup: '样本量较少是本研究的主要局限。', bad: '样本量过大是本研究的主要优势。' },
+    { o: '综上所述，本文提出的模型是有效的。', ok: '总的来看，文中构建的模型能够达到预期目标。', dup: '综上所述，本文所提出的模型是有效的。', bad: '综上所述，本文提出的模型需要推翻重来。' },
+    { o: '学生的学习动机受到多种因素的影响。', ok: '影响学生学习积极性的原因是多方面的。', dup: '学生的学习动机受到许多因素的影响。', bad: '学生的学习动机只受一个因素影响。' },
+    { o: '温度升高会加快化学反应的速率。', ok: '反应环境越热，化学反应进行得越快。', dup: '温度的升高会加快化学反应的速率。', bad: '温度升高会让化学反应完全停止。' },
+    { o: '目前该领域的相关研究仍然较少。', ok: '到现在为止，关注这一方向的学者并不多。', dup: '目前该领域的相关研究依然较少。', bad: '目前该领域的研究已经多到饱和。' },
+    { o: '本章首先介绍研究背景，然后提出研究问题。', ok: '这一章先交代研究的来龙去脉，再引出要解决的问题。', dup: '本章首先介绍研究的背景，然后提出研究的问题。', bad: '本章直接给出结论，不介绍背景。' },
+    { o: '数据经过标准化处理后输入模型。', ok: '模型的输入是统一量纲之后的数据。', dup: '数据经过了标准化处理后输入到模型。', bad: '数据不做任何处理，直接丢掉。' },
+    { o: '城市化进程导致了耕地面积的减少。', ok: '城市不断扩张，使得可耕种的土地越来越少。', dup: '城市化的进程导致了耕地面积的减少。', bad: '城市化进程使耕地面积大幅增加。' },
+    { o: '未来的研究可以进一步扩大样本范围。', ok: '后续工作不妨把调查对象覆盖得更广一些。', dup: '未来的研究可以更进一步扩大样本的范围。', bad: '未来不需要再做任何研究。' },
+    { o: '该算法的时间复杂度较低。', ok: '这个算法运行起来耗时不多。', dup: '该算法的时间复杂度比较低。', bad: '该算法的时间复杂度极高。' },
+    { o: '良好的睡眠有助于提高记忆力。', ok: '睡得好，记东西也会更牢。', dup: '良好的睡眠有利于提高记忆力。', bad: '良好的睡眠会损害记忆力。' }
+  ];
+  var cc = null;
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function startCC() {
+    regen(); if (save.energy <= 0) return;
+    audioInit(); spendEnergy();
+    var seen = save.ccSeen || [], pool = CC.map(function (_, i) { return i; }).filter(function (i) { return seen.indexOf(i) < 0; });
+    if (pool.length < 3) { seen = []; pool = CC.map(function (_, i) { return i; }); }
+    shuffle(pool);
+    var pick = pool.slice(0, 3); save.ccSeen = seen.concat(pick); persist();
+    cc = { i: 0, items: pick.map(function (i) { return CC[i]; }), good: 0, r0: ccRate(), sc0: totalScore() };
+    showCC(); overlay('ccOv', true);
+  }
+  function showCC() {
+    var it = cc.items[cc.i];
+    $('ccEyebrow').textContent = '降重 · 第 ' + (cc.i + 1) + ' / 3 句'; $('ccRate').textContent = ccRate() + '%';
+    $('ccNote').textContent = '选一个改写：意思不变、说法要换。只换一两个字还是会被标红。';
+    $('ccO').innerHTML = '<mark></mark>'; $('ccO').firstChild.textContent = it.o;
+    var box = $('ccOpts'); box.innerHTML = ''; $('ccNext').hidden = true;
+    shuffle([['ok', it.ok], ['dup', it.dup], ['bad', it.bad]]).forEach(function (op) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = op[1];
+      b.addEventListener('click', function () {
+        if (!$('ccNext').hidden) return;
+        [].forEach.call(box.children, function (x) { x.disabled = true; });
+        if (op[0] === 'ok') { b.className = 'ok'; cc.good++; save.cc = Math.max(0, ccRate() - 4); sfx('level'); $('ccNote').textContent = '改得好！意思没变，说法全换了。查重率 −4%。'; }
+        else {
+          b.className = 'no'; sfx('hurt');
+          if (op[0] === 'dup') $('ccNote').textContent = '只换了一两个字，查重系统照样标红。';
+          else { save.stress = Math.min(100, save.stress + 3); $('ccNote').textContent = '意思都变了！导师：“你这是在写另一篇论文。”压力 +3。'; }
+          [].forEach.call(box.children, function (x) { if (x.textContent === it.ok) x.className = 'ok'; });
+        }
+        $('ccRate').textContent = ccRate() + '%'; persist();
+        $('ccNext').textContent = cc.i < 2 ? '下一句' : '完成'; $('ccNext').hidden = false;
+      });
+      box.appendChild(b);
+    });
+  }
+  $('ccNext').addEventListener('click', function () {
+    if (!cc) return;
+    cc.i++; if (cc.i < 3) { showCC(); return; }
+    var g = cc.good, st = 20 + 25 * g, sc0 = cc.sc0, r0 = cc.r0;
+    save.study += st; if (save.dayLog) { save.dayLog.runs++; save.dayLog.study += st; }
+    persist(); overlay('ccOv', false); cc = null;
+    showResult(g >= 3 ? '降重大成功！' : g ? '降了一点' : '一句都没降下来……', ccRate() <= ccTarget() ? '查重率已经达标，可以放心答辩了。' : '离目标 ' + ccTarget() + '% 还差 ' + (ccRate() - ccTarget()) + '%。',
+      [['改对', g + ' / 3'], ['查重率', r0 + '% → ' + ccRate() + '%', true], ['论文进度', (sc0 === totalScore() ? '' : sc0 + ' → ') + totalScore() + ' / ' + lineOf()], ['学习力', '+' + st]],
+      [{ label: '回书桌', primary: true, fn: backHome }].concat(save.energy > 0 ? [{ label: '再降一次', fn: startCC }] : []));
+  });
+
+  // ---------- 研三 · 毕业去向 ----------
+  var ENDINGS = [
+    { id: 'phd', name: '继续读博', req: '发表 ≥ 2 篇，导师好感 ≥ 60（周老组好感 ≥ 45 就行：有推荐信）',
+      ok: function () { return (save.pubs || []).length >= 2 && (save.favor || 0) >= (save.advisor === 'zhou' ? 45 : 60); },
+      text: function () { return advDef(save.advisor).name + '：“留下来读博吧，课题我都给你想好了。”你开始了新的五年。工位没换，咖啡机还是那台。'; } },
+    { id: 'bigco', name: '大厂 offer', req: '发表 ≥ 1 篇，或者在钱老板组做过横向项目',
+      ok: function () { return (save.pubs || []).length >= 1 || save.advisor === 'qian'; },
+      text: function () { return '你拿到了一家大厂的 offer。入职第一天，组长在群里发了一句：“在吗？”'; } },
+    { id: 'indie', name: '自己做游戏', req: '补助存款 ≥ ¥6000（启动资金）',
+      ok: function () { return (save.money || 0) >= 6000; },
+      text: function () { return '你用三年攒下的补助做了一款像素小游戏，名字叫《疯狂的研究生》。'; } },
+    { id: 'gov', name: '考公上岸', req: '随时可以选',
+      ok: function () { return true; },
+      text: function () { return '你又考了一次试，这次是考公，一战上岸。妈妈说：“这下稳了。”'; } }
+  ];
+  function openEndings() {
+    var box = $('endingList'); box.innerHTML = '';
+    ENDINGS.forEach(function (e) {
+      var ok = e.ok(), b = document.createElement('button'); b.type = 'button'; b.className = 'endg'; b.disabled = !ok;
+      b.innerHTML = '<b></b><small></small>'; b.querySelector('b').textContent = (ok ? '' : '🔒 ') + e.name; b.querySelector('small').textContent = e.req;
+      b.addEventListener('click', function () {
+        save.ending = e.id; persist(); overlay('endingOv', false);
+        stampThen('毕业快乐', function () { renderEnd(); show('vEnd'); });
+      });
+      box.appendChild(b);
+    });
+    overlay('endingOv', true);
+  }
   // ---------- 研二 · 做实验（调参数小游戏） ----------
   var EXP_PARAMS = ['温度', '浓度', '反应时间', '转速', 'pH 值', '学习率', '批大小', '电压', '采样频率', '样本量', '光照强度', '迭代次数'];
   var ex = null;
   function startExp() {
     regen(); if (save.energy <= 0) return;
     audioInit(); spendEnergy();
-    ex = { i: 0, hits: 0, res: [], names: EXP_PARAMS.slice().sort(function () { return Math.random() - 0.5; }).slice(0, 3), pos: 0, dir: 1, last: performance.now(), state: 'run', sc0: totalScore() };
+    ex = { i: 0, hits: 0, res: [], names: shuffle(EXP_PARAMS.slice()).slice(0, 3), pos: 0, dir: 1, last: performance.now(), state: 'run', sc0: totalScore() };
     newParam(); overlay('expOv', true);
   }
   function newParam() {
@@ -4310,8 +4612,9 @@
   }
   $('buyBtn').addEventListener('click', function () { renderBuy(); overlay('buyOv', true); });
   $('buyClose').addEventListener('click', function () { overlay('buyOv', false); });
-  $('gradStartBtn').addEventListener('click', function () { if (isGrad()) startYear((save.gy || 1) + 1); else openSlots(); });
+  $('gradStartBtn').addEventListener('click', function () { if (isGrad()) { if (gyN() >= 3) openEndings(); else startYear(gyN() + 1); } else openSlots(); });
   if ($('dbgY2')) $('dbgY2').addEventListener('click', function () { if (!save.advisor) save.advisor = 'su'; if (!save.meetSlot) save.meetSlot = 'eve'; save.phase = 'grad'; save.finalSchool = save.finalSchool || SCHOOLS[save.school || 0].name; startYear(2); });
+  if ($('dbgY3')) $('dbgY3').addEventListener('click', function () { if (!save.advisor) save.advisor = 'su'; if (!save.meetSlot) save.meetSlot = 'eve'; save.phase = 'grad'; save.finalSchool = save.finalSchool || SCHOOLS[save.school || 0].name; startYear(3); });
   if ($('dbgReview')) $('dbgReview').addEventListener('click', function () { if (save.paper) { save.paper.at = '2000-01-01'; persist(); renderHome(); } });
   if ($('dbgMeet')) $('dbgMeet').addEventListener('click', function () { if (!isGrad()) return; window.__meetNow = true; startMeet(); });
 
@@ -4520,6 +4823,19 @@
       g.rect(10, 12, 4, 1, INK); g.p(13, 11, INK);
       g.rect(1, 17 - t, 6, 5, '#aeb8c4'); g.rect(2, 18 - t, 4, 3, '#7fd1ff');
     } };
+  // 研三：盲审专家（戴面具）和答辩委员会
+  var BLIND = { id: 'boss_blind', draw: function (g, t) {
+      g.rect(5, 15, 14, 9, '#3a3a4a'); g.rect(10, 15, 4, 4, '#f4f1ea');
+      g.circ(12, 9, 6, '#f3c9a0'); g.rect(6, 3, 12, 3, '#555');
+      g.rect(6, 7, 12, 4, INK); g.rect(8, 8, 2, 2, '#ffffff'); g.rect(14, 8, 2, 2, '#ffffff');
+      g.rect(10, 13, 4, 1, INK); g.text('?', 19, 1 + t, '#7fd1ff');
+    } };
+  var COMM = { id: 'boss_comm', draw: function (g, t) {
+      var hx = [3, 8, 12, 16, 21], hc = ['#6b4a3a', '#9a9a9a', '#1c1c1c', '#6b4a3a', '#d5d5d5'];
+      hx.forEach(function (x, k) { var y = 7 + (k === 2 ? -2 : 0) + ((k + t) % 2); g.circ(x, y, 2, '#f3c9a0'); g.rect(x - 2, y - 3, 4, 1, hc[k]); g.p(x - 1, y, INK); g.p(x + 1, y, INK); g.rect(x - 2, y + 3, 4, 3, k === 2 ? '#d9503f' : '#2d3a4f'); });
+      g.rect(0, 15, 24, 3, '#8a5432'); g.rect(1, 18, 2, 6, '#6b3f22'); g.rect(21, 18, 2, 6, '#6b3f22');
+      g.rect(10, 13, 4, 2, '#f4f1ea');
+    } };
   // 考研日每一科的 Boss
   var EXAM_BOSSES = {
     po: { def: BOSS_PO, name: '材料分析巨卷', say: '辨析题：论你上岸的必然性与偶然性！', die: '答……答到点子上了……', sk: ['spit'] },
@@ -4541,6 +4857,11 @@
     g1c: { def: JUDGE_C, round: '专家评审', name: '评委丙 · 新颖性之问', say: '这个方向，去年别人就做过了。', die: '……你做的确实不一样。', sk: ['blink', 'spit'] },
     g2a: { def: JUDGE_A, round: '进展汇报', name: '评委甲 · 进展之问', say: '半年过去了，实验做到哪一步了？', die: '……进展还算扎实。', sk: ['spit', 'ring'] },
     g2b: { def: JUDGE_B, round: '数据质询', name: '评委乙 · 数据之问', say: '这个数据可靠吗？原始记录拿来看看。', die: '……数据经得起推敲。', sk: ['bomb', 'spit'] },
+    g3a: { def: BLIND, round: '盲审', name: '盲审专家 · 匿名甲', say: '本文创新性一般，建议修改后再审。', die: '……同意答辩。', sk: ['blink', 'spit'] },
+    g3b: { def: BLIND, round: '盲审', name: '盲审专家 · 匿名乙', say: '研究方法存在一定缺陷，请说明。', die: '……同意答辩。', sk: ['blink', 'bomb'] },
+    g3c: { def: COMM, round: '毕业答辩', name: '答辩委员会', say: '请用十分钟介绍你的论文，然后回答五位委员的提问。', die: '……经委员会表决，同意授予学位！', sk: ['spit'],
+      rot: [{ name: '委员一', sk: ['spit'], say: '你的创新点到底在哪？' }, { name: '委员二', sk: ['charge'], say: '这个结论的依据是什么？' }, { name: '委员三', sk: ['bomb'], say: '参考文献为什么这么旧？' },
+        { name: '委员四', sk: ['blink', 'spit'], say: '换一批样本，结论还成立吗？' }, { name: '主席', sk: ['blink', 'spit', 'bomb'], say: '最后一个问题：毕业以后打算做什么？' }] },
     g2c: { def: JUDGE_C, adv: true, round: '导师终审', name: '导师 · 中期终审', say: '（导师站了起来）最后一个问题，我来问。', die: '……行，中期过了。', sk: ['blink', 'spit', 'bomb'] }
   };
   function bossDef(B) { return B.adv && save && save.advisor ? ADV_SPR[save.advisor] : B.def; }
@@ -4980,6 +5301,7 @@
   function eliteDown(m) {
     var spec = m.spec || S.eliteSpec || EXAM_ELITE;
     S.eliteDown = true; S.slowT = 1.4; S.eliteKills++; codexHit('e', spec.name);
+    if (spec.countdown && S.rush) { S.rush = false; banner('延毕危机解除', 1.4); }
     if (m.main) S.mainDown = true;
     battleSay(m.def, spec.name, spec.die, 3.2);
   }
@@ -4998,6 +5320,7 @@
   function spawnRoundBoss(RD) {
     var a = edgePoint(60), B = RD.boss;
     S.boss = addMob(B.def, a.x, a.y, 'boss'); S.bossSpawned = true;
+    S.boss.rot = B.rot || null; S.boss.rotI = 0;
     S.boss.max = S.boss.hp = B.hp; S.bossT0 = S.rt; S.boss.dmg = BAL.bossHit; S.boss.skills = B.sk || []; S.boss.ringN = B.ring || 14; S.boss.ringCd = B.ringCd || 6; S.boss.ring = 3;
     $('bossName').textContent = B.name;
     banner('压轴：' + B.name, 2.2); S.shake = 8; sfx('boss'); buzz([60, 40, 60]);
@@ -5078,7 +5401,7 @@
     if (m.kind === 'mob') {
       burst(m, 8, 150, dx, dy); S.gems.push({ x: m.x, y: m.y, v: 1 });
       if (Math.random() < BAL.dropMob) dropPick(m.x, m.y);
-      if (m.def.id === 'taowa' && !m.child) {
+      if ((m.def.id === 'taowa' || m.def.id === 'biaohong') && !m.child) {
         for (var k = 0; k < 2; k++) { var c = addMob(m.def, m.x + (k ? 10 : -10), m.y, 'mob'); c.scale = 1.4; c.r = 9; c.max = c.hp = 8; c.child = true; c.kx = (k ? 1 : -1) * 160; }
       }
       sfx('kill');
@@ -5267,6 +5590,11 @@
     var dir = inputDir(), sp = speed() * (S.distractT > 0 ? 0.55 : 1);
     if (S.distractT > 0) S.distractT -= dt;
     if (S.jamT > 0) S.jamT -= dt;
+    if (S.scan) {   // 查重系统的扫描线：从屏幕顶扫到底，碰到受伤一次
+      S.scan.t += dt; var scy = S.scan.y0 + S.scan.t / 2.2 * H;
+      if (!S.scan.hit && Math.abs(p.y - scy) < 14) { S.scan.hit = true; hurtPlayer(BAL.eliteHit * 0.8, p.x, scy); }
+      if (S.scan.t >= 2.2) S.scan = null;
+    }
     p.x += (dir.x * sp + p.kx) * dt; p.y += (dir.y * sp + p.ky) * dt;
     var damp = Math.exp(-9 * dt); p.kx *= damp; p.ky *= damp;
     if (dir.x || dir.y) { p.fx = dir.x; p.fy = dir.y; if (Math.abs(dir.x) > 0.1) p.face = dir.x < 0; }
@@ -5291,6 +5619,18 @@
       }
       if (m.spec && m.spec.jam) { m.jamCd = (m.jamCd == null ? 5 : m.jamCd) - dt; if (m.jamCd <= 0) { m.jamCd = 8; S.jamT = 2; banner('服务器宕机！攻击停 2 秒', 1.8); sfx('thud'); } }
       if (m.spec && m.spec.reflect) { m.reflC = (m.reflC || 0) + dt; m.refl = (m.reflC % 5) > 3.2; }
+      if (m.spec && m.spec.scan) { m.scanCd = (m.scanCd == null ? 4 : m.scanCd) - dt; if (m.scanCd <= 0 && !S.scan) { m.scanCd = 7; S.scan = { t: 0, y0: p.y - H / 2, hit: false }; banner('查重系统扫描中！躲开红线', 1.6); sfx('beam'); } }
+      if (m.spec && m.spec.countdown) { m.cdT = (m.cdT == null ? 20 : m.cdT) - dt; if (m.cdT <= 0 && !S.rush) { S.rush = true; banner('延毕预警！全场怪物加速', 2); sfx('boss'); } }
+      if (m.rot) {   // 答辩委员会：每打掉 1/5 血换一位委员
+        var rI = Math.min(4, Math.floor((1 - m.hp / m.max) * 5));
+        if (rI !== m.rotI) { m.rotI = rI; var RM = m.rot[rI]; m.skills = RM.sk; battleSay(m.def, '答辩委员会 · ' + RM.name, RM.say, 2.8); $('bossName').textContent = '答辩委员会 · ' + RM.name; }
+      }
+      if (m.kind === 'mob' && S.rush) { vx *= 1.45; vy *= 1.45; }
+      if (m.kind === 'mob' && m.def.id === 'cuobie') { var wv = Math.sin(S.t * 5 + m.ph * 3) * 70; vx += -dy / d * wv; vy += dx / d * wv; }
+      if (m.kind === 'mob' && m.def.id === 'yema') {   // 页码乱序：保持距离，换个方向瞬移
+        m.tp = (m.tp == null ? 2 + Math.random() * 2 : m.tp) - dt;
+        if (m.tp <= 0) { m.tp = 2.5 + Math.random() * 2; if (d > 90) { var ta = Math.random() * Math.PI * 2; m.x = p.x + Math.cos(ta) * d; m.y = p.y + Math.sin(ta) * d; m.flash = 0.15; } }
+      }
       if (m.kami) {   // 自爆怪：贴近就点燃引信，停下闪红，0.8 秒后爆炸
         if (m.fuse > 0) { vx = 0; vy = 0; m.fuse -= dt; m.flash = Math.floor(m.fuse * 12) % 2 ? 0.08 : 0; if (m.fuse <= 0) { kamiBoom(m); return; } }
         else if (d < 48) { m.fuse = 0.8; sfx('tick'); }
@@ -5672,8 +6012,11 @@
       var sq = m.flash > 0 ? 1 + m.flash * (m.kind === 'mob' ? 2 : 0.6) : 1;
       var o = { flip: m.face, sx: sq, sy: 1 / sq };
       if (m.def.id === 'pzhi' && pShield(m)) o.alpha = 0.4;
+      if (m.spec && m.spec.stealth) o.alpha = Math.sin(S.t * 1.4 + m.ph) > 0.35 ? 1 : 0.12;
+      if (m.kind === 'mob' && m.def.id === 'niming') o.alpha = 0.55 + 0.35 * Math.sin(S.t * 2 + m.ph * 3);
       if (m.refl) { ctx.save(); ctx.strokeStyle = '#e5484d'; ctx.lineWidth = 3; ctx.globalAlpha = 0.6 + 0.3 * Math.sin(S.t * 14); ctx.beginPath(); ctx.arc(m.x, m.y, m.r + 12, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
       spr(m.def, t, m.x, m.y, m.scale, o);
+      if (m.spec && m.spec.countdown && m.cdT > 0) { ctx.save(); ctx.fillStyle = '#e5484d'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(Math.ceil(m.cdT) + 's', m.x, m.y - m.r - 20); ctx.restore(); }
       if (m.flash > 0) { o.white = true; o.alpha = m.kind === 'mob' ? 0.85 : 0.4; spr(m.def, t, m.x, m.y, m.scale, o); }
       if (S.freezeT > 0) { spr(m.def, t, m.x, m.y, m.scale, { flip: m.face, white: true, alpha: 0.35 }); }
       if (m.kind === 'elite') {
@@ -5687,6 +6030,7 @@
     var blink = p.inv > 0 && Math.floor(S.t * 20) % 2 === 0;
     if (S.koiT > 0) { blink = false; ctx.fillStyle = 'rgba(244,167,66,' + (0.25 + 0.15 * Math.sin(S.t * 10)) + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, 28, 0, Math.PI * 2); ctx.fill(); }
     spr(GM.player, pt, p.x, p.y, 2, { flip: p.face, alpha: blink ? 0.35 : 1 });
+    if (S.scan) { var lyy = S.scan.y0 + S.scan.t / 2.2 * H; ctx.save(); ctx.fillStyle = 'rgba(229,72,77,0.22)'; ctx.fillRect(p.x - W, lyy - 14, W * 2, 28); ctx.fillStyle = '#e5484d'; ctx.fillRect(p.x - W, lyy - 2, W * 2, 4); ctx.restore(); }
     if (S.jamT > 0) { ctx.save(); ctx.fillStyle = '#e5484d'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('宕机 ' + S.jamT.toFixed(1), p.x, p.y - 30); ctx.restore(); }
     if (p.hurt > 0) spr(GM.player, pt, p.x, p.y, 2, { flip: p.face, white: true, alpha: p.hurt * 3 });
 
@@ -5824,7 +6168,7 @@
   function chapterCfg(sub, ci, onEnd) {
     var ch = CHAPTERS[sub.id], t = tierOf(sub.id, ci), cfg = chapterCfg0(sub, ci, onEnd);
     if (ch.ease) cfg.hpMul *= ch.ease;   // 机制特别难缠的线（p 值）血量打折
-    if (sub.grad) { cfg.hpMul *= BAL.gradHp * (sub.grad === 2 ? BAL.grad2Hp : 1); cfg.mobDmg *= BAL.gradDmg * (sub.grad === 2 ? BAL.grad2Dmg : 1); }
+    if (sub.grad) { cfg.hpMul *= BAL.gradHp * yK('Hp', sub.grad); cfg.mobDmg *= BAL.gradDmg * yK('Dmg', sub.grad); }
     return cfg;
   }
   function chapterCfg0(sub, ci, onEnd) {
@@ -5947,15 +6291,15 @@
     };
   }
   // 发表的论文让中期评委变弱：每篇 −10%，最多 −30%
-  function pubMul() { return gyN() === 2 ? 1 - 0.1 * Math.min(3, (save.pubs || []).length) : 1; }
+  function pubMul() { return gyN() >= 2 ? 1 - 0.1 * Math.min(3, (save.pubs || []).length) : 1; }
   function gradExamCfg(s, accident, onEnd) {
-    var K = [1.0, 1.25, 1.5], R = [12, 14, 16], RC = [6, 5.5, 5], Y = gyN() === 2 ? BAL.grad2Exam : 1;
+    var K = [1.0, 1.25, 1.5], R = [12, 14, 16], RC = [6, 5.5, 5], YM = yK('Exam') * ccMul();
     return {
       kind: 'exam', hpMul: s.hp * BAL.gradHp * 0.8, mobDmg: BAL.gradDmg, rateMul: 0.9, duration: 0, bossAt: 0, elites: [], accident: accident, phases: [{ group: SUB_IDS[0], until: 1e9, label: '' }],
       rounds: SUBJECTS.map(function (sub, i) {
         var B = EXAM_BOSSES[sub.id];
         return { group: sub.id, name: B.round, tag: '第' + CN_NUM[i] + '轮 · ' + B.round + '（3 分钟）',
-          boss: { def: bossDef(B), name: B.name, say: B.say, die: B.die, ring: R[i], ringCd: RC[i], sk: B.sk, hp: Math.round(BAL.gradExamHp * Y * K[i] * examMul(sub.id) * favorMul() * pubMul()) } };
+          boss: { def: bossDef(B), name: B.name, say: B.say, die: B.die, ring: R[i], ringCd: RC[i], sk: B.sk, rot: B.rot, hp: Math.round(BAL.gradExamHp * YM * K[i] * examMul(sub.id) * favorMul() * pubMul()) } };
       }),
       onEnd: onEnd
     };
@@ -5966,7 +6310,7 @@
     var accident = rollExamState(save.stress);
     var B0 = EXAM_BOSSES[SUB_IDS[0]];
     var first = { name: B0.name, say: accident && accident.late ? '同学，还有一分钟收卷。' : B0.say, boss: bossDef(B0), sk: B0.sk };
-    showLoading({ sub: isGrad() ? gyName() + ' · ' + (gyN() === 2 ? '中期考核' : '开题答辩') : '考研日 · ' + s.name, title: accident && accident.late ? '迟到了！' : (isGrad() ? (gyN() === 2 ? '中期考核组' : '三位评委') : '四门连考'), kind: isGrad() ? '第一位评委' : '第一科 Boss', spec: first, done: function () {
+    showLoading({ sub: isGrad() ? gyName() + ' · ' + Y().exFull : '考研日 · ' + s.name, title: accident && accident.late ? '迟到了！' : (isGrad() ? Y().loadT : '四门连考'), kind: isGrad() ? '第一位评委' : '第一科 Boss', spec: first, done: function () {
       startBattle(examCfg(s, accident, function (r) { examResult(s, r, accident); }));
       if (accident) { if (!accident.late) banner(accident.banner, 2.6); battleSay(GM.player, '你（内心）', accident.text + (accident.good ? '！' : '……'), 4); }
     } });
@@ -5977,6 +6321,17 @@
     if (isGrad()) {
       var gr = r.results || [], gp = gr.filter(Boolean).length;
       var gst = [['考场状态', acc ? acc.label : '正常发挥'], ['通过轮次', gp + ' / 3', true], ['导师好感', save.favor], ['击杀', r.kills]];
+      if (gyN() === 3) {
+        if (gp >= 2 && !r.quit) {
+          save.gyDone = 1; save.favor = Math.min(100, save.favor + 10); persist();
+          showResult('答辩通过！', '主席：“经委员会表决，同意授予硕士学位。”', gst.concat([['查重率', ccRate() + '%'], ['已发表论文', (save.pubs || []).length + ' 篇']]),
+            [{ label: '选择毕业去向', primary: true, fn: function () { renderEnd(); show('vEnd'); openEndings(); } }]);
+        } else {
+          save.yanbi = (save.yanbi || 0) + 1; persist();
+          showResult('答辩没通过……', '委员会：“论文还需要大改，延期毕业。”这就是延毕一年：星星、论文、补助都保留，再来一周。', gst, [{ label: '延毕一年', primary: true, fn: gradRetry }]);
+        }
+        return;
+      }
       if (gyN() === 2) {
         if (gp >= 2 && !r.quit) {
           save.gyDone = 1; save.favor = Math.min(100, save.favor + 10); persist();
@@ -6092,28 +6447,29 @@
       var A = advDef(save.advisor);
       if (!log || log.key === key) {
         $('dailyEyebrow').textContent = gyName() + ' · 主线任务';
-        $('dailyTitle').textContent = gyN() === 2 ? '7 天后，中期考核。' : '7 天后，开题答辩。';
+        $('dailyTitle').textContent = '7 天后，' + Y().exFull + '。';
         addStat(dl, '导师', A.name + '（' + A.role + '）');
-        addStat(dl, gyN() === 2 ? '中期线' : '开题线', line + ' / ' + fullTotal());
+        addStat(dl, Y().line, line + ' / ' + fullTotal());
         addStat(dl, '组会', '这周 ' + meetPlan().length + ' 次 · ' + slotDef().name, true);
-        $('dailyGoal').innerHTML = gyN() === 2 ? '<b>怎么过中期：</b>打通实验、数据、投稿三条线，多做实验，中期进度过线；攒够实验数据就去投稿，中了的论文让评委变弱。第 7 天：两位评委 + 你的导师亲自终审！'
+        $('dailyGoal').innerHTML = gyN() === 3 ? '<b>怎么毕业：</b>打通写论文、格式、答辩准备三条线，再去“降重”把查重率降到 ' + ccTarget() + '% 以下，论文进度过线。研二没投完的数据还能继续投稿。第 7 天：两位盲审专家 + 答辩委员会！'
+          : gyN() === 2 ? '<b>怎么过中期：</b>打通实验、数据、投稿三条线，多做实验，中期进度过线；攒够实验数据就去投稿，中了的论文让评委变弱。第 7 天：两位评委 + 你的导师亲自终审！'
           : '<b>怎么开题：</b>打通文献海、课程、杂事三条线，再多读文献，开题进度过线；组会准时出席拿补助和好感。第 7 天面对三位评委！';
       } else {
         save.review = (save.review || 0) + 1;
         $('dailyEyebrow').textContent = gyName() + ' 第 ' + Math.min(d, 7) + ' 天 · 昨日小结';
         $('dailyTitle').textContent = MISS ? '你错过了 ' + MISS.n + ' 次组会……' : (log.runs ? '忙了 ' + log.runs + ' 件事' : '昨天什么都没干……');
-        addStat(dl, gyN() === 2 ? '中期进度' : '开题进度', log.score0 + ' → ' + sc + ' / ' + line);
+        addStat(dl, Y().prog, log.score0 + ' → ' + sc + ' / ' + line);
         addStat(dl, '补助', '¥' + (save.money || 0)); addStat(dl, '导师好感', save.favor);
         addStat(dl, '高级复习 第 ' + save.review + ' 层', '伤害 +' + Math.round(save.review * BAL.reviewDmg * 100) + '%', true);
         $('dailyGoal').innerHTML = MISS ? '<b>' + A.name + '：</b>“' + A.scold + '”' + (A.id === 'tao' ? '' : '（好感 −' + 8 * MISS.n + '，压力 +' + 15 * MISS.n + '）')
-          : d >= 7 ? '<b>今天' + examWord() + '！</b>' + (sc >= line ? '进度已过线，评委会好对付些。' : '进度还没过线，会很难。') : '<b>今日建议：</b>' + (meetToday().st === 'soon' ? '今天有组会（' + slotDef().name + '），记得准时来。' : save.paper && paperReady() ? '审稿结果出来了，去“投稿”看看！' : gyN() === 2 ? '去刷章节和做实验，把中期进度往上推。' : '去刷章节和读文献，把开题进度往上推。');
+          : d >= 7 ? '<b>今天' + examWord() + '！</b>' + (sc >= line ? '进度已过线，评委会好对付些。' : '进度还没过线，会很难。') : '<b>今日建议：</b>' + (meetToday().st === 'soon' ? '今天有组会（' + slotDef().name + '），记得准时来。' : save.paper && paperReady() ? '审稿结果出来了，去“投稿”看看！' : gyN() === 3 ? '去刷章节和降重，把论文进度往上推。' : gyN() === 2 ? '去刷章节和做实验，把中期进度往上推。' : '去刷章节和读文献，把开题进度往上推。');
       }
-      $('dailyGo').textContent = d >= 7 ? (gyN() === 2 ? '去考核' : '去答辩') : '开始今天的科研';
+      $('dailyGo').textContent = d >= 7 ? Y().go : '开始今天的科研';
       save.dayLog = { key: key, runs: 0, study: 0, score0: sc };
       save.seenDay = key; persist();
       var gl = Math.max(0, 7 - d);
-      $('dailyBig').innerHTML = d >= 7 ? '今天' + examWord() + '！<small>评委已就位</small>' : '距离' + examWord() + ' ' + gl + ' 天<small>' + (gyN() === 2 ? '中期考核组' : '开题答辩组') + '正在逼近</small>';
-      $('dailyName').textContent = gyN() === 2 ? '中期考核组 · 两位评委 + 导师' : '开题答辩组 · 三位评委';
+      $('dailyBig').innerHTML = d >= 7 ? '今天' + examWord() + '！<small>评委已就位</small>' : '距离' + examWord() + ' ' + gl + ' 天<small>' + Y().group + '正在逼近</small>';
+      $('dailyName').textContent = Y().group + ' · ' + Y().groupD;
       $('dailyBig').hidden = $('dailyName').hidden = $('dailyCard').hidden = true;
       $('dailyOv').hidden = false;
       daily = { t: 0, left: gl, steps: 0, shake: 0, flash: 0, stage: 0 };
@@ -6244,7 +6600,7 @@
       var keep = { up: save.up, attrs: save.attrs, review: save.review, stars: save.stars };
       if (opt.major) setMajor(opt.major);
       var keepPh = save.phase, keepAdv = save.advisor;
-      var keepGy = save.gy, keepPubs = save.pubs;
+      var keepGy = save.gy, keepPubs = save.pubs, keepCc = save.cc; if (opt.cc != null) save.cc = opt.cc;
       if (opt.grad) { save.phase = 'grad'; save.advisor = opt.advisor || 'su'; save.gRev0 = 0; save.gy = opt.gy || 1; save.pubs = opt.pubs || []; setGradYear(save.gy); }
       save.up = opt.up || { notebook: 0, cup: 0, phones: 0, coffee: 0, bag: 0 };
       save.attrs = opt.attrs || { focus: 0, stamina: 0, wit: 0 };
@@ -6274,6 +6630,7 @@
       save.up = keep.up; save.attrs = keep.attrs; save.review = keep.review; save.stars = keep.stars;
       if (opt.major) setMajor(save.major);
       if (opt.grad) { save.phase = keepPh; save.advisor = keepAdv; save.gy = keepGy; save.pubs = keepPubs; setStage(); }
+      save.cc = keepCc;
       persist();
       mode = 'idle'; ['levelOv', 'resultOv', 'celeOv', 'letterOv'].forEach(function (o) { overlay(o, false); }); $('bsay').hidden = true;
       return res;
