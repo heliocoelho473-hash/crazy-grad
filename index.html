@@ -200,6 +200,35 @@
   .tb-btn .dot { position: absolute; right: -4px; top: -4px; min-width: 14px; height: 14px; padding: 0 3px; background: var(--red); color: #fff; font-size: 9px; display: grid; place-items: center; box-shadow: 0 0 0 2px var(--ink); }
   @media (max-width: 360px) { .tb-logo { display: none; } .tb-res { margin-right: auto; } .tb-res ~ .tb-res { margin-right: 0; } }
 
+  /* 导师双选 */
+  .adv { display: grid; grid-template-columns: 64px 1fr; gap: 10px 12px; text-align: left; width: 100%; background: #fff; border: 0; padding: 12px; cursor: pointer; color: var(--text); box-shadow: 0 0 0 2px var(--ink), 3px 4px 0 1px rgba(0,0,0,0.18); }
+  .adv:hover { background: #fffbe8; }
+  .adv canvas, .adv-big canvas { width: 64px; height: 64px; background: var(--c, #3a3358); box-shadow: 0 0 0 2px var(--ink); }
+  .adv .t { font-family: var(--display); font-size: 21px; line-height: 1.1; }
+  .adv .role { font-size: 12px; font-weight: 700; color: #fff; background: var(--ink); padding: 1px 6px; margin-left: 6px; vertical-align: 3px; font-family: var(--body); }
+  .adv .tag { font-size: 13px; color: var(--dim); margin-top: 2px; }
+  .adv-stats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .adv-stats div { background: #f6efdc; padding: 5px 6px; display: grid; gap: 1px; }
+  .adv-stats small { font-size: 11px; color: var(--dim); font-weight: 700; }
+  .adv-stats b { font-size: 15px; font-variant-numeric: tabular-nums; }
+  .adv-stats b.hot { color: var(--red); }
+  .adv-pips { grid-column: 1 / -1; display: grid; grid-template-columns: auto 1fr auto 1fr; gap: 4px 8px; align-items: center; font-size: 12px; font-weight: 700; color: var(--dim); }
+  .pip5 { display: flex; gap: 3px; } .pip5 i { width: 12px; height: 8px; background: #e9e2d0; box-shadow: 0 0 0 1px var(--ink); } .pip5 i.on { background: var(--gold); }
+  .adv-pc { grid-column: 1 / -1; display: grid; gap: 3px; font-size: 13px; line-height: 1.45; }
+  .adv-pc .g::before { content: "好 "; color: #3f8a46; font-weight: 700; }
+  .adv-pc .b::before { content: "坏 "; color: var(--red); font-weight: 700; }
+  .adv-big { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: center; }
+  .adv-big canvas { width: 80px; height: 80px; box-shadow: var(--px); }
+  .wx { display: grid; gap: 8px; background: #ededed; padding: 10px; box-shadow: 0 0 0 2px var(--ink); }
+  .wx .hd { font-size: 12px; color: #666; text-align: center; }
+  .wx p { justify-self: start; max-width: 88%; background: #fff; padding: 7px 10px; font-size: 14px; line-height: 1.45; box-shadow: 0 0 0 1px #d6d6d6; }
+  .end-adv { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; background: #fff; padding: 10px; box-shadow: 0 0 0 2px var(--ink); text-align: left; }
+  .end-adv canvas { width: 64px; height: 64px; box-shadow: 0 0 0 2px var(--ink); }
+  .next-ch { display: grid; gap: 6px; text-align: left; }
+  .next-ch div { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; font-size: 14px; background: #f6efdc; padding: 7px 10px; }
+  .next-ch b { font-family: var(--display); font-weight: 400; font-size: 17px; }
+  .next-ch small { color: var(--dim); font-size: 12px; font-weight: 700; }
+
   /* 设置 */
   .set-row { display: grid; grid-template-columns: 72px 1fr 40px; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
   .set-row output { font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; color: var(--dim); }
@@ -611,6 +640,7 @@
           <button type="button" id="dbgEnergy">精力回满</button>
           <button type="button" id="dbgDaily">重看今日动画</button>
           <button type="button" id="dbgIntro">重看开场</button>
+          <button type="button" id="dbgAdv">直接到选导师</button>
           <button type="button" id="dbgReset">重置存档</button>
         </div>
       </details>
@@ -618,14 +648,31 @@
   </section>
 
   <!-- 上岸结局 -->
+  <section class="view form-view" id="vAdvisor" hidden>
+    <div class="sheetbox">
+      <div class="form-head">
+        <div class="eyebrow">研究生 · 师生双选表</div>
+        <h2>选择你的导师</h2>
+        <p class="muted">组会开得越多，补助越高；但每位导师都有自己的“坑”。没有最好的，只有最适合你的。</p>
+      </div>
+      <div class="stack" id="advList"></div>
+    </div>
+  </section>
+
   <section class="view end-view" id="vEnd" hidden>
     <div class="sheetbox">
-    <div class="eyebrow">备考篇 · 完</div>
+    <div class="eyebrow" id="endEyebrow">备考篇 · 完</div>
     <h1 id="endTitle">上岸！</h1>
     <div class="photo"><canvas id="photo" width="96" height="56"></canvas></div>
     <p id="endText"></p>
     <dl class="result" id="endStats"></dl>
-    <p class="muted">研究生篇（开题、组会、导师、答辩）正在制作中。</p>
+    <div class="end-adv" id="endAdv" hidden><canvas class="pix" id="endAdvCv" width="24" height="24"></canvas><div><div class="eyebrow">你的导师</div><b id="endAdvName"></b><p class="muted" id="endAdvLine"></p></div></div>
+    <div class="next-ch" id="endNext" hidden>
+      <div><b>研一</b><span>开题：读文献、写综述</span><small>即将开放</small></div>
+      <div><b>研二</b><span>中期：做实验、组会汇报</span><small>即将开放</small></div>
+      <div><b>研三</b><span>答辩：论文、查重、盲审</span><small>即将开放</small></div>
+    </div>
+    <p class="muted" id="endSoon">研究生篇（开题、组会、导师、答辩）正在制作中。</p>
     <button class="btn ghost" id="restartBtn" type="button">换个专业重新开始</button>
     </div>
   </section>
@@ -683,6 +730,15 @@
       <p class="muted">学习力：<b id="shopStudy">0</b>。升级永久生效，再战也保留。<br><span id="shopProg"></span></p>
       <div class="stack" id="shopList"></div>
       <button class="btn ghost" id="shopClose" type="button">回书桌</button>
+    </div>
+  </div>
+  <div class="ov" id="advOv" hidden>
+    <div class="panel">
+      <div class="adv-big"><canvas class="pix" id="advCv" width="24" height="24"></canvas><div><div class="eyebrow" id="advRole"></div><h2 id="advName"></h2><p class="muted" id="advTag"></p></div></div>
+      <div class="wx"><div class="hd" id="advWxHd"></div><div id="advWx" style="display:grid;gap:8px"></div></div>
+      <dl class="result" id="advStats"></dl>
+      <button class="btn red" id="advPick" type="button">就选 TA 了</button>
+      <button class="btn ghost" id="advBack" type="button">再看看别的导师</button>
     </div>
   </div>
   <div class="ov" id="setOv" hidden>
@@ -2689,7 +2745,7 @@
     return { major: null, school: null, start: null, week: 1, study: 0, up: { notebook: 0, cup: 0, phones: 0, coffee: 0, bag: 0 },
       stress: 0, energy: MAX_ENERGY, energyAt: Date.now(), energyDay: null, ads: 0, dayOffset: 0, outcome: null, finalSchool: null,
       totalKills: 0, runs: 0, storySeen: false, stars: { po: [], en: [], ma: [], cs: [] }, seenDay: null, dayLog: null, msgSeen: null,
-      attrs: { focus: 0, stamina: 0, wit: 0 }, review: 0, endlessBest: 0, lastRelax: 0, codex: { m: {}, e: {}, b: {} }, codexSeen: 0 };
+      attrs: { focus: 0, stamina: 0, wit: 0 }, review: 0, endlessBest: 0, lastRelax: 0, codex: { m: {}, e: {}, b: {} }, codexSeen: 0, advisor: null };
   }
   function load() {
     var b = blank();
@@ -2762,7 +2818,7 @@
   // ======================================================================
   // 界面切换
   // ======================================================================
-  var VIEWS = ['vIntro', 'vMajor', 'vSchool', 'vHome', 'vEnd', 'battle'];
+  var VIEWS = ['vIntro', 'vMajor', 'vSchool', 'vHome', 'vAdvisor', 'vEnd', 'battle'];
   function show(id) {
     VIEWS.forEach(function (v) { $(v).hidden = v !== id; });
     if (id === 'vHome' && window.GradScenes) { desk.resize(); desk.step(0); }
@@ -3073,6 +3129,7 @@
   $('dbgDaily').addEventListener('click', function () { save.seenDay = null; persist(); goHome(); });
   $('dbgStress').addEventListener('click', function () { save.stress = Math.min(100, save.stress + 30); persist(); renderHome(); });
   $('dbgIntro').addEventListener('click', function () { startIntro(); });
+  if ($('dbgAdv')) $('dbgAdv').addEventListener('click', function () { save.outcome = 'pass'; save.finalSchool = SCHOOLS[save.school].name; save.advisor = null; persist(); showLetter(save.finalSchool, false); });
   $('dbgReset').addEventListener('click', function () { save = blank(); persist(); boot(); });
 
 
@@ -3258,8 +3315,140 @@
     addStat(dl, '总击杀', save.totalKills);
     addStat(dl, '剩余学习力', save.study, true);
     drawPhoto();
+    var a = advDef(save.advisor);
+    $('endAdv').hidden = $('endNext').hidden = !a; $('endSoon').hidden = !!a;
+    if (a) {
+      advCanvas($('endAdvCv'), a); $('endAdvName').textContent = a.name + ' · ' + a.role;
+      $('endAdvLine').textContent = '组会' + meetText(a.meet) + ' · 查岗 ' + a.check + '% · 补助 ¥' + a.pay + '/月';
+    }
   }
   $('restartBtn').addEventListener('click', function () { save = blank(); save.storySeen = true; persist(); boot(); });
+  // ======================================================================
+  // 研究生篇：导师双选
+  // 组会越多补助越高；每位导师都有自己的坑，没有绝对最好或最差
+  // meet = 每月组会次数，check = 每天被查岗的概率，pay = 每月补助（元），guide / free = 1~5
+  // ======================================================================
+  var ADVISORS = [
+    { id: 'tao', name: '陶老师', role: '佛系放养型', c: '#7fbf8a', tag: '保温杯里泡枸杞，“你们自己看着办”。',
+      meet: 1, check: 5, pay: 600, guide: 1, free: 5,
+      good: ['几乎不开组会，作息完全自由', '从不查岗，想摸鱼就摸鱼'],
+      bad: ['补助最低，月底要吃泡面', '课题全靠自己摸索，毕业前才突然开始“关心”你'],
+      wx: ['同学你好，欢迎加入。', '我们组比较自由，你先自己看看文献。', '有事……也可以不找我。'] },
+    { id: 'zhou', name: '周老', role: '学术泰斗', c: '#c8a27a', tag: '头发花白的小老头，常年全国各地开会。',
+      meet: 2, check: 10, pay: 900, guide: 3, free: 4,
+      good: ['平台大、名气响，推荐信一封顶别人十封', '组里大师兄靠谱，事情有人带'],
+      bad: ['一学期见不到几次面，消息隔三天才回', '组会难得开一次，一开就是一下午，还随机点名'],
+      wx: ['小同学，欢迎。', '我下周在外地开会，具体的你先找你大师兄。', '年轻人，要沉得住气。'] },
+    { id: 'su', name: '苏博士', role: '海归新星', c: '#7fb2ff', tag: '刚从国外回来的年轻女导师，组会全英文。',
+      meet: 4, check: 20, pay: 1600, guide: 3, free: 3,
+      good: ['国际视野，有机会出国交流、开国际会议', '鼓励你自己提想法，氛围像朋友'],
+      bad: ['组会全英文，PPT 也要英文', '只想投顶刊顶会，按国外时间半夜开线上会'],
+      wx: ['Hi! Welcome to the lab~', '我们每周一次 group meeting，记得准备 English slides。', 'Let’s aim high!'] },
+    { id: 'yan', name: '严教授', role: '严谨细节控', c: '#d98a8a', tag: '短发、眼镜链、红笔不离手的女教授。',
+      meet: 6, check: 45, pay: 2000, guide: 5, free: 2,
+      good: ['论文一句一句帮你改，质量最高', '要求清清楚楚，答辩和盲审最稳'],
+      bad: ['改完的稿子红一片，连 PPT 字体都要统一', '不定时到实验室转一圈，看谁不在'],
+      wx: ['你好。入组前先把我们组的写作规范读三遍。', '每周一交周报，周五组会。', '标点用全角。'] },
+    { id: 'lin', name: '林老师', role: '奋进青椒', c: '#8f6ad1', tag: '格子衫、黑眼圈，正在冲职称的年轻男老师。',
+      meet: 8, check: 60, pay: 2600, guide: 4, free: 1,
+      good: ['手把手教，技术最强，回消息最快', '论文多、机会多，跟着他成长最快'],
+      bad: ['一周两次组会，周末也不例外', '凌晨两点在群里@你：“那个实验跑完了吗？”'],
+      wx: ['欢迎欢迎！明天早上 8 点组会，带电脑。', '服务器账号已经发你了，先把环境配好。', '我们组目标是今年三篇。'] },
+    { id: 'qian', name: '钱老板', role: '横向项目老板', c: '#e0b07a', tag: '啤酒肚、金表，开口就是“咱们这个项目”。',
+      meet: 12, check: 35, pay: 3800, guide: 2, free: 1,
+      good: ['补助最高，还有项目奖金', '企业资源多，实习和找工作有门路'],
+      bad: ['横向项目做不完，自己的论文没时间写', '一周三次项目会，实验室装了打卡机'],
+      wx: ['小伙子/小姑娘，欢迎！', '咱们组项目多，明天先去甲方那边对接一下。', '补助按月发，好好干。'] }
+  ];
+  function advDef(id) { return ADVISORS.filter(function (a) { return a.id === id; })[0]; }
+  // 导师头像（24×24 像素）
+  var ADV_ART = {
+    tao: function (g, t) {
+      g.rect(5, 16, 14, 8, '#6b8f5a'); g.rect(10, 16, 4, 2, '#e9efe6');
+      g.circ(12, 10, 6, '#f0c59b'); g.rect(6, 4, 12, 3, '#3b3b3b'); g.rect(9, 3, 6, 1, '#3b3b3b');
+      g.p(9, 10, INK); g.p(15, 10, INK); g.rect(10, 13, 4, 1, '#a0522d'); g.p(9, 12, INK); g.p(14, 12, INK);
+      g.rect(17, 15 + t, 5, 7, '#d6dde6'); g.rect(17, 14 + t, 5, 1, '#8c96a3'); g.p(19, 17 + t, '#d62828'); g.p(20, 19 + t, '#d62828');
+    },
+    zhou: function (g, t) {
+      g.rect(5, 16, 14, 8, '#b98a5a'); g.rect(10, 16, 4, 8, '#f4ecd8'); g.p(12, 18, '#8a5432'); g.p(12, 21, '#8a5432');
+      g.circ(12, 10, 6, '#efc8a0'); g.rect(6, 8, 2, 4, '#e9efe6'); g.rect(16, 8, 2, 4, '#e9efe6'); g.rect(8, 4, 8, 1, '#e9efe6');
+      g.rect(8, 9, 3, 3, INK); g.p(9, 10, '#bfe3ff'); g.rect(13, 9, 3, 3, INK); g.p(14, 10, '#bfe3ff'); g.p(11, 10, INK); g.p(12, 10, INK);
+      g.rect(10, 14, 4, 1, '#a0522d'); g.p(7, 13, '#d9a77e'); g.p(16, 13, '#d9a77e');
+      if (t) { g.p(19, 3, '#f4c542'); g.p(20, 2, '#f4c542'); }
+    },
+    su: function (g, t) {
+      g.rect(5, 16, 14, 8, '#3d5a8a'); g.rect(10, 16, 4, 3, '#ffffff');
+      g.rect(5, 5, 14, 12, '#3b2a20'); g.circ(12, 10, 5, '#f3c9a0'); g.rect(7, 4, 10, 3, '#3b2a20'); g.rect(17, 7, 3, 10, '#3b2a20');
+      g.p(10, 10, INK); g.p(14, 10, INK); g.rect(11, 13, 3, 1, '#d9503f');
+      g.rect(2, 17 - t, 4, 5, '#f4f1ea'); g.rect(3, 16 - t, 2, 1, '#8a5432');
+    },
+    yan: function (g, t) {
+      g.rect(5, 16, 14, 8, '#7a2e3a'); g.rect(10, 16, 4, 3, '#f4f1ea');
+      g.circ(12, 10, 6, '#f3c9a0'); g.rect(6, 4, 12, 4, '#2b2b2b'); g.rect(5, 6, 3, 7, '#2b2b2b'); g.rect(16, 6, 3, 7, '#2b2b2b');
+      g.rect(8, 9, 3, 2, INK); g.rect(13, 9, 3, 2, INK); g.p(11, 9, INK); g.p(12, 9, INK);
+      g.rect(10, 13, 4, 1, INK);
+      g.line(19, 13 - t, 22, 22 - t, '#d9503f'); g.p(19, 12 - t, '#9e2e25');
+    },
+    lin: function (g, t) {
+      for (var y = 16; y < 24; y++) for (var x = 5; x < 19; x++) g.p(x, y, ((x >> 1) + (y >> 1)) % 2 ? '#5b7fb3' : '#9ab8e0');
+      g.circ(12, 10, 5, '#f3c9a0'); g.rect(6, 3, 12, 4, '#1c1c1c'); g.p(7, 7, '#1c1c1c'); g.p(16, 7, '#1c1c1c'); g.p(10, 2, '#1c1c1c'); g.p(14, 2, '#1c1c1c');
+      g.rect(8, 9, 3, 2, INK); g.rect(13, 9, 3, 2, INK); g.p(11, 9, INK); g.p(12, 9, INK);
+      g.p(8, 11, '#9b8fb8'); g.p(9, 11, '#9b8fb8'); g.p(14, 11, '#9b8fb8'); g.p(15, 11, '#9b8fb8');
+      g.rect(10, 13, 4, 1, INK);
+      if (t) { g.rect(18, 2, 5, 4, '#ffffff'); g.p(20, 6, '#ffffff'); g.text('!', 20, 0 + 1, '#d9503f'); }
+    },
+    qian: function (g, t) {
+      g.ell(12, 21, 8, 5, '#2f6f9a'); g.rect(10, 16, 4, 2, '#ffffff');
+      g.circ(12, 10, 6, '#f0c59b'); g.rect(6, 4, 12, 3, '#2b2b2b'); g.rect(6, 5, 2, 3, '#2b2b2b'); g.p(16, 4, '#5a5a5a');
+      g.p(9, 10, INK); g.p(15, 10, INK); g.rect(9, 13, 6, 1, '#a0522d'); g.p(9, 12, '#a0522d'); g.p(14, 12, '#a0522d');
+      g.rect(3, 19, 3, 2, '#f4c542'); g.rect(18, 15 - t, 3, 5, '#2b2b2b'); g.p(19, 16 - t, '#7fd1ff');
+    }
+  };
+  var ADV_SPR = {};
+  ADVISORS.forEach(function (a) { ADV_SPR[a.id] = { id: 'adv_' + a.id, draw: ADV_ART[a.id] }; });
+  function advCanvas(cv, a, t) { var x = cv.getContext('2d'); x.clearRect(0, 0, 24, 24); x.drawImage(GM.frame(ADV_SPR[a.id], t || 0), 0, 0); cv.style.setProperty('--c', a.c); }
+  function pip5(n) { var h = '<span class="pip5">'; for (var i = 0; i < 5; i++) h += '<i' + (i < n ? ' class="on"' : '') + '></i>'; return h + '</span>'; }
+  function meetText(n) { return n % 4 ? '每月 ' + n + ' 次' : '每周 ' + (n / 4) + ' 次'; }
+  function renderAdvisors() {
+    var box = $('advList'); box.innerHTML = '';
+    ADVISORS.forEach(function (a) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'adv'; b.id = 'adv-' + a.id;
+      b.innerHTML = '<canvas class="pix" width="24" height="24"></canvas><div><div class="t"></div><div class="tag"></div></div>' +
+        '<div class="adv-stats"><div><small>组会</small><b></b></div><div><small>查岗</small><b></b></div><div><small>补助</small><b></b></div></div>' +
+        '<div class="adv-pips"><span>指导</span>' + pip5(a.guide) + '<span>自由</span>' + pip5(a.free) + '</div>' +
+        '<div class="adv-pc"></div>';
+      advCanvas(b.querySelector('canvas'), a);
+      b.querySelector('.t').innerHTML = ''; b.querySelector('.t').textContent = a.name;
+      var role = document.createElement('span'); role.className = 'role'; role.textContent = a.role; b.querySelector('.t').appendChild(role);
+      b.querySelector('.tag').textContent = a.tag;
+      var st = b.querySelectorAll('.adv-stats b');
+      st[0].textContent = meetText(a.meet); st[1].textContent = a.check + '%'; st[2].textContent = '¥' + a.pay + '/月';
+      if (a.check >= 40) st[1].className = 'hot'; if (a.meet >= 8) st[0].className = 'hot';
+      var pc = b.querySelector('.adv-pc');
+      a.good.slice(0, 1).concat(a.bad.slice(0, 1)).forEach(function (txt, i) { var p = document.createElement('span'); p.className = i ? 'b' : 'g'; p.textContent = txt; pc.appendChild(p); });
+      b.addEventListener('click', function () { openAdvisor(a); });
+      box.appendChild(b);
+    });
+  }
+  var advPicked = null;
+  function openAdvisor(a) {
+    advPicked = a; audioInit(); sfx('pop');
+    advCanvas($('advCv'), a, 1);
+    $('advRole').textContent = a.role; $('advName').textContent = a.name; $('advTag').textContent = a.tag;
+    $('advWxHd').textContent = a.name + ' 给你发来了消息';
+    var w = $('advWx'); w.innerHTML = ''; a.wx.forEach(function (m) { var p = document.createElement('p'); p.textContent = m; w.appendChild(p); });
+    var dl = $('advStats'); dl.innerHTML = '';
+    addStat(dl, '组会', meetText(a.meet)); addStat(dl, '查岗', '每天 ' + a.check + '%'); addStat(dl, '补助', '¥' + a.pay + ' / 月', true);
+    a.good.forEach(function (g) { addStat(dl, '好处', g); }); a.bad.forEach(function (g) { addStat(dl, '坑', g); });
+    overlay('advOv', true);
+  }
+  $('advBack').addEventListener('click', function () { overlay('advOv', false); });
+  $('advPick').addEventListener('click', function () {
+    var a = advPicked; if (!a) return;
+    overlay('advOv', false); save.advisor = a.id; persist();
+    stampThen('双选成功', function () { renderEnd(); show('vEnd'); });
+  });
+
 
   // ======================================================================
   // 战斗：精英与 Boss 草图
@@ -4851,7 +5040,7 @@
     overlay('letterOv', true); sfx('whoosh');
     setTimeout(function () { sfx('stamp'); }, 1500);
   }
-  $('letterGo').addEventListener('click', function () { overlay('letterOv', false); renderEnd(); show('vEnd'); });
+  $('letterGo').addEventListener('click', function () { overlay('letterOv', false); renderAdvisors(); show('vAdvisor'); $('vAdvisor').scrollTop = 0; });
   function secondTry() {
     save.week++; save.outcome = null; save.finalSchool = null;
     // 再战从今天算第 1 天，今天剩下的精力照常可用
@@ -5006,8 +5195,9 @@
   // ======================================================================
   function boot() {
     mode = 'idle'; setMajor(save.major);
-    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv', 'celeOv', 'letterOv', 'setOv', 'codexOv', 'codexCard'].forEach(function (o) { overlay(o, false); });
+    ['levelOv', 'pauseOv', 'resultOv', 'shopOv', 'adOv', 'preExamOv', 'phoneOv', 'chapOv', 'loadOv', 'dailyOv', 'celeOv', 'letterOv', 'setOv', 'codexOv', 'codexCard', 'advOv'].forEach(function (o) { overlay(o, false); });
     if (!save.codex || !save.codex.m) save.codex = { m: {}, e: {}, b: {} };
+    if (save.outcome && !save.advisor) { renderAdvisors(); show('vAdvisor'); return; }
     if (save.outcome) { renderEnd(); show('vEnd'); return; }
     if (!save.storySeen) { startIntro(); return; }
     if (!save.major) { renderMajors(); show('vMajor'); return; }
