@@ -355,9 +355,9 @@
       }
     },
 
-    // 政治
+    // 公共课
     {
-      id: 'danxuan', flip: true, group: 'po', name: '单选题小兵', course: '政治', main: true, speed: 36,
+      id: 'danxuan', flip: true, group: 'po', name: '单选题小兵', course: '公共课', main: true, speed: 36,
       origin: '单选题', behavior: '成片冲过来，一碰就碎', line: '四选一，选不出来？',
       draw: function (g, t) {
         g.line(18, 4, 18, 20, '#8a6b3d');
@@ -371,7 +371,7 @@
       }
     },
     {
-      id: 'datika', group: 'po', name: '答题卡方格', course: '政治', speed: 26,
+      id: 'datika', group: 'po', name: '答题卡方格', course: '公共课', speed: 26,
       origin: '涂错的答题卡格子', behavior: '排成方阵往前推', line: '2B 铅笔带了吗？',
       draw: function (g, t) {
         g.rect(4, 4, 16, 15, '#f7f3ea');
@@ -384,7 +384,7 @@
       }
     },
     {
-      id: 'dice', group: 'po', name: '蒙题骰子', course: '政治', speed: 40,
+      id: 'dice', group: 'po', name: '蒙题骰子', course: '公共课', speed: 40,
       origin: '不会就蒙', behavior: '路线随机乱滚', line: '三长一短选最短',
       draw: function (g, t) {
         g.rect(5, 4, 14, 14, '#fbfbf6');
@@ -796,7 +796,7 @@
       }
     },
     {
-      id: 'jiechi', flip: true, group: 'e2', name: '戒尺小兵', course: '311·中国教育史', speed: 30,
+      id: 'jiechi', flip: true, group: 'e2', name: '戒尺小兵', course: '311·教育史', speed: 30,
       origin: '古代私塾的戒尺', behavior: '一蹦一蹦地敲过来', line: '伸手！',
       draw: function (g, t) {
         g.rect(9, 2 + t, 6, 19, '#c8945a'); g.rect(9, 2 + t, 1, 19, '#e0b07a');
@@ -805,7 +805,7 @@
       }
     },
     {
-      id: 'xianzhuang', group: 'e2', name: '线装书', course: '311·中国教育史', speed: 24,
+      id: 'xianzhuang', group: 'e2', name: '线装书', course: '311·教育史', speed: 24,
       origin: '古代学堂的线装书', behavior: '慢吞吞地翻着页飘过来', line: '学而时习之……',
       draw: function (g, t) {
         g.rect(4, 4, 16, 17, '#3f6fa8'); g.rect(6, 6, 6, 12, '#f4ecd8');
@@ -1158,16 +1158,16 @@
 
   var GROUPS = [
     { id: 'en', name: '英语', note: '公共课 · 所有专业都要打' },
-    { id: 'po', name: '政治', note: '公共课 · 只按题型做怪' },
+    { id: 'po', name: '公共课', note: '公共课 · 只按题型做怪' },
     { id: 'ma', name: '数学', note: '公共课 · 计算机、材料要考，会计考 199 数学' },
     { id: 'cs', name: '计算机 408', note: '专业课 · 数据结构、组成原理、操作系统、计算机网络' },
     { id: 'lb', name: '法硕 · 专业基础', note: '专业课 · 刑法、民法' },
-    { id: 'lz', name: '法硕 · 综合', note: '专业课 · 法理学、宪法、法制史' },
+    { id: 'lz', name: '法硕 · 综合', note: '专业课 · 法理学、诉讼法、法制史' },
     { id: 'mat', name: '材料科学基础', note: '专业课 · 晶体、缺陷、扩散、相图、热处理' },
     { id: 'lg', name: '199 · 逻辑', note: '会计专硕 · 管理类综合' },
     { id: 'wr', name: '199 · 写作', note: '会计专硕 · 管理类综合' },
     { id: 'e1', name: '311 · 原理与心理', note: '教育学 · 教育学原理、教育心理学' },
-    { id: 'e2', name: '311 · 中外教育史', note: '教育学 · 中国教育史、外国教育史' },
+    { id: 'e2', name: '311 · 教育史', note: '教育学 · 古代与近现代教育史' },
     { id: 'm1', name: '306 · 生理生化', note: '临床医学 · 生理学、生物化学' },
     { id: 'm2', name: '306 · 病理内外', note: '临床医学 · 病理学、内科学、外科学' },
     { id: 'g1a', name: '研一 · 文献海', note: '研究生篇 · 读不完的文献' },
