@@ -3292,7 +3292,7 @@
     var b = blank();
     try {
       var s = JSON.parse(localStorage.getItem(KEY));
-      if (s && s.up) { for (var k in b) if (s[k] === undefined) s[k] = b[k]; return s; }
+      if (s && s.up) { for (var k in b) if (s[k] === undefined) s[k] = b[k]; if (s.ending === 'gov') s.ending = 'shop'; return s; }
     } catch (e) {}
     return b;
   }
@@ -3510,7 +3510,7 @@
     }
     list.push({ who: '研友 老王', av: '王', c: '#3d7bd9', text: homeMessage(d).replace(/^研友说：/, '') });
     list.push({ who: '考研倒计时', av: '倒', c: '#d9503f', text: d >= 7 ? '<b>今天考研。</b>带好准考证和 2B 铅笔。' : '距离考研还有 <b>' + left + ' 天</b>。' });
-    var fam = ['吃饭了没？别老吃泡面。', '你二姨问你考上没。', '少熬夜！头发要紧。', '家里给你寄了一箱牛奶。', '隔壁小张考公上岸了哦。', '考完回家吃饭。', '妈妈相信你。'];
+    var fam = ['吃饭了没？别老吃泡面。', '你二姨问你考上没。', '少熬夜！头发要紧。', '家里给你寄了一箱牛奶。', '隔壁小张考研上岸了哦。', '考完回家吃饭。', '妈妈相信你。'];
     list.push({ who: '妈妈', av: '妈', c: '#e0a43a', text: fam[Math.min(d, 7) - 1] });
     if (save.week > 1) list.push({ who: '研友 老王', av: '王', c: '#3d7bd9', text: save.week === 2 ? '二战的人最可怕，我看好你。' : '都' + zhan(save.week) + '了，你是我见过最能扛的人。冲！' });
     return list;
@@ -4550,9 +4550,9 @@
     { id: 'indie', name: '自己做游戏', req: '补助存款 ≥ ¥6000（启动资金）',
       ok: function () { return (save.money || 0) >= 6000; },
       text: function () { return '你用三年攒下的补助做了一款像素小游戏，名字叫《疯狂的研究生》。'; } },
-    { id: 'gov', name: '考公上岸', req: '随时可以选',
+    { id: 'shop', name: '回老家开书店', req: '随时可以选',
       ok: function () { return true; },
-      text: function () { return '你又考了一次试，这次是考公，一战上岸。妈妈说：“这下稳了。”'; } }
+      text: function () { return '你回到家乡，开了一家小小的考研书店。每年冬天都有人推门进来问：“老板，这本真题还有吗？”'; } }
   ];
   function openEndings() {
     var box = $('endingList'); box.innerHTML = '';
