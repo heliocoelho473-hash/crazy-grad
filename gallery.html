@@ -582,8 +582,8 @@
       }
     },
     {
-      id: 'zhujian', flip: true, group: 'lz', name: '律令竹简兵', course: '综合·法制史', speed: 22,
-      origin: '古代律令竹简', behavior: '排成方阵正面推进', line: '哪个朝代的来着？',
+      id: 'zhujian', flip: true, group: 'lz', name: '卷宗竹简兵', course: '综合·诉讼法', speed: 22,
+      origin: '堆成山的案件卷宗', behavior: '排成方阵正面推进', line: '这是第几号卷宗来着？',
       draw: function (g, t) {
         for (var i = 0; i < 5; i++) g.rect(4 + i * 3, 4, 2, 14, '#d2bc7c');
         for (var k = 0; k < 4; k++) g.rect(6 + k * 3, 4, 1, 14, '#a88d4f');
@@ -764,9 +764,9 @@
       }
     },
 
-    // 教育学 · 311 中外教育史
+    // 教育学 · 311 教育史
     {
-      id: 'renming', group: 'e2', name: '人名牌', course: '311·中外教育史', main: true, speed: 34,
+      id: 'renming', group: 'e2', name: '人名牌', course: '311·教育史', main: true, speed: 34,
       origin: '一长串教育家的名字', behavior: '成群冲来，名字长得都很像', line: '你记得我是哪个学派的吗？',
       draw: function (g, t) {
         g.line(8, 1, 12, 6, '#d9503f'); g.line(16, 1, 12, 6, '#d9503f');
@@ -1075,7 +1075,7 @@
     },
     {
       id: 'geshicuo', group: 'g3b', name: '格式错误', course: '研三·降重', speed: 30,
-      origin: '学院格式审查', behavior: '一路歪歪扭扭地冲过来', line: '一级标题应为黑体三号',
+      origin: '学院格式检查', behavior: '一路歪歪扭扭地冲过来', line: '一级标题应为黑体三号',
       draw: function (g, t) {
         g.rect(4, 4, 16, 16, '#fbf6e9'); g.rect(6, 7, 12, 2, INK); g.rect(8 + t, 11, 10, 1, '#8a8a8a'); g.rect(6 - t, 13, 10, 1, '#8a8a8a'); g.rect(9, 15, 9, 1, '#8a8a8a');
         g.circ(18, 18, 3, '#e5484d'); g.p(18, 17, '#ffffff'); g.p(18, 19, '#ffffff');
@@ -1143,7 +1143,7 @@
     { id: 'ma', name: '数学', note: '公共课 · 计算机、材料要考，会计考 199 数学' },
     { id: 'cs', name: '计算机 408', note: '专业课 · 数据结构、组成原理、操作系统、计算机网络' },
     { id: 'lb', name: '法硕 · 专业基础', note: '专业课 · 刑法、民法' },
-    { id: 'lz', name: '法硕 · 综合', note: '专业课 · 法理学、诉讼法、法制史' },
+    { id: 'lz', name: '法硕 · 综合', note: '专业课 · 法理学、诉讼法、证据法' },
     { id: 'mat', name: '材料科学基础', note: '专业课 · 晶体、缺陷、扩散、相图、热处理' },
     { id: 'lg', name: '199 · 逻辑', note: '会计专硕 · 管理类综合' },
     { id: 'wr', name: '199 · 写作', note: '会计专硕 · 管理类综合' },

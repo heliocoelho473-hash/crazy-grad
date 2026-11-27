@@ -586,7 +586,7 @@
         <div class="edurow"><span>学历：</span><span class="edu"></span></div>
       </div>
       <div class="cs-toasts"></div>
-      <div class="cs-notif" hidden><b>研招网 · 刚刚</b><span>考研报名倒计时：仅剩 7 天</span></div>
+      <div class="cs-notif" hidden><b>招生网 · 刚刚</b><span>考研报名倒计时：仅剩 7 天</span></div>
       <div class="cs-card" hidden></div>
       <div class="cs-dlg" hidden><div class="cs-name"></div><div class="cs-text"></div><div class="cs-more">▼</div></div>
       <div class="cs-logo" hidden><div class="l1">疯狂的</div><div class="l2">研究生</div><div class="l3">7 天备考 · 割草上岸</div></div>
@@ -614,7 +614,7 @@
       <div class="form-head">
         <div class="eyebrow">考研报名表 · 第 2 栏</div>
         <h2>目标院校</h2>
-        <p class="muted">院校越好，考场上的怪越厚。没考上可以调剂，也可以再战一年（二战、三战……），学习力和道具全部保留。</p>
+        <p class="muted">院校越好，考场上的怪越厚。没考上可以调剂，也可以再战一年（第二年、第三年……），学习力和道具全部保留。</p>
       </div>
       <div id="schoolList"></div>
     </div>
@@ -965,7 +965,7 @@
       <p class="cele-score">预估初试 <b id="celeScore">0</b> 分</p>
       <p class="cele-pop">🍾 开香槟！上岸了！</p>
       <div class="cele-twist" id="celeTwist" hidden>
-        <b>研招办 · 刚刚</b>
+        <b>招生办 · 刚刚</b>
         <span>初试过线。请于明早 8:00 参加复试，导师组面试。</span>
       </div>
     </div>
@@ -1409,8 +1409,8 @@
       }
     },
     {
-      id: 'zhujian', flip: true, group: 'lz', name: '律令竹简兵', course: '综合·法制史', speed: 22,
-      origin: '古代律令竹简', behavior: '排成方阵正面推进', line: '哪个朝代的来着？',
+      id: 'zhujian', flip: true, group: 'lz', name: '卷宗竹简兵', course: '综合·诉讼法', speed: 22,
+      origin: '堆成山的案件卷宗', behavior: '排成方阵正面推进', line: '这是第几号卷宗来着？',
       draw: function (g, t) {
         for (var i = 0; i < 5; i++) g.rect(4 + i * 3, 4, 2, 14, '#d2bc7c');
         for (var k = 0; k < 4; k++) g.rect(6 + k * 3, 4, 1, 14, '#a88d4f');
@@ -1591,9 +1591,9 @@
       }
     },
 
-    // 教育学 · 311 中外教育史
+    // 教育学 · 311 教育史
     {
-      id: 'renming', group: 'e2', name: '人名牌', course: '311·中外教育史', main: true, speed: 34,
+      id: 'renming', group: 'e2', name: '人名牌', course: '311·教育史', main: true, speed: 34,
       origin: '一长串教育家的名字', behavior: '成群冲来，名字长得都很像', line: '你记得我是哪个学派的吗？',
       draw: function (g, t) {
         g.line(8, 1, 12, 6, '#d9503f'); g.line(16, 1, 12, 6, '#d9503f');
@@ -1902,7 +1902,7 @@
     },
     {
       id: 'geshicuo', group: 'g3b', name: '格式错误', course: '研三·降重', speed: 30,
-      origin: '学院格式审查', behavior: '一路歪歪扭扭地冲过来', line: '一级标题应为黑体三号',
+      origin: '学院格式检查', behavior: '一路歪歪扭扭地冲过来', line: '一级标题应为黑体三号',
       draw: function (g, t) {
         g.rect(4, 4, 16, 16, '#fbf6e9'); g.rect(6, 7, 12, 2, INK); g.rect(8 + t, 11, 10, 1, '#8a8a8a'); g.rect(6 - t, 13, 10, 1, '#8a8a8a'); g.rect(9, 15, 9, 1, '#8a8a8a');
         g.circ(18, 18, 3, '#e5484d'); g.p(18, 17, '#ffffff'); g.p(18, 19, '#ffffff');
@@ -1970,7 +1970,7 @@
     { id: 'ma', name: '数学', note: '公共课 · 计算机、材料要考，会计考 199 数学' },
     { id: 'cs', name: '计算机 408', note: '专业课 · 数据结构、组成原理、操作系统、计算机网络' },
     { id: 'lb', name: '法硕 · 专业基础', note: '专业课 · 刑法、民法' },
-    { id: 'lz', name: '法硕 · 综合', note: '专业课 · 法理学、诉讼法、法制史' },
+    { id: 'lz', name: '法硕 · 综合', note: '专业课 · 法理学、诉讼法、证据法' },
     { id: 'mat', name: '材料科学基础', note: '专业课 · 晶体、缺陷、扩散、相图、热处理' },
     { id: 'lg', name: '199 · 逻辑', note: '会计专硕 · 管理类综合' },
     { id: 'wr', name: '199 · 写作', note: '会计专硕 · 管理类综合' },
@@ -2713,7 +2713,7 @@
       }
       await say('你', '保安……也要博士？？', C.you);
       quiet();
-      await narr('学历，正在贬值。', 1.6);
+      await narr('本科……好像不够用了。', 1.6);
       await fadeTo(1, 0.6);
       E.poster.hidden = true;
 
@@ -2964,12 +2964,12 @@
     cs: { name: '专业课 408', book: '408', d: '僵尸进程、丢包数据包……有精英死锁双子' },
     mat: { name: '材料科学基础', book: '材料基础', d: '空位小精灵、位错蠕虫、坩埚小炉' },
     lb: { name: '法硕 · 专业基础', book: '专业基础', d: '法条纸片、甲乙丙、但书小尾巴' },
-    lz: { name: '法硕 · 综合', book: '法硕综合', d: '概念泡泡、律令竹简、法谚鹦鹉' },
+    lz: { name: '法硕 · 综合', book: '法硕综合', d: '概念泡泡、卷宗竹简、法谚鹦鹉' },
     am: { name: '199 · 数学', book: '数学', d: '应用题、排列组合、无穷小量', pool: 'ma' },
     lg: { name: '199 · 逻辑', book: '逻辑', d: '假言命题、三段论积木、削弱箭头' },
     wr: { name: '199 · 写作', book: '写作', d: '作文方格、论证漏洞、墨水滴' },
     e1: { name: '311 · 原理与心理', book: '原理心理', d: '条件反射小狗、认知积木、课程表格' },
-    e2: { name: '311 · 中外教育史', book: '教育史', d: '人名牌、戒尺小兵、线装书' },
+    e2: { name: '311 · 教育史', book: '教育史', d: '人名牌、戒尺小兵、线装书' },
     m1: { name: '306 · 生理生化', book: '生理生化', d: '动作电位闪电、ATP 小电池、酶钥匙' },
     m2: { name: '306 · 病理内外', book: '病理内外', d: '白细胞巡逻兵、胶囊小药丸、听诊器' },
     g1a: { name: '文献海', book: '文献海', d: '未读文献、格式虫、英文摘要', grad: 1 },
@@ -3023,7 +3023,7 @@
       E('dice', '蒙题骰子王', '不会就蒙！掷一下就知道选哪个了！', '……蒙对的终究只是少数。'),
       E('datika', '涂卡巨人', '2B 铅笔涂满，一格都不许出框！', '答题卡……被你涂穿了……'),
       E('danxuan', '多选陷阱兵长', '少选得一半，错选零分，你选几个？', '我……被你全选对了……'),
-      E('datika', '道德标兵', '同学，你的品德分只有及格。', '好人……终究有好报……'),
+      E('datika', '早起标兵', '同学，你今天又没早起背书。', '……明天，一定早起……'),
       E('dice', '押题大师', '押中了吗？押中了吗！', '今年……一道都没押中……')] },
     en: { full: 100, list: ['词汇', '完形填空', '阅读理解', '新题型', '翻译', '作文'], el: [
       E('abandon', '巨型 Abandon', '你又从 A 开始背了？', '你终于……背到 B 了……'),
@@ -3058,10 +3058,10 @@
       E('buding', '司法解释大全', '法条背完了？还有司法解释呢！', '补丁……打完了……'),
       E('jiayibing', '善意取得怪', '我是善意的！东西归我了！', '原来……我有重大过失……'),
       E('fatiao', '侵权责任巨兽', '过错推定！你得证明你没错！', '举证……成功了……')] },
-    lz: { full: 150, list: ['法理学', '诉讼法基础', '法制史', '法律职业伦理'], el: [
+    lz: { full: 150, list: ['法理学', '诉讼法基础', '证据法', '法律职业伦理'], el: [
       E('paopao', '权利权力泡泡王', '权利还是权力？就差一个字！', '……木字旁的那个。'),
       E('yingwu', '法谚大鹦鹉', '法无明文规定不为罪！法无明文规定不为罪！', '……我只会这一句。'),
-      E('zhujian', '律令竹简将军', '古代律令那么多篇，报上名来！', '……我自己也背不全……'),
+      E('zhujian', '卷宗竹简将军', '这么多卷宗，你看得完吗？', '……卷宗，被你理清了……'),
       E('yingwu', '职业伦理考官', '律师能同时代理双方吗？', '……利益冲突，必须回避。')] },
     am: { full: 75, list: ['算术与应用题', '代数', '几何', '数据分析'], el: [
       E('wuqiong', '应用题大叔', '一个水池，一边进水一边放水……', '水……终于放完了……'),
@@ -3083,10 +3083,10 @@
       E('jimu', '认知发展四阶段', '我从感知运动阶段开始成长！', '……形式运算……到顶了……'),
       E('xiaogou', '条件反射铃铛王', '叮铃——听到铃声你就会流口水！', '……反射消退了……'),
       E('kebiao', '最近发展区导师', '这道题，你跳一跳就够得着！', '……支架，可以撤掉了。'),
-      E('jimu', '对照组审查官', '你没设对照组，实验无效！', '……变量控制住了。')] },
+      E('jimu', '对照组检查官', '你没设对照组，实验无效！', '……变量控制住了。')] },
     e2: { full: 150, list: ['古代教育史', '近现代教育史', '教育思想流派', '教育名家名著'], el: [
-      E('xianzhuang', '学在官府守卫', '想读书？先当贵族子弟！', '……学术下移了。'),
-      E('jiechi', '科举考官', '八股文八个部分，一个都不能少！', '……科举，废除了……'),
+      E('xianzhuang', '古籍守卫', '这本书，你读懂了几页？', '……原来你全读完了。'),
+      E('jiechi', '背书先生', '伸出手来，背错一句打一下！', '……一句都没背错。'),
       E('renming', '问答法导师', '那你认为什么是教育？那你认为……', '……你自己想出了答案。'),
       E('renming', '人名大军', '你记得我是哪个学派的吗？', '……原来你都记住了。')] },
     m1: { full: 150, list: ['细胞生理', '血液循环', '呼吸与消化', '生物化学', '物质代谢'], el: [
@@ -3131,7 +3131,7 @@
       E('yichang', '过拟合怪', '训练集 100 分，测试集 30 分。', '……泛化能力有了。'),
       E('luanma', '结果部分空白怪', 'Results：（待补充）', '……结果写完了。')] },
     g2c: { full: 30, list: ['选期刊', '改格式', '投出去', '等审稿', '返修'], el: [
-      E('dengdai', '期刊格式要求', '行距 1.5，图要 300 dpi，参考文献全部换格式。', '……格式审查通过。'),
+      E('dengdai', '期刊格式要求', '行距 1.5，图要 300 dpi，参考文献全部换格式。', '……格式检查通过。'),
       E('jugao', '秒拒编辑', 'Desk reject，48 小时内。', '……这次送外审了。'),
       E('dengdai', '漫长的审稿', '状态：审稿中（第 93 天）。', '……终于有消息了。'),
       { sprite: 'yijian', reflect: true, name: '审稿人 2 号', say: '我对这篇文章有一些小小的意见。（共 37 条）', die: '……建议接收。' },
@@ -3142,9 +3142,9 @@
       E('yema', '目录生成失败', '错误！未定义书签。', '……目录自动生成了。'),
       E('cuobie', '字数焦虑', '还差 8000 字……要不把字体调大？', '……字数够了，而且都是干货。'),
       E('kongbai', '致谢写不出来', '致谢：感谢……感谢谁来着？', '……感谢自己没有放弃。')] },
-    g3b: { full: 30, ease: 1.4, list: ['第一次查重', '格式审查', '改引用', '逐句降重', '终稿查重'], el: [
+    g3b: { full: 30, ease: 1.4, list: ['第一次查重', '格式检查', '改引用', '逐句降重', '终稿查重'], el: [
       E('biaohong', '重复率 38%', '整段都是红的哦。', '……降到 20% 了。'),
-      E('geshicuo', '格式审查官', '页边距 2.5 厘米，行距 1.5 倍，图表要编号！', '……格式审查通过。'),
+      E('geshicuo', '格式检查官', '页边距 2.5 厘米，行距 1.5 倍，图表要编号！', '……格式检查通过。'),
       E('yinyong', '引用格式混乱', '参考文献列表和正文对不上。', '……一一对应了。'),
       { sprite: 'biaohong', scan: true, name: '查重系统', say: '开始比对数据库……', die: '……总重复率 8.7%，通过。' },
       E('biaohong', '降重降成病句', '“本文的研究的方法的创新的点是……”', '……句子通顺了。')] },
@@ -3155,7 +3155,7 @@
       { sprite: 'yanbi', countdown: true, name: '延毕预警', say: '距离论文提交截止，还剩 20 秒……', die: '……赶在截止前交上了！' },
       E('ppt', '答辩彩排', '大师兄：“这页讲太久了，删掉。”', '……彩排通过，明天正式上场。')] }
   };
-  // 精英技能：spit 吐毒液 / bomb 召唤自爆怪 / blink 隐入虚空再突袭 / charge 冲撞 / ring 弹幕
+  // 精英技能：spit 吐毒液 / bomb 召唤炸弹怪 / blink 隐入虚空再突袭 / charge 冲撞 / ring 弹幕
   var ELITE_SK = {
     po: [['ring'], ['charge'], ['spit', 'ring'], ['bomb', 'charge'], ['blink', 'spit']],
     en: [['charge'], ['spit'], ['spit', 'ring'], ['blink', 'charge'], ['bomb', 'ring'], ['blink', 'bomb', 'spit']],
@@ -3182,7 +3182,7 @@
     g3c: [['blink', 'spit'], ['ring', 'bomb'], ['charge', 'spit'], ['bomb', 'ring'], ['blink', 'charge', 'bomb']]
   };
   Object.keys(CHAPTERS).forEach(function (id) { CHAPTERS[id].el.forEach(function (e, i) { e.sk = ELITE_SK[id][i]; }); });
-  var SK_NAME = { spit: '吐毒液', bomb: '召唤自爆怪', blink: '隐入虚空', charge: '冲撞', ring: '弹幕' };
+  var SK_NAME = { spit: '吐毒液', bomb: '召唤炸弹怪', blink: '隐入虚空', charge: '冲撞', ring: '弹幕' };
   // 研二精英的专属机制（图鉴和加载页显示）
   function elExtra(e) { return e.chain ? '连续来 ' + e.chain + ' 只' : e.jam ? '定时让你的攻击停 2 秒' : e.reflect ? '周期性“反驳”，期间打它会反伤' : e.scan ? '扫描线扫过全场，碰到会受伤' : e.countdown ? '20 秒后全场怪物加速' : e.stealth ? '匿名隐身，时隐时现' : ''; }
   var SK = {
@@ -3211,14 +3211,14 @@
   var MAJOR_TIPS = {
     cs: ['408 年年考 PV 操作，别再躲了。', '数据结构的代码题，先写思路再写代码，思路也给分。'],
     mat: ['铁碳相图那几条线和温度，背熟了能拿一大块分。', '材料科学基础各校自命题，一定要看目标院校的真题。'],
-    law: ['法条要背，但案例题更看分析过程：先定性，再找条文。', '法制史按朝代串成时间线，比零散背好记得多。'],
+    law: ['法条要背，但案例题更看分析过程：先定性，再找条文。', '诉讼法按流程串起来记：起诉、审理、判决、执行。'],
     acc: ['199 时间特别紧：数学 25 道题，每道别超过 3 分钟。', '论证有效性分析先找漏洞，常见的就那几类。'],
-    edu: ['311 人名多，按“人名 + 代表作 + 核心观点”三件套背。', '教育史画一条时间线，中外对照着记。'],
+    edu: ['311 人名多，按“人名 + 代表作 + 核心观点”三件套背。', '教育史画一条时间线，人物和观点对照着记。'],
     med: ['西综五科分值不同，生理和内科最值得花时间。', '病例分析先抓主诉，再按诊断依据一条条写。']
   };
   var GRAD_TIPS = {
     1: ['综述先读近五年的，再顺着参考文献往回追。', '组会汇报前一晚把 PPT 发给大师兄看看。', '开题报告最重要的是讲清楚“为什么值得做”。', '文献管理软件早点用起来，后面写论文能省一大半时间。'],
-    3: ['降重要换说法，不是换同义词。', '查重系统的红线扫过来时往旁边躲。', '延毕预警出来先集火，20 秒后全场加速。', '盲审专家会隐身，看准它现身的时候输出。', '答辩委员会每打掉 1/5 血就换一位委员提问。', '致谢可以写得真诚一点。'],
+    3: ['降重要换说法，不是换同义词。', '查重系统的红线扫过来时往旁边躲。', '延毕预警出来先集火，20 秒后全场加速。', '盲审专家会隐身，看准它现身的时候输出。', '答辩组每打掉 1/5 血就换一位老师提问。', '致谢可以写得真诚一点。'],
     2: ['实验记录本每天都写，中期考核会翻。', '数据不显著就如实写，千万别改数据。', 'p 值暗着打不动，先躲开，亮起来再集中火力。', '投稿先投稍微够一够的期刊，被拒了再往下投。', '审稿人 2 号反驳的时候（红圈），别硬打。', '服务器宕机时攻击无效，先跑位躲怪。']
   };
   var LOAD_MSG = ['正在削铅笔……', '正在占图书馆的座……', '正在泡速溶咖啡……', '正在给 2B 铅笔开光……', '正在翻开真题集……', '正在把手机调成静音……'];
@@ -3230,7 +3230,7 @@
   var YR = {
     1: { ex: '开题', exFull: '开题答辩', prog: '开题进度', line: '开题线', cal: '题', group: '开题答辩组', groupD: '三位评委', go: '去答辩', btn: '进入开题答辩', loadT: '三位评委' },
     2: { ex: '中期考核', exFull: '中期考核', prog: '中期进度', line: '中期线', cal: '核', group: '中期考核组', groupD: '两位评委 + 导师', go: '去考核', btn: '进入中期考核', loadT: '中期考核组' },
-    3: { ex: '毕业答辩', exFull: '毕业答辩', prog: '论文进度', line: '毕业线', cal: '答', group: '答辩委员会', groupD: '两位盲审专家 + 答辩委员会', go: '去答辩', btn: '进入毕业答辩', loadT: '盲审与答辩' }
+    3: { ex: '毕业答辩', exFull: '毕业答辩', prog: '论文进度', line: '毕业线', cal: '答', group: '答辩组', groupD: '两位盲审专家 + 答辩组', go: '去答辩', btn: '进入毕业答辩', loadT: '盲审与答辩' }
   };
   function Y() { return YR[gyN() || 1]; }
   // 每学年的难度倍率：k = Hp / Dmg / Exam / Meet
@@ -3442,15 +3442,15 @@
     return c;
   }
   function dayKey() { return (isGrad() ? 'g' + save.gy + '.' + (save.gweek || 1) : save.week) + '-' + dayNum(); }
-  // 第几战：1 → 一战，2 → 二战 …… 超过十就写数字
+  // 第几年：1 → 第一年，2 → 第二年 …… 超过十就写数字
   var CN_NUM = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
-  function zhan(w) { return (w <= 10 ? CN_NUM[w - 1] : w + ' ') + '战'; }
+  function zhan(w) { return '第' + (w <= 10 ? CN_NUM[w - 1] : ' ' + w + ' ') + '年'; }
 
   // 自习室
   function homeMessage(d) {
     if (isGrad() && gyN() === 3) {
       var A3 = advDef(save.advisor), mt3 = meetToday();
-      if (d >= 7) return '<b>今天毕业答辩！</b>盲审专家和答辩委员会已经就位。';
+      if (d >= 7) return '<b>今天毕业答辩！</b>盲审专家和答辩组已经就位。';
       if (mt3.st === 'open') return '<b>组会开始了！</b>' + A3.name + (A3.id === 'tao' ? '突然要检查你的进度' : '在会议室等你') + '，快去“组会”卡片。';
       if (mt3.st === 'soon') return '<b>今天有组会：</b>' + slotDef().name + '，记得准时打开游戏。';
       var gt3 = ['<b>研三第 1 天。</b>写论文、格式、答辩准备三条线 + 降重都能涨论文进度，第 7 天毕业答辩。' + (A3.id === 'tao' ? '陶老师突然发消息：“这周开两次组会，我看看你的进度。”' : ''),
@@ -3512,7 +3512,7 @@
     list.push({ who: '考研倒计时', av: '倒', c: '#d9503f', text: d >= 7 ? '<b>今天考研。</b>带好准考证和 2B 铅笔。' : '距离考研还有 <b>' + left + ' 天</b>。' });
     var fam = ['吃饭了没？别老吃泡面。', '你二姨问你考上没。', '少熬夜！头发要紧。', '家里给你寄了一箱牛奶。', '隔壁小张考研上岸了哦。', '考完回家吃饭。', '妈妈相信你。'];
     list.push({ who: '妈妈', av: '妈', c: '#e0a43a', text: fam[Math.min(d, 7) - 1] });
-    if (save.week > 1) list.push({ who: '研友 老王', av: '王', c: '#3d7bd9', text: save.week === 2 ? '二战的人最可怕，我看好你。' : '都' + zhan(save.week) + '了，你是我见过最能扛的人。冲！' });
+    if (save.week > 1) list.push({ who: '研友 老王', av: '王', c: '#3d7bd9', text: save.week === 2 ? '再考一年的人最可怕，我看好你。' : '都' + zhan(save.week) + '了，你是我见过最能扛的人。冲！' });
     return list;
   }
   function openPhone() {
@@ -3991,7 +3991,7 @@
     var s = SCHOOLS[save.school], G = isGrad();
     $('preExamEyebrow').textContent = G ? gyName() + ' · 第 7 天' : '考研日';
     $('preExamTitle').textContent = G ? Y().exFull : '四门连考';
-    $('preExamNote').textContent = G && gyN() === 3 ? '三轮各 3 分钟：两位匿名盲审专家，最后是五位委员组成的答辩委员会（每打掉 1/5 血换一位委员提问）。三轮里过两轮就能毕业，否则延毕一年再来一周。查重率没降到 ' + ccTarget() + '% 以下，评委会更难缠。' : G && gyN() === 2 ? '三轮各 3 分钟：进展汇报、数据质询，最后是' + advDef(save.advisor).name + '亲自终审。三轮里过两轮就算通过，否则延期中期再来一周。进度、导师好感、发表的论文都会让评委变弱。' : G ? '三轮各 3 分钟：开题汇报、答辩提问、专家评审，每轮一位评委。三轮里过两轮就算开题通过，否则重新开题再来一周。进度越高、导师好感越高，评委越好说话。'
+    $('preExamNote').textContent = G && gyN() === 3 ? '三轮各 3 分钟：两位匿名盲审专家，最后是五位答辩老师组成的答辩组（每打掉 1/5 血换一位老师提问）。三轮里过两轮就能毕业，否则延毕一年再来一周。查重率没降到 ' + ccTarget() + '% 以下，评委会更难缠。' : G && gyN() === 2 ? '三轮各 3 分钟：进展汇报、数据质询，最后是' + advDef(save.advisor).name + '亲自终审。三轮里过两轮就算通过，否则延期中期再来一周。进度、导师好感、发表的论文都会让评委变弱。' : G ? '三轮各 3 分钟：开题汇报、答辩提问、专家评审，每轮一位评委。三轮里过两轮就算开题通过，否则重新开题再来一周。进度越高、导师好感越高，评委越好说话。'
       : '四科各 3 分钟：每科开考 15 秒后出 Boss，3 分钟内打倒才算这科过关。四科都过才算考完……吗？三科以上可以调剂，否则再战一年（星星、学习力、道具全保留）。预估分越高，那一科的 Boss 越弱。';
     $('preExamStats').innerHTML = '';
     var sc = totalScore();
@@ -4048,7 +4048,7 @@
       var GC = advDef(save.advisor), EN = save.ending && ENDINGS.filter(function (e) { return e.id === save.ending; })[0];
       $('endEyebrow').textContent = EN ? '研究生篇 · 完' : '研究生篇 · 研三';
       $('endTitle').textContent = EN ? '毕业快乐！' : '答辩通过！';
-      $('endText').textContent = EN ? EN.text() : '五位委员一致同意授予学位。最后一步：选一个毕业去向。';
+      $('endText').textContent = EN ? EN.text() : '五位答辩老师一致同意授予学位。最后一步：选一个毕业去向。';
       var gdl3 = $('endStats'); gdl3.innerHTML = '';
       addStat(gdl3, '毕业去向', EN ? EN.name : '待选', true);
       addStat(gdl3, '考研', zhan(save.week || 1) + '上岸'); addStat(gdl3, '读研', '3 年' + (save.yanbi ? '（延毕 ' + save.yanbi + ' 次）' : ''));
@@ -4089,7 +4089,7 @@
     }
     $('endEyebrow').textContent = '备考篇 · 完';
     $('endTitle').textContent = save.outcome === 'adjust' ? '调剂上岸！' : '上岸！';
-    $('endText').textContent = (save.outcome === 'adjust' ? '虽然没考上第一志愿，但你调剂到了 ' : '你考上了 ') + s + '。' + (save.week > 1 ? zhan(save.week) + '终于成功了。' : '一战上岸。');
+    $('endText').textContent = (save.outcome === 'adjust' ? '虽然没考上第一志愿，但你调剂到了 ' : '你考上了 ') + s + '。' + (save.week > 1 ? zhan(save.week) + '终于成功了。' : '第一年就上岸。');
     var dl = $('endStats'); dl.innerHTML = '';
     addStat(dl, '备考周数', save.week + ' 周');
     addStat(dl, '刷题局数', save.runs + ' 局');
@@ -4475,7 +4475,7 @@
   // ---------- 研三 · 降重（改写小游戏） ----------
   // o = 标红的原句，ok = 意思不变、换了说法，dup = 只换一两个字（还是重复），bad = 意思变了
   var CC = [
-    { o: '随着经济的快速发展，人们的生活水平不断提高。', ok: '在经济高速增长的带动下，居民生活质量持续改善。', dup: '随着经济的快速的发展，人们的生活水平不断的提高。', bad: '随着经济的停滞，人们的生活水平有所下降。' },
+    { o: '随着网络的快速发展，人们获取信息越来越方便。', ok: '网络技术日新月异，查找资料变得前所未有地容易。', dup: '随着网络的快速的发展，人们获取信息越来越方便了。', bad: '随着网络的发展，人们越来越难获取信息。' },
     { o: '本文采用问卷调查的方法收集数据。', ok: '本研究的数据通过发放问卷获得。', dup: '本文采取问卷调查的方法收集数据。', bad: '本文没有收集任何数据。' },
     { o: '实验结果表明，该方法具有较好的效果。', ok: '从实验数据来看，这一方法的表现令人满意。', dup: '实验结果表明，该方法具有较好的成效。', bad: '实验结果表明，该方法完全无效。' },
     { o: '近年来，人工智能技术受到了广泛关注。', ok: '这几年，人工智能逐渐成为各界讨论的热点。', dup: '近些年来，人工智能技术受到了广泛的关注。', bad: '近年来，人工智能技术已经无人问津。' },
@@ -4487,7 +4487,7 @@
     { o: '目前该领域的相关研究仍然较少。', ok: '到现在为止，关注这一方向的学者并不多。', dup: '目前该领域的相关研究依然较少。', bad: '目前该领域的研究已经多到饱和。' },
     { o: '本章首先介绍研究背景，然后提出研究问题。', ok: '这一章先交代研究的来龙去脉，再引出要解决的问题。', dup: '本章首先介绍研究的背景，然后提出研究的问题。', bad: '本章直接给出结论，不介绍背景。' },
     { o: '数据经过标准化处理后输入模型。', ok: '模型的输入是统一量纲之后的数据。', dup: '数据经过了标准化处理后输入到模型。', bad: '数据不做任何处理，直接丢掉。' },
-    { o: '城市化进程导致了耕地面积的减少。', ok: '城市不断扩张，使得可耕种的土地越来越少。', dup: '城市化的进程导致了耕地面积的减少。', bad: '城市化进程使耕地面积大幅增加。' },
+    { o: '长时间使用手机会导致视力下降。', ok: '一直盯着手机看，眼睛会越来越不好。', dup: '长时间地使用手机会导致视力的下降。', bad: '长时间使用手机能让视力变得更好。' },
     { o: '未来的研究可以进一步扩大样本范围。', ok: '后续工作不妨把调查对象覆盖得更广一些。', dup: '未来的研究可以更进一步扩大样本的范围。', bad: '未来不需要再做任何研究。' },
     { o: '该算法的时间复杂度较低。', ok: '这个算法运行起来耗时不多。', dup: '该算法的时间复杂度比较低。', bad: '该算法的时间复杂度极高。' },
     { o: '良好的睡眠有助于提高记忆力。', ok: '睡得好，记东西也会更牢。', dup: '良好的睡眠有利于提高记忆力。', bad: '良好的睡眠会损害记忆力。' }
@@ -4912,7 +4912,7 @@
       g.rect(10, 12, 4, 1, INK); g.p(13, 11, INK);
       g.rect(1, 17 - t, 6, 5, '#aeb8c4'); g.rect(2, 18 - t, 4, 3, '#7fd1ff');
     } };
-  // 研三：盲审专家（戴面具）和答辩委员会
+  // 研三：盲审专家（戴面具）和答辩组
   var BLIND = { id: 'boss_blind', draw: function (g, t) {
       g.rect(5, 15, 14, 9, '#3a3a4a'); g.rect(10, 15, 4, 4, '#f4f1ea');
       g.circ(12, 9, 6, '#f3c9a0'); g.rect(6, 3, 12, 3, '#555');
@@ -4927,18 +4927,18 @@
     } };
   // 考研日每一科的 Boss
   var EXAM_BOSSES = {
-    po: { def: BOSS_PO, name: '材料分析巨卷', say: '辨析题：论你上岸的必然性与偶然性！', die: '答……答到点子上了……', sk: ['spit'] },
+    po: { def: BOSS_PO, name: '材料分析巨卷', say: '材料题：读完这三页，概括你上岸的理由！', die: '答……答到点子上了……', sk: ['spit'] },
     en: { def: BOSS_EN, name: '作文阅卷官', say: '这个模板，我今天已经看了一万遍。', die: '……这篇，给你个高分吧。', sk: ['blink'] },
     ma: { def: BOSS_MA, name: '压轴大题', say: '前面都是送分，我才是真正的数学。', die: '步骤分……被你拿满了……', sk: ['bomb'] },
     cs: { def: BOSS, name: '408 缝合怪', say: '四门课，我全都要！', die: '四门课缝在一起……还是被你一门一门拆开了……', sk: ['spit', 'bomb'] },
     mat: { def: BOSS_MAT, name: '铁碳相图巨兽', say: '727 度，共析转变！你背到第几条线了？', die: '奥氏体、珠光体、渗碳体……全被你分清了……', sk: ['spit', 'bomb'] },
-    lb: { def: BOSS_LB, name: '法典巨像', say: '一千二百多条，你背到哪了？', die: '……翻到最后一页了。', sk: ['bomb', 'spit'] },
-    lz: { def: BOSS_LZ, name: '法理大法官', say: '法的本质是什么？三句话说清楚。', die: '……本庭宣布，你通过了。', sk: ['blink', 'spit'] },
+    lb: { def: BOSS_LB, name: '法典巨像', say: '这么厚一本，你背到哪了？', die: '……翻到最后一页了。', sk: ['bomb', 'spit'] },
+    lz: { def: BOSS_LZ, name: '法理考官', say: '法的渊源有哪些？三句话说清楚。', die: '……答得很清楚，你通过了。', sk: ['blink', 'spit'] },
     am: { def: BOSS_MA, name: '199 速算王', say: '25 道题，每道两分半，开始计时！', die: '……时间居然够用了。', sk: ['bomb'] },
     lg: { def: BOSS_LG, name: '真假话之主', say: '我们之中只有一个说真话。猜猜是谁？', die: '……原来说真话的是我自己。', sk: ['blink', 'spit'] },
     wr: { def: BOSS_WR, name: '论说文阅卷组长', say: '审题跑偏，直接三类卷！', die: '……这篇，一类卷。', sk: ['spit', 'bomb', 'blink'] },
     e1: { def: BOSS_E1, name: '教育理论巨塔', say: '三大流派、四个阶段，你分得清吗？', die: '……塔，被你一层层拆完了。', sk: ['bomb', 'spit'] },
-    e2: { def: BOSS_E2, name: '教育史时间线巨龙', say: '这个制度是哪一年颁布的？', die: '……时间线，被你理顺了。', sk: ['blink', 'spit', 'bomb'] },
+    e2: { def: BOSS_E2, name: '教育史时间线巨龙', say: '这位教育家，是哪个学派的？', die: '……时间线，被你理顺了。', sk: ['blink', 'spit', 'bomb'] },
     m1: { def: BOSS_M1, name: '人体循环巨心', say: '心输出量等于什么？给你一秒钟！', die: '……心率，恢复正常了。', sk: ['bomb', 'spit'] },
     m2: { def: BOSS_M2, name: '西综五头龙', say: '还有五年本科、三年规培等着你哦。', die: '……五个头，都被你打下来了。', sk: ['blink', 'spit', 'bomb'] },
     g1a: { def: JUDGE_A, round: '开题汇报', name: '评委甲 · 创新点之问', say: '你的创新点在哪？请用一句话说清楚。', die: '……嗯，有点意思。', sk: ['spit'] },
@@ -4948,9 +4948,9 @@
     g2b: { def: JUDGE_B, round: '数据质询', name: '评委乙 · 数据之问', say: '这个数据可靠吗？原始记录拿来看看。', die: '……数据经得起推敲。', sk: ['bomb', 'spit'] },
     g3a: { def: BLIND, round: '盲审', name: '盲审专家 · 匿名甲', say: '本文创新性一般，建议修改后再审。', die: '……同意答辩。', sk: ['blink', 'spit'] },
     g3b: { def: BLIND, round: '盲审', name: '盲审专家 · 匿名乙', say: '研究方法存在一定缺陷，请说明。', die: '……同意答辩。', sk: ['blink', 'bomb'] },
-    g3c: { def: COMM, round: '毕业答辩', name: '答辩委员会', say: '请用十分钟介绍你的论文，然后回答五位委员的提问。', die: '……经委员会表决，同意授予学位！', sk: ['spit'],
-      rot: [{ name: '委员一', sk: ['spit'], say: '你的创新点到底在哪？' }, { name: '委员二', sk: ['charge'], say: '这个结论的依据是什么？' }, { name: '委员三', sk: ['bomb'], say: '参考文献为什么这么旧？' },
-        { name: '委员四', sk: ['blink', 'spit'], say: '换一批样本，结论还成立吗？' }, { name: '主席', sk: ['blink', 'spit', 'bomb'], say: '最后一个问题：毕业以后打算做什么？' }] },
+    g3c: { def: COMM, round: '毕业答辩', name: '答辩组', say: '请用十分钟介绍你的论文，然后回答五位答辩老师的提问。', die: '……经答辩组讨论，同意授予学位！', sk: ['spit'],
+      rot: [{ name: '老师一', sk: ['spit'], say: '你的创新点到底在哪？' }, { name: '老师二', sk: ['charge'], say: '这个结论的依据是什么？' }, { name: '老师三', sk: ['bomb'], say: '参考文献为什么这么旧？' },
+        { name: '老师四', sk: ['blink', 'spit'], say: '换一批样本，结论还成立吗？' }, { name: '答辩组长', sk: ['blink', 'spit', 'bomb'], say: '最后一个问题：毕业以后打算做什么？' }] },
     g2c: { def: JUDGE_C, adv: true, round: '导师终审', name: '导师 · 中期终审', say: '（导师站了起来）最后一个问题，我来问。', die: '……行，中期过了。', sk: ['blink', 'spit', 'bomb'] }
   };
   function bossDef(B) { return B.adv && save && save.advisor ? ADV_SPR[save.advisor] : B.def; }
@@ -5710,9 +5710,9 @@
       if (m.spec && m.spec.reflect) { m.reflC = (m.reflC || 0) + dt; m.refl = (m.reflC % 5) > 3.2; }
       if (m.spec && m.spec.scan) { m.scanCd = (m.scanCd == null ? 4 : m.scanCd) - dt; if (m.scanCd <= 0 && !S.scan) { m.scanCd = 7; S.scan = { t: 0, y0: p.y - H / 2, hit: false }; banner('查重系统扫描中！躲开红线', 1.6); sfx('beam'); } }
       if (m.spec && m.spec.countdown) { m.cdT = (m.cdT == null ? 20 : m.cdT) - dt; if (m.cdT <= 0 && !S.rush) { S.rush = true; banner('延毕预警！全场怪物加速', 2); sfx('boss'); } }
-      if (m.rot) {   // 答辩委员会：每打掉 1/5 血换一位委员
+      if (m.rot) {   // 答辩组：每打掉 1/5 血换一位老师
         var rI = Math.min(4, Math.floor((1 - m.hp / m.max) * 5));
-        if (rI !== m.rotI) { m.rotI = rI; var RM = m.rot[rI]; m.skills = RM.sk; battleSay(m.def, '答辩委员会 · ' + RM.name, RM.say, 2.8); $('bossName').textContent = '答辩委员会 · ' + RM.name; }
+        if (rI !== m.rotI) { m.rotI = rI; var RM = m.rot[rI]; m.skills = RM.sk; battleSay(m.def, '答辩组 · ' + RM.name, RM.say, 2.8); $('bossName').textContent = '答辩组 · ' + RM.name; }
       }
       if (m.kind === 'mob' && S.rush) { vx *= 1.45; vy *= 1.45; }
       if (m.kind === 'mob' && m.def.id === 'cuobie') { var wv = Math.sin(S.t * 5 + m.ph * 3) * 70; vx += -dy / d * wv; vy += dx / d * wv; }
@@ -5720,7 +5720,7 @@
         m.tp = (m.tp == null ? 2 + Math.random() * 2 : m.tp) - dt;
         if (m.tp <= 0) { m.tp = 2.5 + Math.random() * 2; if (d > 90) { var ta = Math.random() * Math.PI * 2; m.x = p.x + Math.cos(ta) * d; m.y = p.y + Math.sin(ta) * d; m.flash = 0.15; } }
       }
-      if (m.kami) {   // 自爆怪：贴近就点燃引信，停下闪红，0.8 秒后爆炸
+      if (m.kami) {   // 炸弹怪：贴近就点燃引信，停下闪红，0.8 秒后爆炸
         if (m.fuse > 0) { vx = 0; vy = 0; m.fuse -= dt; m.flash = Math.floor(m.fuse * 12) % 2 ? 0.08 : 0; if (m.fuse <= 0) { kamiBoom(m); return; } }
         else if (d < 48) { m.fuse = 0.8; sfx('tick'); }
       }
@@ -5865,7 +5865,7 @@
         var km = addMob(def, m.x + Math.cos(a) * (m.r + 16), m.y + Math.sin(a) * (m.r + 16), 'mob');
         km.kami = true; km.sp *= 2.1; km.max = km.hp = km.max * 0.7; km.fuse = 0;
       }
-      floatText(m, '自爆小队，上！', '#ff8a5c'); sfx('whoosh');
+      floatText(m, '炸弹小队，上！', '#ff8a5c'); sfx('whoosh');
     } else if (k === 'blink') {
       m.st = 'vanish'; m.ghost = true; m.kx = m.ky = 0;
       S.hz.push({ k: 'warn', x: p.x, y: p.y, r: boss ? 92 : 72, t: 1.15, t0: 1.15, dmg: hzDmg(boss ? 14 : 12), then: 'appear', src: m });
@@ -6413,11 +6413,11 @@
       if (gyN() === 3) {
         if (gp >= 2 && !r.quit) {
           save.gyDone = 1; save.favor = Math.min(100, save.favor + 10); persist();
-          showResult('答辩通过！', '主席：“经委员会表决，同意授予硕士学位。”', gst.concat([['查重率', ccRate() + '%'], ['已发表论文', (save.pubs || []).length + ' 篇']]),
+          showResult('答辩通过！', '答辩组长：“经答辩组讨论，同意授予硕士学位。”', gst.concat([['查重率', ccRate() + '%'], ['已发表论文', (save.pubs || []).length + ' 篇']]),
             [{ label: '选择毕业去向', primary: true, fn: function () { renderEnd(); show('vEnd'); openEndings(); } }]);
         } else {
           save.yanbi = (save.yanbi || 0) + 1; persist();
-          showResult('答辩没通过……', '委员会：“论文还需要大改，延期毕业。”这就是延毕一年：星星、论文、补助都保留，再来一周。', gst, [{ label: '延毕一年', primary: true, fn: gradRetry }]);
+          showResult('答辩没通过……', '答辩组：“论文还需要大改，延期毕业。”这就是延毕一年：星星、论文、补助都保留，再来一周。', gst, [{ label: '延毕一年', primary: true, fn: gradRetry }]);
         }
         return;
       }
@@ -6451,11 +6451,11 @@
       showResult(passed === 4 ? '复试没过…但可以调剂！' : '差一科…可以调剂！',
         (passed === 4 ? '初试四科都过了，复试被导师问倒了。' : acc && acc.late && !res[0] && passed === 3 ? '睡过头错过了' + SUBJECTS[0].name + '，剩下三科全过。' : '四科里过了三科。') + '可以调剂到 ' + adj + '，也可以' + zhan(save.week + 1) + '再冲 ' + s.name + '（星星、学习力、道具全保留）。',
         stats, [{ label: '接受调剂：' + adj, primary: true, fn: function () { save.outcome = 'adjust'; save.finalSchool = adj; persist(); showLetter(adj, true); } },
-                { label: '不甘心，' + zhan(save.week + 1), fn: secondTry }]);
+                { label: '不甘心，再考一年', fn: secondTry }]);
     } else {
       persist();
       showResult('没过线…', '星星、学习力、道具和学习素质都保留。' + zhan(save.week + 1) + '从今天开始，每天的高级复习还会继续叠加。', stats.concat([['当前学习力', save.study, true]]),
-        [{ label: '开始' + zhan(save.week + 1), primary: true, fn: secondTry }]);
+        [{ label: '再考一年', primary: true, fn: secondTry }]);
     }
   }
   // 录取通知书
@@ -6540,7 +6540,7 @@
         addStat(dl, '导师', A.name + '（' + A.role + '）');
         addStat(dl, Y().line, line + ' / ' + fullTotal());
         addStat(dl, '组会', '这周 ' + meetPlan().length + ' 次 · ' + slotDef().name, true);
-        $('dailyGoal').innerHTML = gyN() === 3 ? '<b>怎么毕业：</b>打通写论文、格式、答辩准备三条线，再去“降重”把查重率降到 ' + ccTarget() + '% 以下，论文进度过线。研二没投完的数据还能继续投稿。第 7 天：两位盲审专家 + 答辩委员会！'
+        $('dailyGoal').innerHTML = gyN() === 3 ? '<b>怎么毕业：</b>打通写论文、格式、答辩准备三条线，再去“降重”把查重率降到 ' + ccTarget() + '% 以下，论文进度过线。研二没投完的数据还能继续投稿。第 7 天：两位盲审专家 + 答辩组！'
           : gyN() === 2 ? '<b>怎么过中期：</b>打通实验、数据、投稿三条线，多做实验，中期进度过线；攒够实验数据就去投稿，中了的论文让评委变弱。第 7 天：两位评委 + 你的导师亲自终审！'
           : '<b>怎么开题：</b>打通文献海、课程、杂事三条线，再多读文献，开题进度过线；组会准时出席拿补助和好感。第 7 天面对三位评委！';
       } else {
