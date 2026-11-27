@@ -3780,7 +3780,7 @@
     ttLogin();
     if (TT.unit && tap.createRewardedVideoAd) {
       try {
-        TT.ad = tap.createRewardedVideoAd({ adUnitId: TT.unit });
+        TT.ad = tap.createRewardedVideoAd({ adUnitId: TT.unit, orientation: 'portrait' });   // 竖屏激励位
         TT.ad.onLoad(function () { TT.adReady = true; });
         TT.ad.onError(function () { TT.adReady = false; });
         TT.ad.onClose(function (res) { var cb = TT.cb; TT.cb = null; TT.adReady = false; if (cb) cb(!!(res && res.isEnded)); });
